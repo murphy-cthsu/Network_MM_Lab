@@ -1,0 +1,17 @@
+{
+  "boot_aggregate": [
+    "541771a6f90eb748156ea5f30713493584e0f7521d7dcf51e4ba4cec3d515d91"
+  ],
+  "/usr/bin/bash": [
+    "2b531687f96e4893dbe9472abd9eabc84e50b4437443e1c13151c73fe4f84a84"
+  ],
+  "/usr/bin/python3.11": [
+    "a35513b3a443def7d21e676c7b9f3b6f0300272c1089a6a105307d9473678395"
+  ],
+  "/usr/local/bin/attester-agent": [
+    "45edf39aae4018f0e52bde886f1c278290ddfa3b91ad3036213c191a5c3c8095"
+  ],
+  "/usr/local/bin/play_video": [
+    "998e5db07f2778a7ec4a6854053d63076eb4366023b462ad0be5d662779782b5"
+  ]
+}

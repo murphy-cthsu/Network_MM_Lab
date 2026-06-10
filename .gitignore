@@ -1,0 +1,32 @@
+# --- Secrets / key material (Constraint 5: never commit) ---
+# TPM context files and private blobs (EK/AK private parts live inside these)
+attester/keys/
+*.ctx
+*.priv
+*.sealed
+sealed_*
+*.key
+*.pem.priv
+
+# NOTE: AK *public* material is allowed in git (verifier/ak.pub, verifier/ak_pub.pem)
+# and is explicitly NOT ignored.
+
+# --- swtpm state (contains the software TPM's seed/NV state) ---
+dev/swtpm-state/
+*.permall
+# generated, machine-local TCTI env
+dev/tcti.env
+
+# --- Runtime artifacts (quotes, sigs, fetched evidence) ---
+attester/out/
+verifier/runtime/
+
+# --- Python ---
+__pycache__/
+*.pyc
+.venv/
+venv/
+
+# --- Editor noise ---
+*.swp
+.DS_Store
