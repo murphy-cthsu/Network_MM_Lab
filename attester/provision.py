@@ -1,97 +1,106 @@
-"""Provision the attester's TPM identity (runs on the Pi; dev: against swtpm).
+"""Provision the attester's TPM identity via tpm2-pytss ESAPI (Constraint 8).
 
-Creates an EK and a restricted-signing AK, persists the AK at a well-known
-handle, and exports ONLY the AK public part to verifier/ (Constraint 5: the
-private blobs stay in attester/keys/, which is gitignored).
+Creates a primary key in the endorsement hierarchy, creates a
+restricted-signing RSA2048/SHA256 AK (Constraint 7) under it, persists the
+AK at a well-known handle, and exports ONLY the AK public part to verifier/
+(Constraint 5: private material never leaves the TPM; the persisted AK lives
+inside it).
 
-Requires TPM2TOOLS_TCTI to be set (e.g. via `source dev/tcti.env` for swtpm);
-the same code runs unchanged against the Pi's real TPM (Constraint 1).
-
-Usage: python3 attester/provision.py [--ak-handle 0x81010002]
+Runs identically against swtpm (laptop, via dev/tcti.env) and the Pi's real
+TPM. Usage: python3 attester/provision.py [--ak-handle 0x81010002]
 """
 
 import argparse
 import os
-import shutil
-import subprocess
-import sys
+
+from tpm2_pytss import (
+    ESYS_TR,
+    TPM2B_PUBLIC,
+    TPM2B_SENSITIVE_CREATE,
+    TPM2_CAP,
+    TPM2_HC,
+    TPM2_HANDLE,
+)
+
+from tpmconn import open_esapi
 
 ATTESTER_DIR = os.path.dirname(os.path.abspath(__file__))
-REPO_ROOT = os.path.dirname(ATTESTER_DIR)
-KEYS_DIR = os.path.join(ATTESTER_DIR, "keys")
-VERIFIER_DIR = os.path.join(REPO_ROOT, "verifier")
+VERIFIER_DIR = os.path.join(os.path.dirname(ATTESTER_DIR), "verifier")
 
-EK_HANDLE = "0x81010001"
-DEFAULT_AK_HANDLE = "0x81010002"
+DEFAULT_AK_HANDLE = 0x81010002
+
+# Storage-style primary (restricted decrypt) — the AK's parent.
+PRIMARY_TEMPLATE = TPM2B_PUBLIC.parse(
+    "rsa2048:null:aes128cfb",
+    objectAttributes="fixedtpm|fixedparent|sensitivedataorigin|userwithauth"
+                     "|restricted|decrypt|noda",
+)
+
+# AK: restricted signing — the TPM will only sign internally-generated data
+# (quotes) with it, which is what makes a quote trustworthy.
+# RSA2048 + RSASSA/SHA256 per Constraint 7.
+AK_TEMPLATE = TPM2B_PUBLIC.parse(
+    "rsa2048:rsassa-sha256:null",
+    objectAttributes="fixedtpm|fixedparent|sensitivedataorigin|userwithauth"
+                     "|restricted|sign",
+)
 
 
-def run(cmd, **kwargs):
-    print(f"+ {' '.join(cmd)}", flush=True)
-    return subprocess.run(cmd, check=True, **kwargs)
-
-
-def flush_transient():
-    """TPMs (swtpm especially) have very few transient-object slots; flush
-    between steps or ContextLoad fails with TPM_RC_OBJECT_MEMORY (0x902)."""
-    subprocess.run(["tpm2_flushcontext", "-t"], check=False, capture_output=True)
-
-
-def evict_if_present(handle):
+def evict_if_present(esys, handle):
     """Remove a stale persistent object so provisioning is re-runnable."""
-    listed = subprocess.run(
-        ["tpm2_getcap", "handles-persistent"], capture_output=True, text=True
-    )
-    if listed.returncode == 0 and handle.lower() in listed.stdout.lower():
-        run(["tpm2_evictcontrol", "-C", "o", "-c", handle])
+    more = True
+    prop = TPM2_HC.PERSISTENT_FIRST
+    while more:
+        more, caps = esys.get_capability(TPM2_CAP.HANDLES, prop, 64)
+        existing = list(caps.data.handles)
+        if handle in existing:
+            obj = esys.tr_from_tpmpublic(TPM2_HANDLE(handle))
+            esys.evict_control(ESYS_TR.OWNER, obj, handle)
+            print(f"evicted stale object at {handle:#x}")
+            return
+        if not existing:
+            return
+        prop = existing[-1] + 1
 
 
 def main():
     parser = argparse.ArgumentParser(description=__doc__)
-    parser.add_argument("--ak-handle", default=DEFAULT_AK_HANDLE,
-                        help="persistent handle for the AK")
+    parser.add_argument("--ak-handle", type=lambda s: int(s, 0),
+                        default=DEFAULT_AK_HANDLE)
     args = parser.parse_args()
 
-    if not os.environ.get("TPM2TOOLS_TCTI"):
-        sys.exit(
-            "TPM2TOOLS_TCTI is not set. For laptop dev run:\n"
-            "  dev/swtpm_setup.sh start && source dev/tcti.env"
+    esys = open_esapi()
+    try:
+        evict_if_present(esys, args.ak_handle)
+
+        primary, _, _, _, _ = esys.create_primary(
+            TPM2B_SENSITIVE_CREATE(), PRIMARY_TEMPLATE, ESYS_TR.ENDORSEMENT
         )
+        print("primary created (endorsement hierarchy, RSA2048)")
 
-    os.makedirs(KEYS_DIR, exist_ok=True)
-    ek_ctx = os.path.join(KEYS_DIR, "ek.ctx")
-    ak_ctx = os.path.join(KEYS_DIR, "ak.ctx")
-    ak_pub = os.path.join(KEYS_DIR, "ak.pub")
-    ak_name = os.path.join(KEYS_DIR, "ak.name")
+        ak_priv, ak_pub, _, _, _ = esys.create(
+            primary, TPM2B_SENSITIVE_CREATE(), AK_TEMPLATE
+        )
+        ak = esys.load(primary, ak_priv, ak_pub)
+        esys.flush_context(primary)
+        print("AK created (restricted signing, RSA2048/SHA256)")
 
-    evict_if_present(args.ak_handle)
-    evict_if_present(EK_HANDLE)
+        ak_persistent = esys.evict_control(ESYS_TR.OWNER, ak, args.ak_handle)
+        esys.flush_context(ak)
+        esys.tr_close(ak_persistent)
+        print(f"AK persisted at {args.ak_handle:#x}")
 
-    # Endorsement Key (decrypt-only parent; identity root)
-    run(["tpm2_createek", "-c", ek_ctx, "-G", "rsa",
-         "-u", os.path.join(KEYS_DIR, "ek.pub")])
-    flush_transient()
-
-    # Attestation Key: restricted signing key under the EK — the TPM will only
-    # sign internally-generated data (quotes) with it, which is what makes
-    # tpm2_quote trustworthy. RSA2048/SHA256 per Constraint 7.
-    run(["tpm2_createak", "-C", ek_ctx, "-c", ak_ctx,
-         "-G", "rsa", "-g", "sha256", "-s", "rsassa",
-         "-u", ak_pub, "-n", ak_name])
-    flush_transient()
-
-    # Persist the AK so agent.py can use a stable handle across reboots.
-    run(["tpm2_evictcontrol", "-C", "o", "-c", ak_ctx, args.ak_handle])
-    flush_transient()
-
-    # Export ONLY public material to the verifier. In a real deployment this
-    # is a one-time enrollment step over a trusted channel.
-    shutil.copyfile(ak_pub, os.path.join(VERIFIER_DIR, "ak.pub"))
-    run(["tpm2_readpublic", "-c", args.ak_handle, "-f", "pem",
-         "-o", os.path.join(VERIFIER_DIR, "ak_pub.pem")])
-
-    print(f"\nProvisioned: AK persisted at {args.ak_handle}")
-    print(f"  private material : {KEYS_DIR}/ (gitignored)")
-    print(f"  AK public        : {VERIFIER_DIR}/ak.pub, {VERIFIER_DIR}/ak_pub.pem")
+        # Export ONLY public material. In a real deployment this is a one-time
+        # enrollment over a trusted channel.
+        pem_path = os.path.join(VERIFIER_DIR, "ak_pub.pem")
+        with open(pem_path, "wb") as f:
+            f.write(ak_pub.publicArea.to_pem())
+        # marshaled TPM2B_PUBLIC, usable by tpm2_checkquote -u for CLI debug
+        with open(os.path.join(VERIFIER_DIR, "ak.pub"), "wb") as f:
+            f.write(ak_pub.marshal())
+        print(f"AK public exported to {pem_path} (+ ak.pub for CLI debug)")
+    finally:
+        esys.close()
 
 
 if __name__ == "__main__":

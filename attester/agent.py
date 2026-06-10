@@ -1,10 +1,11 @@
-"""Attester agent (runs on the Pi; dev: against swtpm + recorded IMA logs).
+"""Attester agent via tpm2-pytss ESAPI (Constraint 8).
 
-Protocol steps 2–3 (docs/SPEC_EN.md §7):
+Protocol steps 2-3 (docs/SPEC_EN.md §7):
   1. GET  <verifier>/nonce
-  2. tpm2_quote over PCR 10 with the AK, nonce as qualifying data
+  2. esapi.quote over PCR 10 with the persisted AK, nonce as qualifying data;
+     esapi.pcr_read for the reported PCR values
   3. read the IMA ASCII measurement log
-  4. POST {quote, signature, pcrs, ima_log} to <verifier>/evidence
+  4. POST {quote, signature, pcr_values, ima_log} to <verifier>/evidence
 
 The IMA log path is configurable so the identical code reads
 dev/sample_ima_log/*.log on the laptop (IMA cannot be emulated there —
@@ -21,71 +22,68 @@ import base64
 import json
 import os
 import socket
-import subprocess
 import sys
 
 import requests
+from tpm2_pytss import (
+    TPM2B_DATA,
+    TPM2_ALG,
+    TPM2_HANDLE,
+    TPML_PCR_SELECTION,
+    TPMT_SIG_SCHEME,
+)
 
-ATTESTER_DIR = os.path.dirname(os.path.abspath(__file__))
-OUT_DIR = os.path.join(ATTESTER_DIR, "out")
+from tpmconn import open_esapi
 
 DEFAULT_IMA_LOG = os.environ.get(
     "IMA_LOG_PATH", "/sys/kernel/security/ima/ascii_runtime_measurements"
 )
-DEFAULT_AK_HANDLE = "0x81010002"
+DEFAULT_AK_HANDLE = 0x81010002
 PCR_SELECTION = "sha256:10"
 
 
-def b64_file(path):
-    with open(path, "rb") as f:
-        return base64.b64encode(f.read()).decode()
+def read_pcr10(esys):
+    _, _, digests = esys.pcr_read(TPML_PCR_SELECTION.parse(PCR_SELECTION))
+    return bytes(digests[0]).hex()
 
 
-def make_quote(ak_handle, nonce_hex):
-    """tpm2_quote over PCR 10, binding the verifier's nonce (replay protection)."""
-    os.makedirs(OUT_DIR, exist_ok=True)
-    msg = os.path.join(OUT_DIR, "quote.msg")
-    sig = os.path.join(OUT_DIR, "quote.sig")
-    pcrs = os.path.join(OUT_DIR, "quote.pcrs")
-    subprocess.run(
-        [
-            "tpm2_quote",
-            "-c", ak_handle,
-            "-l", PCR_SELECTION,
-            "-q", nonce_hex,
-            "-g", "sha256",
-            "-m", msg,
-            "-s", sig,
-            "-o", pcrs,
-        ],
-        check=True, capture_output=True, text=True,
+def make_quote(esys, ak_handle, nonce_hex):
+    """Quote PCR 10 with the AK; the nonce rides as qualifying data so the
+    verifier gets replay protection. NULL scheme = use the AK's own
+    RSASSA/SHA256."""
+    ak = esys.tr_from_tpmpublic(TPM2_HANDLE(ak_handle))
+    quoted, signature = esys.quote(
+        ak,
+        TPML_PCR_SELECTION.parse(PCR_SELECTION),
+        TPM2B_DATA(bytes.fromhex(nonce_hex)),
+        TPMT_SIG_SCHEME(scheme=TPM2_ALG.NULL),
     )
-    return msg, sig, pcrs
+    esys.tr_close(ak)
+    # bytes(quoted) is the raw TPMS_ATTEST blob — exactly what the AK signed
+    return bytes(quoted), signature.marshal()
 
 
 def main():
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--verifier-url", default="http://127.0.0.1:5000")
-    parser.add_argument("--ak-handle", default=DEFAULT_AK_HANDLE)
+    parser.add_argument("--ak-handle", type=lambda s: int(s, 0),
+                        default=DEFAULT_AK_HANDLE)
     parser.add_argument("--ima-log", default=DEFAULT_IMA_LOG,
                         help="path to the IMA ASCII measurement log "
                              "(dev: a file under dev/sample_ima_log/)")
     parser.add_argument("--device-id", default=socket.gethostname())
     args = parser.parse_args()
 
-    if not os.environ.get("TPM2TOOLS_TCTI") and not os.path.exists("/dev/tpm0"):
-        sys.exit(
-            "No TPM available: TPM2TOOLS_TCTI unset and /dev/tpm0 missing.\n"
-            "For laptop dev: dev/swtpm_setup.sh start && source dev/tcti.env"
-        )
-
     nonce = requests.get(f"{args.verifier_url}/nonce", timeout=10).json()["nonce"]
     print(f"nonce: {nonce}")
 
+    esys = open_esapi()
     try:
-        msg, sig, pcrs = make_quote(args.ak_handle, nonce)
-    except subprocess.CalledProcessError as e:
-        sys.exit(f"tpm2_quote failed: {e.stderr}")
+        pcr10 = read_pcr10(esys)
+        attest_blob, sig_blob = make_quote(esys, args.ak_handle, nonce)
+    finally:
+        esys.close()
+    print(f"quoted; current PCR 10 = {pcr10}")
 
     with open(args.ima_log, "r") as f:
         ima_log = f.read()
@@ -93,9 +91,9 @@ def main():
     evidence = {
         "device_id": args.device_id,
         "nonce": nonce,
-        "quote_b64": b64_file(msg),
-        "signature_b64": b64_file(sig),
-        "pcrs_b64": b64_file(pcrs),
+        "quote_b64": base64.b64encode(attest_blob).decode(),
+        "signature_b64": base64.b64encode(sig_blob).decode(),
+        "pcr_values": {"sha256": {"10": pcr10}},
         "ima_log": ima_log,
     }
     resp = requests.post(f"{args.verifier_url}/evidence", json=evidence, timeout=30)

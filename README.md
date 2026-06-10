@@ -11,8 +11,12 @@ demonstrate a working build, we do not claim to invent the concept.
 ## Status
 
 **Done — laptop vertical slice (Phase 0 + Phase 1 tasks 1.1–1.3 vs swtpm):**
-provisioning, attester agent, verifier (checkquote + IMA replay + allowlist),
+provisioning, attester agent, verifier (quote check + IMA replay + allowlist),
 sample IMA log fixtures, end-to-end demo script, minimal dashboard.
+Per Constraint 8 all attestation code is **tpm2-pytss ESAPI** (attester) and
+**pytss types + `cryptography`** (verifier quote check); `tpm2-tools` is kept
+only for CLI/debug (e.g. `dev/extend_pcr10.sh`, manual `tpm2_checkquote`
+cross-checks). Keys are RSA2048/SHA256 (Constraint 7).
 
 **Stubbed (next):** `attester/seal.py`, `attester/payload/*`, `tamper/*`
 (Phase 1 tasks 1.4–1.6 and Phase 2), and all Pi hardware bring-up.
@@ -22,14 +26,16 @@ sample IMA log fixtures, end-to-end demo script, minimal dashboard.
 Prerequisites (Debian/Ubuntu):
 
 ```sh
-sudo apt-get install swtpm tpm2-tools python3-flask python3-requests
+sudo apt-get install swtpm tpm2-tools libtss2-dev python3-flask python3-requests
+pip3 install tpm2-pytss          # in a venv, or --user
 ```
 
-No root? `pip3 install --user flask requests`, then `apt-get download` the
-swtpm/tpm2-tools/libtss2 debs, `dpkg -x` each into `~/.local/opt/tpm-stack`,
-and export `PATH=$PREFIX/usr/bin:$PATH` plus `LD_LIBRARY_PATH=
-$PREFIX/usr/lib/x86_64-linux-gnu:$PREFIX/usr/lib/x86_64-linux-gnu/swtpm`
-(this repo's dev laptop uses that setup via `~/.local/opt/tpm-stack/env.sh`).
+No root? `pip3 install --user flask requests tpm2-pytss`, then `apt-get
+download` the swtpm/tpm2-tools/libtss2(-dev)/pkg-config debs, `dpkg -x` each
+into `~/.local/opt/tpm-stack`, sed the `.pc` prefixes to that dir, and export
+`PATH`, `PKG_CONFIG_PATH`, and `LD_LIBRARY_PATH` (including the `.../swtpm`
+subdir). This repo's dev laptop uses that setup via
+`~/.local/opt/tpm-stack/env.sh` — source it before anything TPM-related.
 
 One-shot end-to-end demo (clean → TRUSTED, tampered → COMPROMISED):
 
@@ -43,9 +49,11 @@ dev/run_demo.sh
 # 1. Software TPM. 'reset' wipes state (fresh PCRs); 'start' is idempotent.
 dev/swtpm_setup.sh reset
 source dev/tcti.env            # sets TPM2TOOLS_TCTI / TSS2_TCTI to the swtpm socket
-tpm2_pcrread sha256:10         # Phase 0 laptop gate: must return a value (all zeros when fresh)
+python3 dev/read_pcr10.py      # Phase 0 laptop gate: pytss ESAPI reads PCR 10
+                               # (tpm2_pcrread sha256:10 is the CLI cross-check)
 
-# 2. Provision EK + restricted-signing AK; AK public lands in verifier/.
+# 2. Provision primary + restricted-signing RSA2048 AK (pytss ESAPI);
+#    AK public lands in verifier/ (ak_pub.pem + ak.pub for CLI debug).
 python3 attester/provision.py
 
 # 3. Verifier (separate terminal; talks to the attester over HTTP/JSON only).
@@ -71,10 +79,12 @@ kernel's IMA does the PCR-10 extending; `agent.py` then reads
 
 ## How verification works (`verifier/verify.py`)
 
-1. `tpm2_checkquote` with the enrolled AK public: verifies the quote
-   signature, that the qualifying data equals the issued nonce (single-use,
-   120 s TTL — replay protection), and that the quote's PCR digest matches
-   the reported PCR values.
+1. Quote check (pytss types + `cryptography`, no TPM needed): parse the
+   `TPMS_ATTEST`/`TPMT_SIGNATURE` blobs, verify the AK's RSASSA/SHA256
+   signature with the enrolled `ak_pub.pem`, require TPM-generated quote
+   magic/type, the issued nonce in `extraData` (single-use, 120 s TTL —
+   replay protection), a PCR selection of exactly `sha256:10`, and that
+   `pcrDigest == sha256(reported PCR 10)`.
 2. IMA replay: recompute each `ima-ng` template hash from its file-hash +
    path fields (rejecting internally inconsistent lines), fold them into a
    running SHA-256 PCR-10 value, and require it to equal the quoted PCR 10.

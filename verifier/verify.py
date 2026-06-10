@@ -1,10 +1,13 @@
-"""Verification logic: tpm2_checkquote + IMA log replay + allowlist compare.
+"""Verification logic: quote check + IMA log replay + allowlist compare.
 
-Runs on the laptop/host only (Constraint 2 — never on the Pi). Pure
-verification: needs no TPM of its own; tpm2_checkquote is local crypto.
+Runs on the laptop/host only (Constraint 2 — never on the Pi). Pure local
+crypto — the verifier needs no TPM: the quote is parsed with tpm2-pytss
+types and the AK signature is verified with `cryptography` (Constraint 8;
+`tpm2_checkquote` remains usable as a CLI cross-check via verifier/ak.pub).
 
 Protocol step 4 (docs/SPEC_EN.md §7):
-  a. tpm2_checkquote with the enrolled AK public + nonce  -> signature & freshness
+  a. verify the AK signature over the quote, the nonce in its extraData
+     (replay protection), and that its pcrDigest matches the reported PCR 10
   b. replay the IMA log -> recompute PCR 10 -> must equal the quoted PCR 10
   c. every file-hash entry must be in allowlist.json, else COMPROMISED
 """
@@ -13,13 +16,22 @@ import base64
 import hashlib
 import json
 import os
-import re
 import struct
-import subprocess
-import tempfile
+
+from cryptography.exceptions import InvalidSignature
+from cryptography.hazmat.primitives import hashes
+from cryptography.hazmat.primitives.asymmetric import padding
+from cryptography.hazmat.primitives.serialization import load_pem_public_key
+from tpm2_pytss import (
+    TPM2_ALG,
+    TPM2_GENERATED,
+    TPM2_ST,
+    TPMS_ATTEST,
+    TPMT_SIGNATURE,
+)
 
 VERIFIER_DIR = os.path.dirname(os.path.abspath(__file__))
-DEFAULT_AK_PUB = os.path.join(VERIFIER_DIR, "ak.pub")
+DEFAULT_AK_PUB = os.path.join(VERIFIER_DIR, "ak_pub.pem")
 DEFAULT_ALLOWLIST = os.path.join(VERIFIER_DIR, "allowlist.json")
 
 PCR_BANK = "sha256"
@@ -117,56 +129,76 @@ def replay_ima_log(ima_log_text):
 
 
 # ---------------------------------------------------------------------------
-# Quote verification (tpm2_checkquote)
+# Quote verification (tpm2-pytss types + cryptography)
 # ---------------------------------------------------------------------------
 
-def check_quote(quote_msg, signature, pcrs, nonce_hex, ak_pub_path):
-    """Run tpm2_checkquote: verifies the AK signature over the quote, that the
-    qualifying data equals our nonce (replay protection), and that the PCR
-    digest in the quote matches the reported PCR values.
+def check_quote(attest_blob, sig_blob, reported_pcr10_hex, nonce_hex, ak_pub_path):
+    """Verify the quote without a TPM:
+      - the AK's RSASSA/SHA256 signature over the raw TPMS_ATTEST blob
+      - magic/type say "TPM-generated quote"
+      - extraData equals our nonce (replay protection)
+      - the PCR selection is exactly sha256:10
+      - pcrDigest equals sha256(reported PCR-10 value), binding the reported
+        value to the signature
 
-    Returns the quoted PCR-10 value (hex) parsed from checkquote's output.
+    Returns the bound PCR-10 value (hex).
     """
     if not os.path.exists(ak_pub_path):
         raise VerificationError("quote_signature", f"AK public not found: {ak_pub_path}")
-    with tempfile.TemporaryDirectory(prefix="verify-") as tmp:
-        msg_f = os.path.join(tmp, "quote.msg")
-        sig_f = os.path.join(tmp, "quote.sig")
-        pcr_f = os.path.join(tmp, "quote.pcrs")
-        for fname, blob in ((msg_f, quote_msg), (sig_f, signature), (pcr_f, pcrs)):
-            with open(fname, "wb") as f:
-                f.write(blob)
-        env = dict(os.environ, TPM2TOOLS_TCTI="none")  # local crypto, no TPM
-        proc = subprocess.run(
-            [
-                "tpm2_checkquote",
-                "-u", ak_pub_path,
-                "-m", msg_f,
-                "-s", sig_f,
-                "-f", pcr_f,
-                "-g", "sha256",
-                "-q", nonce_hex,
-            ],
-            capture_output=True, text=True, env=env,
-        )
-    if proc.returncode != 0:
+
+    try:
+        attest, _ = TPMS_ATTEST.unmarshal(attest_blob)
+        sig, _ = TPMT_SIGNATURE.unmarshal(sig_blob)
+    except Exception as e:
+        raise VerificationError("quote_signature", f"unparseable quote/signature: {e}")
+
+    if attest.magic != TPM2_GENERATED.VALUE:
+        raise VerificationError("quote_signature", "attest blob is not TPM-generated")
+    if attest.type != TPM2_ST.ATTEST_QUOTE:
+        raise VerificationError("quote_signature", "attest blob is not a quote")
+    if sig.sigAlg != TPM2_ALG.RSASSA or sig.signature.rsassa.hash != TPM2_ALG.SHA256:
         raise VerificationError(
-            "quote_signature",
-            f"tpm2_checkquote failed: {proc.stderr.strip() or proc.stdout.strip()}",
+            "quote_signature", "signature is not RSASSA/SHA256 (Constraint 7)"
         )
-    # checkquote prints the attested PCRs, e.g.:
-    #   pcrs:
-    #     sha256:
-    #       10: 0x8E7C...
-    m = re.search(
-        rf"{PCR_BANK}:\s*\n\s*{PCR_INDEX}\s*:\s*0x([0-9A-Fa-f]+)", proc.stdout
+
+    with open(ak_pub_path, "rb") as f:
+        ak_public = load_pem_public_key(f.read())
+    try:
+        ak_public.verify(
+            bytes(sig.signature.rsassa.sig),
+            attest_blob,
+            padding.PKCS1v15(),
+            hashes.SHA256(),
+        )
+    except InvalidSignature:
+        raise VerificationError("quote_signature", "AK signature is invalid")
+
+    if bytes(attest.extraData) != bytes.fromhex(nonce_hex):
+        raise VerificationError(
+            "quote_signature", "nonce mismatch in quote (possible replay)"
+        )
+
+    sel = attest.attested.quote.pcrSelect
+    bank = sel.pcrSelections[0]
+    bitmap = bytes(bank.pcrSelect[i] for i in range(bank.sizeofSelect))
+    # exactly one bank (sha256) selecting only bit 10 (byte 1, bit 2)
+    ok = (
+        sel.count == 1
+        and bank.hash == TPM2_ALG.SHA256
+        and bitmap == b"\x00\x04\x00"
     )
-    if not m:
+    if not ok:
+        raise VerificationError(
+            "quote_signature", f"quote does not cover exactly {PCR_BANK}:{PCR_INDEX}"
+        )
+
+    pcr10 = bytes.fromhex(reported_pcr10_hex)
+    if hashlib.sha256(pcr10).digest() != bytes(attest.attested.quote.pcrDigest):
         raise VerificationError(
             "quote_signature",
-            f"could not find {PCR_BANK} PCR {PCR_INDEX} in checkquote output",
+            "reported PCR 10 does not match the quote's pcrDigest",
         )
-    return m.group(1).lower().zfill(64)
+    return reported_pcr10_hex.lower()
 
 
 # ---------------------------------------------------------------------------
@@ -202,7 +234,7 @@ def verify_evidence(evidence, nonce_hex, ak_pub_path=DEFAULT_AK_PUB,
                     allowlist_path=DEFAULT_ALLOWLIST):
     """Run all protocol checks; never raises — failures become the verdict.
 
-    evidence: {"quote_b64", "signature_b64", "pcrs_b64", "ima_log", ...}
+    evidence: {"quote_b64", "signature_b64", "pcr_values", "ima_log", ...}
     """
     result = {
         "verdict": "COMPROMISED",
@@ -213,18 +245,20 @@ def verify_evidence(evidence, nonce_hex, ak_pub_path=DEFAULT_AK_PUB,
         "measured_entries": [],
     }
     try:
-        quote_msg = base64.b64decode(evidence["quote_b64"])
-        signature = base64.b64decode(evidence["signature_b64"])
-        pcrs = base64.b64decode(evidence["pcrs_b64"])
+        attest_blob = base64.b64decode(evidence["quote_b64"])
+        sig_blob = base64.b64decode(evidence["signature_b64"])
+        reported_pcr10 = evidence["pcr_values"][PCR_BANK][str(PCR_INDEX)]
         ima_log = evidence["ima_log"]
-    except (KeyError, ValueError) as e:
-        result["checks"]["evidence_format"] = f"FAIL: {e}"
+    except (KeyError, ValueError, TypeError) as e:
+        result["checks"]["evidence_format"] = f"FAIL: {e!r}"
         return result
     result["checks"]["evidence_format"] = "PASS"
 
     # (a) signature + nonce freshness + PCR digest binding
     try:
-        quoted_pcr10 = check_quote(quote_msg, signature, pcrs, nonce_hex, ak_pub_path)
+        quoted_pcr10 = check_quote(
+            attest_blob, sig_blob, reported_pcr10, nonce_hex, ak_pub_path
+        )
         result["quoted_pcr10"] = quoted_pcr10
         result["checks"]["quote_signature_and_nonce"] = "PASS"
     except VerificationError as e:

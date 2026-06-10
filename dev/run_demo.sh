@@ -27,10 +27,10 @@ trap cleanup EXIT
 
 step() { printf '\n\033[1m== %s ==\033[0m\n' "$*"; }
 
-step "1. fresh software TPM"
+step "1. fresh software TPM (PCR 10 read via tpm2-pytss ESAPI)"
 dev/swtpm_setup.sh reset
 source dev/tcti.env
-tpm2_pcrread sha256:10
+python3 dev/read_pcr10.py
 
 step "2. provision EK + AK"
 python3 attester/provision.py
