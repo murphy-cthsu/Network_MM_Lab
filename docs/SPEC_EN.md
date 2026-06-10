@@ -28,8 +28,11 @@ Phase 2 is mostly an IMA-policy change + allowlist entry + payload swap.
 ## 2. Hardware / platform (fixed facts — do not assume otherwise)
 
 - **Board: Raspberry Pi 5** (confirmed; the AI HAT+ 26 TOPS only works on Pi 5 via PCIe).
-- **TPM: LetsTrust TPM HAT (Infineon SLB9670, SPI)** — the same chip used by the
-  reference projects below. Connects on the 40-pin header via SPI.
+- **TPM: Infineon OPTIGA SLB9670 (SPI)** — confirmed: this is the course's own module, enabled
+  with `dtoverlay=tpm-slb9670` + `dtparam=spi=on`. Physically an Infineon Iridium SLB9670 board
+  or the equivalent LetsTrust TPM (same chip). The course slides give the full tpm2-tss +
+  tpm2-tools build-from-source procedure — follow them for the Phase 0 stack install. (Ask the
+  lab whether a board can be borrowed before buying one.)
 - **AI accelerator: Raspberry Pi AI HAT+ 26 TOPS (Hailo-8)** — connects via PCIe ribbon,
   occupies the GPIO header. Only needed for Phase 2.
 - OS: Raspberry Pi OS 64-bit (Bookworm).
@@ -56,6 +59,12 @@ Phase 2 is mostly an IMA-policy change + allowlist entry + payload swap.
    `.gitignore`. Only AK *public* and allowlists are committed.
 6. **Don't claim novelty** in any generated docs/comments. The concept (device + ML-model
    integrity attestation at the edge) exists in recent research; we align with it, not invent it.
+7. **Use RSA2048, not ECC.** Default the AK and all sealing/encryption keys to RSA2048/SHA256.
+   The course's reference TSS environment does not support ECC; RSA is the known-good path.
+8. **Attestation = tpm2-tools (ESAPI) / `tpm2-pytss`, not FAPI.** Use `tpm2_*` commands or
+   `tpm2-pytss` for AK, quote, checkquote, PCR-policy seal/unseal. FAPI (`tss2_*`, as shown in
+   the course usage slides) does not cleanly expose quotes — the course only demoed
+   getrandom/seal/encrypt with FAPI; we go beyond that into attestation.
 
 ---
 
@@ -93,6 +102,8 @@ and the independent attestation story (it never has to trust the device's self-r
   Phase 2: **HailoRT** + a `.hef` model (e.g. YOLOv8 from the Hailo model zoo).
 - **Verifier (laptop):** Python 3, **Flask** (HTTP + dashboard), `tpm2-tools`
   (`tpm2_checkquote`) and/or `cryptography` for signature verification. Minimal HTML/JS dashboard.
+- **Crypto defaults:** RSA2048 + SHA256 for the AK and sealed keys (Constraint 7); ESAPI via
+  `tpm2-tools`/`tpm2-pytss`, not FAPI (Constraint 8).
 - **Dev:** `swtpm` (software TPM), VS Code Remote-SSH, GitHub.
 
 ---

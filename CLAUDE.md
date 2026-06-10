@@ -23,6 +23,11 @@ verifier flags the device `COMPROMISED`. Two phases share ~90% of the code.
    *public* and allowlists are committed.
 6. **No novelty claims** in code/docs/comments. This aligns with existing edge ML-integrity
    attestation research; we don't claim to invent it.
+7. **Use RSA2048, not ECC.** Default AK and sealing/encryption keys to RSA2048/SHA256. The
+   course's reference TSS environment does not support ECC, so RSA is the known-good choice.
+8. **Attestation uses tpm2-tools / ESAPI, not FAPI.** Quotes, AK, and PCR-policy sealing are
+   done with `tpm2_*` (ESAPI) or `tpm2-pytss`. FAPI (`tss2_*`) does not cleanly expose quotes;
+   only use it if a specific high-level op needs it.
 
 ## Phase order (do not skip ahead)
 - **Phase 0 — bring-up (FIRST):** repo + `swtpm` on laptop + Pi TPM/IMA detection. Gate: PCR 10 non-zero on the Pi.
@@ -30,6 +35,9 @@ verifier flags the device `COMPROMISED`. Two phases share ~90% of the code.
 - **Phase 2:** AI HAT + TPM coexistence → IMA-measure the model file → allowlist the model hash → gate inference → swap-the-model demo.
 
 ## Tech stack
+- **TPM module: Infineon OPTIGA SLB9670 (SPI)** — confirmed; this is the course's own module
+  (`dtoverlay=tpm-slb9670`). The course slides provide the full tpm2-tss + tpm2-tools
+  build-from-source steps; follow them for Phase 0 stack install.
 - Attester (Pi): Python 3, `tpm2-tss`, `tpm2-tools`, `tpm2-pytss`, Linux IMA; Phase 2: HailoRT + a `.hef` model.
 - Verifier (laptop): Python 3 + Flask; `tpm2_checkquote` and/or `cryptography` for signature verification.
 - Dev: `swtpm`, VS Code Remote-SSH, GitHub.
