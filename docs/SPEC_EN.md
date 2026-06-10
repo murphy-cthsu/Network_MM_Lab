@@ -61,10 +61,12 @@ Phase 2 is mostly an IMA-policy change + allowlist entry + payload swap.
    integrity attestation at the edge) exists in recent research; we align with it, not invent it.
 7. **Use RSA2048, not ECC.** Default the AK and all sealing/encryption keys to RSA2048/SHA256.
    The course's reference TSS environment does not support ECC; RSA is the known-good path.
-8. **Attestation = tpm2-tools (ESAPI) / `tpm2-pytss`, not FAPI.** Use `tpm2_*` commands or
-   `tpm2-pytss` for AK, quote, checkquote, PCR-policy seal/unseal. FAPI (`tss2_*`, as shown in
-   the course usage slides) does not cleanly expose quotes — the course only demoed
-   getrandom/seal/encrypt with FAPI; we go beyond that into attestation.
+8. **Attestation = `tpm2-pytss` ESAPI (primary); `tpm2-tools` for CLI/debug; not FAPI.** Write
+   the attester and the verifier's quote check in `tpm2-pytss` ESAPI (`esapi.quote`,
+   `create_primary`, `create` for the AK, `pcr_read`, `policy_pcr`, `unseal`). `tpm2-tools`
+   (`tpm2_*`) is the CLI/debug fallback. FAPI (`tss2_*`) — the style of the course's lab — only
+   cleanly does getrandom/seal/encrypt and does not expose quotes; do not use it for attestation.
+   Terminology: **AK (TPM 2.0 Attestation Key) ≡ AIK** (term used in the course intro deck).
 
 ---
 
@@ -98,12 +100,18 @@ and the independent attestation story (it never has to trust the device's self-r
 
 ## 5. Tech stack
 
-- **Attester (Pi):** Python 3, `tpm2-tss`, `tpm2-tools`, `tpm2-pytss`. Linux **IMA**.
+- **Attester (Pi):** Python 3, **`tpm2-pytss` (ESAPI)** as the main TPM interface (the course
+  teaches `tpm2-pytss`), `tpm2-tools` for CLI/debug. Linux **IMA**.
   Phase 2: **HailoRT** + a `.hef` model (e.g. YOLOv8 from the Hailo model zoo).
-- **Verifier (laptop):** Python 3, **Flask** (HTTP + dashboard), `tpm2-tools`
-  (`tpm2_checkquote`) and/or `cryptography` for signature verification. Minimal HTML/JS dashboard.
+- **Verifier (laptop):** Python 3, **Flask** (HTTP + dashboard); quote verification via
+  `tpm2-pytss`/`cryptography` (or `tpm2_checkquote` CLI). Minimal HTML/JS dashboard.
 - **Crypto defaults:** RSA2048 + SHA256 for the AK and sealed keys (Constraint 7); ESAPI via
-  `tpm2-tools`/`tpm2-pytss`, not FAPI (Constraint 8).
+  `tpm2-pytss`, not FAPI (Constraint 8).
+- **pytss install gotcha (Pi):** if tpm2-tss was built from source into `/usr/local`, move
+  `/usr/local/lib/libtss2*`, `/usr/local/include/tss2`, and `/usr/local/lib/pkgconfig/tss2-*`
+  aside, run `ldconfig`, then `apt install libtss2-dev tpm2-tools` and `pip install tpm2-pytss`
+  inside a venv. Otherwise pytss links the wrong tss2 and the build fails. (From the course's
+  tpm2_pytss slide.)
 - **Dev:** `swtpm` (software TPM), VS Code Remote-SSH, GitHub.
 
 ---
@@ -165,8 +173,12 @@ and the independent attestation story (it never has to trust the device's self-r
 - **0.2** Laptop: install `tpm2-tss`, `tpm2-tools`, `tpm2-pytss`, `swtpm`. `dev/swtpm_setup.sh`
   starts a software TPM; `tpm2_pcrread` against it succeeds.
   *DoD:* `tpm2_pcrread sha256:10` returns a value via swtpm on the laptop.
-- **0.3** Pi 5: attach LetsTrust TPM (AI HAT removed for Phase 0/1). Enable SPI;
-  `dtoverlay=tpm-slb9670` in `/boot/firmware/config.txt`.
+- **0.3** Pi 5: attach the SLB9670 TPM (AI HAT removed for Phase 0/1). Enable SPI;
+  `dtoverlay=tpm-slb9670` + `dtparam=spi=on` in `/boot/firmware/config.txt`. Install the TPM
+  stack: prefer `apt install tpm2-tools libtss2-dev`; install **`tpm2-pytss`** in a venv. If
+  tpm2-tss was previously built from source into `/usr/local`, apply the **pytss install gotcha**
+  (move `/usr/local` tss2 artifacts aside → `ldconfig` → apt → pip) before installing pytss.
+  *DoD:* `ls /dev/tpm0` exists; `tpm2_pcrread sha256:10` returns a value; `import tpm2_pytss` works.
 - **0.4 RISK GATE** Build/boot a kernel with **TPM built-in** + **IMA** enabled;
   add `ima_policy=tcb` (or custom) to `/boot/firmware/cmdline.txt`.
   *DoD:* on the Pi, `tpm2_pcrread sha256:10` shows a **non-zero** PCR 10 (i.e. `boot_aggregate`
@@ -274,6 +286,12 @@ detecting model swaps → "trusted AI inference."
   Hailo NPU hardware.
 - **Terminology guard:** this is cryptographic *model integrity*, not the fairness/explainability
   sense of "Trusted AI" — be ready to distinguish if asked.
+- **Builds on the course's own material (strong report angle):** our protocol is the
+  remote-attestation flow taught in class (Challenger sends nonce + reference PCR → TPM returns a
+  signed TPM_Quote → verifier checks), and our gating-by-sealing is the same pattern as BitLocker
+  (a key sealed to TPM + PCR state). We *extend* that taught pattern to **IMA runtime measurement**
+  and then to **AI model integrity** — standing on the instructor's material, not contradicting it.
+  (AK ≡ the AIK from the course intro deck.)
 
 ## 12. Reference projects (study, then adapt — do not copy blindly)
 - Infineon `remote-attestation-optiga-tpm` (Pi + Optiga TPM, IMA, sealed key).
