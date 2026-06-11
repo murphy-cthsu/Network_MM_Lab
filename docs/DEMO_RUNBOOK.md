@@ -98,6 +98,20 @@ into PCR 10; the verifier's allowlist rejected it and refused to sign an
 unseal authorization; old authorizations no longer match PolicyPCR; the
 TPM therefore keeps the clip key sealed.*
 
+What to expect while it runs:
+
+- Timing: ~3 minutes for baseline + 5 cycles (~30 s/cycle — two Python/TPM
+  process launches plus an attestation round-trip each; RSA on the SPI TPM
+  and interpreter start-up dominate, not the protocol).
+- The two `WARNING/ERROR:esys: ... Esys_PolicyAuthorize ... 0x000001c4`
+  lines during a refused playback are the EXPECTED trace of the TPM
+  rejecting the authorization — that is the demo working, not an error.
+- Unseal authorizations live on tmpfs (`/run/network-mm-attest/`), wiped
+  each boot — same lifetime as their validity. They must NOT live on a
+  measured filesystem: the file changes per attestation, and a root read
+  of it would extend PCR 10 right after the verdict, staling the very
+  authorization it carries.
+
 ## Rules that keep the demo deterministic
 
 1. **COMPROMISED is sticky per boot.** The IMA log is append-only; the bad

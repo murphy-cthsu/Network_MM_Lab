@@ -33,7 +33,7 @@ die()  { printf '\nERROR: %s\n' "$*" >&2; exit 1; }
 
 # sudo: the agent reads the IMA log; the payload's live-PCR retry re-attests
 run_agent()   { sudo PYTHONWARNINGS="$PYW" "$PY" attester/agent.py --verifier-url "$URL"; }
-run_payload() { sudo PYTHONWARNINGS="$PYW" "$PY" attester/payload/play_video.py --no-display --verifier-url "$URL"; }
+run_payload() { sudo PYTHONWARNINGS="$PYW" "$PY" attester/payload/play_video.py --no-display --verifier-url "$URL" "$@"; }
 
 step "preflight: verifier at $URL"
 if ! curl -fsS -m 5 "$URL/nonce" >/dev/null 2>&1; then
@@ -67,7 +67,9 @@ for i in $(seq 1 "$CYCLES"); do
     elif [[ $rc -eq 0 ]]; then bad "cycle $i: verifier still says TRUSTED after tamper"
     else die "cycle $i: attestation errored (exit $rc) — aborting (an error is not a verdict)"
     fi
-    run_payload; rc=$?
+    # one gate attempt: the agent just got the COMPROMISED verdict; a
+    # re-attest after the TPM's refusal would only repeat it (~12 s/cycle)
+    run_payload --max-gate-attempts 1; rc=$?
     if   [[ $rc -eq 3 ]]; then ok "cycle $i: unseal refused -> no playback"
     elif [[ $rc -eq 0 ]]; then bad "cycle $i: video STILL played after tamper"
     else bad "cycle $i: playback errored (exit $rc) — expected a clean gate-closed (exit 3)"

@@ -60,7 +60,12 @@ DEFAULT_VERIFIER_URL = os.environ.get("VERIFIER_URL", "http://172.20.10.4:5000")
 DEFAULT_IMA_LOG = os.environ.get(
     "IMA_LOG_PATH", "/sys/kernel/security/ima/ascii_runtime_measurements"
 )
-DEFAULT_APPROVAL = os.path.join(ATTESTER_DIR, "out", "approval.json")
+# tmpfs, NOT the repo: the approval is rewritten per attestation, and a
+# root read of a changed file on ext4 would re-measure it into PCR 10
+# right after the verdict — instantly staling the authorization it
+# carries. tcb does not measure tmpfs, and per-boot lifetime is exactly
+# an authorization's lifetime anyway.
+DEFAULT_APPROVAL = "/run/network-mm-attest/approval.json"
 DEFAULT_AK_HANDLE = 0x81010002
 PCR_SELECTION = "sha256:10"
 MAX_CAPTURE_ATTEMPTS = 5

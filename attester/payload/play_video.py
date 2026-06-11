@@ -46,10 +46,12 @@ import sealing  # noqa: E402
 from tpmconn import open_esapi  # noqa: E402
 
 GATED_PRELUDE = os.path.join(PAYLOAD_DIR, "gated_prelude.sh")
-APPROVAL_PATH = os.path.join(sealing.OUT_DIR, "approval.json")
-LAST_GOOD_PATH = os.path.join(sealing.OUT_DIR, "last_good_approval.json")
+# both live on tmpfs — see agent.DEFAULT_APPROVAL for why
+APPROVAL_PATH = agent.DEFAULT_APPROVAL
+LAST_GOOD_PATH = os.path.join(os.path.dirname(APPROVAL_PATH),
+                              "last_good_approval.json")
 GCM_NONCE_BYTES = 12
-MAX_GATE_ATTEMPTS = 5
+DEFAULT_GATE_ATTEMPTS = 5
 
 
 def gate_closed(why):
@@ -103,11 +105,11 @@ def unseal_key(approval):
         esys.close()
 
 
-def unseal_with_retry(verifier_url):
+def unseal_with_retry(verifier_url, max_attempts):
     """Bounded live-PCR retry: TPM refusal -> re-attest -> re-authorize ->
     re-unseal. Returns the unsealed key or exits via gate_closed()."""
     approval, kind = pick_approval()
-    for attempt in range(1, MAX_GATE_ATTEMPTS + 1):
+    for attempt in range(1, max_attempts + 1):
         if approval is None:
             gate_closed("no unseal authorization available — attest first "
                         "(attester/agent.py)")
@@ -117,12 +119,12 @@ def unseal_with_retry(verifier_url):
                   f"authorization) — releasing the clip key")
             return key
         except TSS2_Exception as e:
-            print(f"[gate] unseal attempt {attempt}/{MAX_GATE_ATTEMPTS} — "
+            print(f"[gate] unseal attempt {attempt}/{max_attempts} — "
                   f"TPM refused the {kind} authorization: {e}")
-        if attempt == MAX_GATE_ATTEMPTS:
-            gate_closed(f"TPM refused {MAX_GATE_ATTEMPTS} times — PCR 10 "
+        if attempt == max_attempts:
+            gate_closed(f"TPM refused {max_attempts} time(s) — PCR 10 "
                         f"does not carry a verifier-attested value")
-        print(f"[gate] retry {attempt}/{MAX_GATE_ATTEMPTS - 1}: PCR 10 may "
+        print(f"[gate] retry {attempt}/{max_attempts - 1}: PCR 10 may "
               f"have moved between verdict and unseal — re-attesting at "
               f"{verifier_url} for a fresh authorization")
         if os.geteuid() != 0:
@@ -158,12 +160,18 @@ def main():
     parser.add_argument("--verifier-url", default=agent.DEFAULT_VERIFIER_URL,
                         help="laptop verifier for the live-PCR re-attest "
                              "retry (env: VERIFIER_URL)")
+    parser.add_argument("--max-gate-attempts", type=int,
+                        default=DEFAULT_GATE_ATTEMPTS,
+                        help="1 = no re-attest after a TPM refusal (the "
+                             "demo's tamper cycles use this: the verdict "
+                             "is already known, a second attestation just "
+                             "costs time)")
     args = parser.parse_args()
 
     # step 1: run the watched helper so IMA measures its CURRENT content
     subprocess.run([GATED_PRELUDE], check=True)
 
-    key = unseal_with_retry(args.verifier_url)
+    key = unseal_with_retry(args.verifier_url, args.max_gate_attempts)
 
     with open(sealing.CLIP_ENC, "rb") as f:
         blob = f.read()
