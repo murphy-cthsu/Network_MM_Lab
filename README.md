@@ -31,43 +31,35 @@ swap-the-model demo).
 
 ## Running it for real (Pi + laptop)
 
-One-time enrollment:
+**Follow `docs/DEMO_RUNBOOK.md`** — it is the authoritative procedure
+(enrollment/rotation, allowlist generation on a frozen environment, fixed
+demo order, and the rules that keep it deterministic). Short version:
 
 ```sh
-# laptop (verifier)
-python3 verifier/make_policy_key.py     # policy_key.pem stays here (gitignored);
-                                        # attester/policy_pub.pem is committed
+# laptop: generate policy key (private NEVER leaves the laptop), serve
+python3 verifier/make_policy_key.py && git add verifier/policy_pub.pem && git commit
 python3 verifier/server.py --host 0.0.0.0   # dashboard at http://<laptop>:5000/
 
-# pi (attester) — .venv has tpm2-pytss, requests
+# pi: enroll the laptop's public key, provision, seal, allowlist
+git pull && cp verifier/policy_pub.pem attester/policy_pub.pem
 .venv/bin/python attester/provision.py      # AK at 0x81010002, publics -> verifier/
-attester/payload/gated_prelude.sh           # get the watched binary measured once
-sudo .venv/bin/python attester/agent.py --offline --out clean_bundle.json
-# copy clean_bundle.json to the laptop, then there:
-python3 verifier/make_allowlist.py --bundle clean_bundle.json \
-    --watch /home/team2/Network_MM_Lab/attester/payload/gated_prelude.sh
-# pi: seal the gated clip key (generates + encrypts a demo clip)
-.venv/bin/python attester/seal.py
+.venv/bin/python attester/seal.py           # seal clip key to the laptop's key
+# allowlist: see the runbook (clean-boot bundle + make_allowlist.py)
+
+# attest + gated playback (root: IMA log + the self-healing re-attest path);
+# the default verifier URL is the laptop — override with $VERIFIER_URL
+sudo .venv/bin/python attester/agent.py
+sudo .venv/bin/python attester/payload/play_video.py   # --no-display over SSH
+
+# tamper demo (clean baseline, then 5 × tamper → COMPROMISED → no playback)
+dev/run_pi_demo.sh
 ```
 
-Attest + gated playback (Pi; agent needs root to read the IMA log):
-
-```sh
-sudo .venv/bin/python attester/agent.py --verifier-url http://<laptop>:5000
-.venv/bin/python attester/payload/play_video.py        # --no-display over SSH
-```
-
-Tamper demo (clean baseline, then 5 × tamper → COMPROMISED → no playback):
-
-```sh
-dev/run_pi_demo.sh http://<laptop>:5000 5
-```
-
-After a tamper, the device stays COMPROMISED until a clean reboot even if the
-file is restored — the bad measurement is in the boot's append-only IMA log,
-which is exactly the guarantee remote attestation makes. After any reboot the
-allowlist may need regenerating from a fresh clean bundle (a kernel/package
-update changes legitimate hashes).
+If the TPM refuses an unseal because PCR 10 moved between verdict and unseal
+(live PCR), the payload re-attests and retries, bounded at 5 attempts with a
+log line per retry. A COMPROMISED verdict is never retried away — that's
+refusal, not drift. After a tamper the device stays COMPROMISED until a clean
+reboot even if the file is restored (append-only IMA log — by design).
 
 ## Laptop-only development (no Pi, no real TPM — Constraint 1)
 

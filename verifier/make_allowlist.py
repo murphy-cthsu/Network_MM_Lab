@@ -10,9 +10,19 @@ boot and grows continuously, so trust comes from quote+replay+allowlist
 --watch marks demo-critical binaries: they get a dedicated status in every
 verdict, and a measurement violation on them is treated as compromising.
 
+--exclude-prefix keeps VOLATILE trees out of the allowlist (user caches,
+desktop session files, ...): such files legitimately change, so if they are
+allowlisted and a root process ever re-reads one, the new hash flips the
+verdict — a false positive. Excluded they fall into the unknown-paths
+bucket: reported on every verdict, never compromising. --keep-prefix
+re-includes subtrees of an excluded prefix (e.g. this repo inside /home,
+so the attester's own code stays integrity-checked); watched paths are
+always kept.
+
 Usage:
   python3 verifier/make_allowlist.py --bundle clean_bundle.json \
-      --watch /path/to/gated_prelude.sh [--out verifier/allowlist.json]
+      --watch /path/to/gated_prelude.sh [--out verifier/allowlist.json] \
+      [--exclude-prefix /home/user/] [--keep-prefix /home/user/repo/]
   python3 verifier/make_allowlist.py --ima-log dev/sample_ima_log/clean.log ...
 """
 
@@ -30,6 +40,14 @@ def main():
     src.add_argument("--ima-log", help="raw IMA ascii log file")
     parser.add_argument("--watch", action="append", default=[],
                         metavar="PATH", help="watched binary (repeatable)")
+    parser.add_argument("--exclude-prefix", action="append", default=[],
+                        metavar="PREFIX",
+                        help="leave paths under PREFIX out of the allowlist "
+                             "(volatile trees; repeatable)")
+    parser.add_argument("--keep-prefix", action="append", default=[],
+                        metavar="PREFIX",
+                        help="re-include subtrees of an excluded prefix "
+                             "(repeatable; watched paths are always kept)")
     parser.add_argument("--out", default=DEFAULT_ALLOWLIST)
     args = parser.parse_args()
 
@@ -42,12 +60,21 @@ def main():
             text = f.read()
         source = args.ima_log
 
+    def included(path):
+        if path in args.watch or any(path.startswith(k) for k in args.keep_prefix):
+            return True
+        return not any(path.startswith(x) for x in args.exclude_prefix)
+
     _, entries = replay_ima_log(text)  # also validates every line
     paths = {}
     violations = 0
+    excluded = 0
     for e in entries:
         if e["violation"]:
             violations += 1
+            continue
+        if not included(e["path"]):
+            excluded += 1
             continue
         digest = e["file_hash"].partition(":")[2]
         paths.setdefault(e["path"], [])
@@ -72,7 +99,7 @@ def main():
     print(f"{args.out}: {len(paths)} path(s), "
           f"{sum(len(v) for v in paths.values())} hash(es), "
           f"{len(args.watch)} watched, {violations} violation entr(y/ies) "
-          f"skipped")
+          f"skipped, {excluded} entr(y/ies) excluded by prefix")
     if violations:
         print("note: violation entries cannot be allowlisted; they only "
               "compromise the verdict when they involve a watched path")

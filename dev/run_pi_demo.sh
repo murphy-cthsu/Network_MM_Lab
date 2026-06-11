@@ -19,7 +19,7 @@ set -uo pipefail
 
 REPO_ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
 cd "$REPO_ROOT"
-URL="${1:-http://127.0.0.1:5000}"
+URL="${1:-${VERIFIER_URL:-http://172.20.10.4:5000}}"   # the LAPTOP verifier
 CYCLES="${2:-5}"
 PY="$REPO_ROOT/.venv/bin/python"
 [[ -x "$PY" ]] || PY=python3
@@ -35,7 +35,8 @@ if sudo "$PY" attester/agent.py --verifier-url "$URL"; then
 else
     bad "clean attest did NOT come back TRUSTED (is the allowlist current?)"
 fi
-if "$PY" attester/payload/play_video.py --no-display; then
+# sudo: the live-PCR retry path re-attests, which needs the IMA log (root)
+if sudo "$PY" attester/payload/play_video.py --no-display --verifier-url "$URL"; then
     ok "clean state -> unseal OK -> video plays"
 else
     bad "clean state playback failed"
@@ -49,7 +50,7 @@ for i in $(seq 1 "$CYCLES"); do
     else
         ok "cycle $i: re-attest -> COMPROMISED"
     fi
-    if "$PY" attester/payload/play_video.py --no-display; then
+    if sudo "$PY" attester/payload/play_video.py --no-display --verifier-url "$URL"; then
         bad "cycle $i: video STILL played after tamper"
     else
         ok "cycle $i: unseal refused -> no playback"

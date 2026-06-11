@@ -11,17 +11,23 @@ The gate (attester/sealing.py documents the policy design):
      rejects because PCR 10 moved — demonstrating the gate is enforced by
      the TPM, not by this script being polite.
   3. TPM policy session: PolicyPCR(current sha256:10) + VerifySignature +
-     PolicyAuthorize -> unseal. Any mismatch -> TPM error -> NO PLAYBACK.
-  4. AES-256-GCM decrypt clip.enc and play it (ffplay when a display is
+     PolicyAuthorize -> unseal.
+  4. LIVE-PCR RETRY: PCR 10 can legitimately move between the verdict and
+     the unseal (any new root file-read anywhere). When the TPM refuses,
+     re-attest against the laptop verifier -> fresh authorization ->
+     re-unseal, up to MAX_GATE_ATTEMPTS, one clear log line per retry.
+     A COMPROMISED verdict during a retry short-circuits to GATE CLOSED —
+     that is refusal, not drift. Re-attesting needs root (the IMA log),
+     so run under sudo for the self-healing path.
+  5. AES-256-GCM decrypt clip.enc and play it (ffplay when a display is
      available, otherwise a full ffmpeg decode to /dev/null counts as
      playback for headless runs).
 
 Exit codes: 0 played, 3 gate closed (unseal refused), 1 other error.
-Usage: .venv/bin/python attester/payload/play_video.py [--no-display]
+Usage: sudo .venv/bin/python attester/payload/play_video.py [--no-display]
 """
 
 import argparse
-import base64
 import json
 import os
 import subprocess
@@ -35,6 +41,7 @@ sys.path.insert(0, ATTESTER_DIR)
 from cryptography.hazmat.primitives.ciphers.aead import AESGCM  # noqa: E402
 from tpm2_pytss import TPM2B_PRIVATE, TPM2B_PUBLIC, TSS2_Exception  # noqa: E402
 
+import agent  # noqa: E402
 import sealing  # noqa: E402
 from tpmconn import open_esapi  # noqa: E402
 
@@ -42,6 +49,12 @@ GATED_PRELUDE = os.path.join(PAYLOAD_DIR, "gated_prelude.sh")
 APPROVAL_PATH = os.path.join(sealing.OUT_DIR, "approval.json")
 LAST_GOOD_PATH = os.path.join(sealing.OUT_DIR, "last_good_approval.json")
 GCM_NONCE_BYTES = 12
+MAX_GATE_ATTEMPTS = 5
+
+
+def gate_closed(why):
+    print(f"GATE CLOSED: {why}. NO PLAYBACK.")
+    sys.exit(3)
 
 
 def pick_approval():
@@ -53,8 +66,11 @@ def pick_approval():
     approval = response.get("approval")
     if approval:
         if response.get("verdict") == "TRUSTED":
-            with open(LAST_GOOD_PATH, "w") as f:
-                json.dump(response, f)
+            try:
+                with open(LAST_GOOD_PATH, "w") as f:
+                    json.dump(response, f)
+            except OSError:
+                pass  # owned by a previous sudo run; keepsake only
         return approval, "fresh"
     print(f"[gate] verifier verdict was {response.get('verdict', 'absent')} "
           f"— no unseal authorization issued")
@@ -87,6 +103,41 @@ def unseal_key(approval):
         esys.close()
 
 
+def unseal_with_retry(verifier_url):
+    """Bounded live-PCR retry: TPM refusal -> re-attest -> re-authorize ->
+    re-unseal. Returns the unsealed key or exits via gate_closed()."""
+    approval, kind = pick_approval()
+    for attempt in range(1, MAX_GATE_ATTEMPTS + 1):
+        if approval is None:
+            gate_closed("no unseal authorization available — attest first "
+                        "(attester/agent.py)")
+        try:
+            key = unseal_key(approval)
+            print(f"unseal OK on gate attempt {attempt} ({kind} "
+                  f"authorization) — releasing the clip key")
+            return key
+        except TSS2_Exception as e:
+            print(f"[gate] unseal attempt {attempt}/{MAX_GATE_ATTEMPTS} — "
+                  f"TPM refused the {kind} authorization: {e}")
+        if attempt == MAX_GATE_ATTEMPTS:
+            gate_closed(f"TPM refused {MAX_GATE_ATTEMPTS} times — PCR 10 "
+                        f"does not carry a verifier-attested value")
+        print(f"[gate] retry {attempt}/{MAX_GATE_ATTEMPTS - 1}: PCR 10 may "
+              f"have moved between verdict and unseal — re-attesting at "
+              f"{verifier_url} for a fresh authorization")
+        if os.geteuid() != 0:
+            gate_closed("cannot re-attest: the IMA log needs root — run "
+                        "this payload under sudo for the self-healing path")
+        try:
+            result = agent.attest(verifier_url)
+        except Exception as e:
+            gate_closed(f"re-attestation failed: {e}")
+        if result.get("verdict") != "TRUSTED" or not result.get("approval"):
+            gate_closed(f"verifier verdict {result.get('verdict')} — it "
+                        f"will not authorize this PCR state")
+        approval, kind = result["approval"], "fresh"
+
+
 def play(clip_path, no_display):
     if not no_display and (os.environ.get("DISPLAY")
                            or os.environ.get("WAYLAND_DISPLAY")):
@@ -104,26 +155,15 @@ def main():
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--no-display", action="store_true",
                         help="decode-only playback (for SSH sessions)")
+    parser.add_argument("--verifier-url", default=agent.DEFAULT_VERIFIER_URL,
+                        help="laptop verifier for the live-PCR re-attest "
+                             "retry (env: VERIFIER_URL)")
     args = parser.parse_args()
 
     # step 1: run the watched helper so IMA measures its CURRENT content
     subprocess.run([GATED_PRELUDE], check=True)
 
-    approval, kind = pick_approval()
-    if approval is None:
-        print("GATE CLOSED: no unseal authorization available — attest "
-              "first (attester/agent.py). NO PLAYBACK.")
-        sys.exit(3)
-
-    try:
-        key = unseal_key(approval)
-    except TSS2_Exception as e:
-        print(f"UNSEAL FAILED ({kind} authorization): TPM refused the "
-              f"policy session — {e}")
-        print("GATE CLOSED: PCR 10 does not carry a verifier-attested "
-              "value. NO PLAYBACK.")
-        sys.exit(3)
-    print(f"unseal OK ({kind} authorization) — releasing the clip key")
+    key = unseal_with_retry(args.verifier_url)
 
     with open(sealing.CLIP_ENC, "rb") as f:
         blob = f.read()

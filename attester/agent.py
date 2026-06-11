@@ -7,6 +7,11 @@ Protocol steps 2-3 (docs/SPEC_EN.md §7):
   4. save the verifier's response (incl. the unseal authorization on
      TRUSTED) to attester/out/approval.json for payload/play_video.py
 
+The verifier is the LAPTOP (Constraint 2): the default URL points at it
+and can be overridden with $VERIFIER_URL or --verifier-url. The attest()
+function is importable — payload/play_video.py calls it to refresh its
+authorization when PCR 10 moved between verdict and unseal.
+
 Atomic capture — PCR 10 is LIVE: under ima_policy=tcb the kernel keeps
 extending PCR 10 whenever a new file is read by root or executed, so a log
 snapshot and a quote taken at different instants can disagree. A bundle is
@@ -50,12 +55,14 @@ from ima_replay import replay_sha256_pcr10
 from tpmconn import open_esapi
 
 ATTESTER_DIR = os.path.dirname(os.path.abspath(__file__))
+DEFAULT_VERIFIER_URL = os.environ.get("VERIFIER_URL", "http://172.20.10.4:5000")
 DEFAULT_IMA_LOG = os.environ.get(
     "IMA_LOG_PATH", "/sys/kernel/security/ima/ascii_runtime_measurements"
 )
 DEFAULT_APPROVAL = os.path.join(ATTESTER_DIR, "out", "approval.json")
 DEFAULT_AK_HANDLE = 0x81010002
 PCR_SELECTION = "sha256:10"
+MAX_CAPTURE_ATTEMPTS = 5
 
 
 def make_quote(esys, ak_handle, nonce_hex):
@@ -104,16 +111,72 @@ def capture_consistent_bundle(esys, ak_handle, nonce_hex, ima_log_path,
     )
 
 
+def build_evidence(nonce, ak_handle=DEFAULT_AK_HANDLE,
+                   ima_log_path=DEFAULT_IMA_LOG, device_id=None,
+                   max_attempts=MAX_CAPTURE_ATTEMPTS):
+    """Capture a consistent bundle and wrap it as protocol evidence."""
+    esys = open_esapi()
+    try:
+        attest_blob, sig_blob, ima_log, pcr10, attempts = \
+            capture_consistent_bundle(
+                esys, ak_handle, nonce, ima_log_path, max_attempts
+            )
+    finally:
+        esys.close()
+    return {
+        "device_id": device_id or socket.gethostname(),
+        "nonce": nonce,
+        "quote_b64": base64.b64encode(attest_blob).decode(),
+        "signature_b64": base64.b64encode(sig_blob).decode(),
+        "pcr_values": {"sha256": {"10": pcr10}},
+        "ima_log": ima_log,
+        "capture_attempts": attempts,
+    }
+
+
+def attest(verifier_url=DEFAULT_VERIFIER_URL, ak_handle=DEFAULT_AK_HANDLE,
+           ima_log_path=DEFAULT_IMA_LOG, device_id=None,
+           max_attempts=MAX_CAPTURE_ATTEMPTS, approval_out=DEFAULT_APPROVAL,
+           bundle_out=None):
+    """One full online attestation round; returns the verifier's response.
+
+    Needs root (the IMA log is root-readable only). The response — with
+    the unseal authorization when TRUSTED — is also saved to approval_out
+    for the gated payload.
+    """
+    nonce = requests.get(f"{verifier_url}/nonce", timeout=10).json()["nonce"]
+    print(f"nonce: {nonce}")
+    evidence = build_evidence(nonce, ak_handle, ima_log_path, device_id,
+                              max_attempts)
+    if bundle_out:
+        with open(bundle_out, "w") as f:
+            json.dump(evidence, f)
+        print(f"evidence bundle written to {bundle_out}")
+
+    resp = requests.post(f"{verifier_url}/evidence", json=evidence,
+                         timeout=30)
+    result = resp.json()
+
+    os.makedirs(os.path.dirname(approval_out), exist_ok=True)
+    with open(approval_out, "w") as f:
+        json.dump(result, f, indent=2)
+    has_approval = bool(result.get("approval"))
+    print(f"verifier response saved to {approval_out} "
+          f"(unseal authorization: {'yes' if has_approval else 'NO'})")
+    return result
+
+
 def main():
     parser = argparse.ArgumentParser(description=__doc__)
-    parser.add_argument("--verifier-url", default="http://127.0.0.1:5000")
+    parser.add_argument("--verifier-url", default=DEFAULT_VERIFIER_URL,
+                        help="laptop verifier base URL (env: VERIFIER_URL)")
     parser.add_argument("--ak-handle", type=lambda s: int(s, 0),
                         default=DEFAULT_AK_HANDLE)
     parser.add_argument("--ima-log", default=DEFAULT_IMA_LOG,
                         help="path to the IMA ASCII measurement log "
                              "(dev: a file under dev/sample_ima_log/)")
     parser.add_argument("--device-id", default=socket.gethostname())
-    parser.add_argument("--max-attempts", type=int, default=5,
+    parser.add_argument("--max-attempts", type=int, default=MAX_CAPTURE_ATTEMPTS,
                         help="quote+log consistency retries (PCR 10 is live)")
     parser.add_argument("--out", metavar="BUNDLE_JSON",
                         help="also write the evidence bundle to this file")
@@ -133,50 +196,18 @@ def main():
         # still check signature/replay/allowlist, but not freshness
         nonce = secrets.token_hex(32)
         print(f"offline mode: self-generated nonce {nonce}")
-    else:
-        nonce = requests.get(f"{args.verifier_url}/nonce",
-                             timeout=10).json()["nonce"]
-        print(f"nonce: {nonce}")
-
-    esys = open_esapi()
-    try:
-        attest_blob, sig_blob, ima_log, pcr10, attempts = \
-            capture_consistent_bundle(
-                esys, args.ak_handle, nonce, args.ima_log, args.max_attempts
-            )
-    finally:
-        esys.close()
-
-    evidence = {
-        "device_id": args.device_id,
-        "nonce": nonce,
-        "quote_b64": base64.b64encode(attest_blob).decode(),
-        "signature_b64": base64.b64encode(sig_blob).decode(),
-        "pcr_values": {"sha256": {"10": pcr10}},
-        "ima_log": ima_log,
-        "capture_attempts": attempts,
-    }
-
-    if args.out:
+        evidence = build_evidence(nonce, args.ak_handle, args.ima_log,
+                                  args.device_id, args.max_attempts)
         with open(args.out, "w") as f:
             json.dump(evidence, f)
         print(f"evidence bundle written to {args.out}")
-        if args.offline:
-            return
+        return
 
-    resp = requests.post(f"{args.verifier_url}/evidence", json=evidence,
-                         timeout=30)
-    result = resp.json()
+    result = attest(args.verifier_url, args.ak_handle, args.ima_log,
+                    args.device_id, args.max_attempts, args.approval_out,
+                    bundle_out=args.out)
     print(json.dumps({k: v for k, v in result.items() if k != "approval"},
                      indent=2))
-
-    os.makedirs(os.path.dirname(args.approval_out), exist_ok=True)
-    with open(args.approval_out, "w") as f:
-        json.dump(result, f, indent=2)
-    has_approval = bool(result.get("approval"))
-    print(f"verifier response saved to {args.approval_out} "
-          f"(unseal authorization: {'yes' if has_approval else 'NO'})")
-
     print(f"\nVERDICT: {result.get('verdict')}")
     sys.exit(0 if result.get("verdict") == "TRUSTED" else 2)
 
