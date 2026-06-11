@@ -26,13 +26,21 @@ an attestation is established by three checks chained together:
 ## Atomic quote+log capture (attester/agent.py)
 
 A log snapshot and a quote taken at different instants disagree whenever a
-measurement lands in between. The agent therefore reads the log, quotes, and
-then replays its own snapshot locally; the bundle is shipped only when
-`sha256(replayed PCR) == pcrDigest` inside the quote, retrying up to 5 times.
-In practice attempt 1 almost always succeeds once the loop's own files have
-been measured; the 5/5 demo run hit one retry (a background measurement) and
-recovered on attempt 2. The verifier replays the log it was **given**, never
-the Pi's "current log".
+measurement lands in between. The agent therefore quotes FIRST, then reads
+the log and trims it to the prefix whose replay satisfies
+`sha256(replayed PCR) == pcrDigest` inside the quote: the log is
+append-only, so that prefix is exactly the state the TPM signed. Capture
+converges in one attempt at any measurement rate (an earlier
+read-then-quote-then-retry design lost the race whenever the system was
+busy — first minutes after boot, desktop churn). The verifier replays the
+log it was **given**, never the Pi's "current log".
+
+When the quote matches NO prefix and even the full log does not replay to
+the live PCR, the agent reports a **log/PCR desync** instead of retrying:
+the PCR holds extends IMA never logged. Observed cause: a warm reboot
+that does not reset the SPI TPM, leaving the previous boot's PCR 10
+underneath the new boot's measurements — only a power-cycle recovers
+(docs/DEMO_RUNBOOK.md, Troubleshooting).
 
 ## Sealing vs a live PCR (attester/sealing.py)
 

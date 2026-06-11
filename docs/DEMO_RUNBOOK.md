@@ -39,24 +39,24 @@ After ANY rotation the old sealed blobs and any saved approvals are dead —
 
 The allowlist is the definition of "clean". It must be regenerated from a
 fresh clean-boot bundle whenever legitimate measured files change — i.e.
-after ANY apt/kernel update or change to the repo's own code. **Freeze the
-environment before the demo**: no `apt upgrade`, no editing measured
-scripts, no new root-level tooling between allowlist generation and demo.
+after ANY apt/kernel update **or any edit to the repo's own code** (the
+attester's `.py` sources and their `.pyc` caches are measured and
+allowlisted on purpose). **Freeze the environment before the demo**: no
+`apt upgrade`, no editing measured scripts, no new root-level tooling
+between allowlist generation and demo.
+
+One command on the Pi, after a power-cycle:
 
 ```sh
-# pi, freshly rebooted and quiet
-attester/payload/gated_prelude.sh        # measure the watched binary once
-sudo .venv/bin/python attester/agent.py --offline --out clean_bundle.json
-sudo .venv/bin/python attester/agent.py --offline --out clean_bundle.json
-#   (run twice; the second bundle includes the agent's own measurements)
-
-# laptop (or pi — generation is just a script; verification is laptop-only)
-python3 verifier/make_allowlist.py --bundle clean_bundle.json \
-    --watch /home/team2/Network_MM_Lab/attester/payload/gated_prelude.sh \
-    --exclude-prefix /home/team2/ \
-    --keep-prefix /home/team2/Network_MM_Lab/
-git add verifier/allowlist.json && git commit && git push   # laptop pulls it
+dev/prepare_demo.sh    # measure watched binary, warm up, capture bundle,
+                       # regenerate allowlist, offline-verify -> TRUSTED
 ```
+
+then ship `verifier/allowlist.json` to the laptop (the script prints the
+`scp` one-liner and the git alternative). Generation is just a script and
+may run on either machine (`verifier/make_allowlist.py --bundle ... --watch
+... --exclude-prefix /home/team2/ --keep-prefix <repo>/`); verification
+stays laptop-only.
 
 `--exclude-prefix` keeps volatile user trees (caches, desktop session
 files) OUT of the allowlist: they then count as "unknown paths" — reported
@@ -103,10 +103,12 @@ TPM therefore keeps the clip key sealed.*
 1. **COMPROMISED is sticky per boot.** The IMA log is append-only; the bad
    measurement stays until reboot, and `tamper/restore_binary.sh` cannot
    undo it (that is the security property, not a bug — an attacker cannot
-   regain trust by restoring the file). **To show green again, reboot the
-   Pi** (~40 s), re-run step 1. The allowlist survives reboots; do NOT
-   regenerate it after a tamper run (it would allowlist the tampered hash
-   if generated from that boot's bundle).
+   regain trust by restoring the file). **To show green again,
+   POWER-CYCLE the Pi** (full power off ≥10 s — a warm `sudo reboot` can
+   leave the SPI TPM un-reset and desync log and PCR; see
+   Troubleshooting), then re-run step 1. The allowlist survives reboots;
+   do NOT regenerate it after a tamper run (it would allowlist the
+   tampered hash if generated from that boot's bundle).
 2. **Keep the box quiet between verdict and unseal** (steps 1→2). Any new
    root file-read anywhere extends PCR 10 and invalidates the fresh
    authorization. The payload self-heals (bounded retry: TPM refusal →
@@ -122,10 +124,11 @@ TPM therefore keeps the clip key sealed.*
    changes legitimate hashes of allowlisted paths → false COMPROMISED.
    That failure mode names a system binary on the dashboard instead of the
    watched one — if you see it, regenerate the allowlist; do not demo.
-5. Rehearse the timing: the first attestation of a boot measures the
-   agent's own files (a few hundred entries) and may need a capture
-   retry — that is the "consistent bundle on attempt N" line, normal and
-   self-correcting.
+5. Capture does not race the system: the agent quotes first, then trims
+   the append-only log to the prefix that replays to the quoted digest —
+   "consistent bundle on attempt 1 (N entries measured after the quote
+   were trimmed)" is normal at any churn level. If the agent instead
+   reports a **log/PCR desync**, see Troubleshooting; no retry fixes that.
 
 ## Honest limitations (say them before someone asks)
 
@@ -142,3 +145,27 @@ TPM therefore keeps the clip key sealed.*
   sealing binds to a verifier-authorized PCR 10, not to "stable" PCRs).
 - Unknown-path noise on a polluted boot (rule 3) is visible on the
   dashboard; it disappears after a clean reboot.
+
+## Troubleshooting
+
+**"IMA log / PCR-10 desync ... POWER-CYCLE the Pi"** (from the agent), or
+the old symptom "quote matches no prefix" on every attempt:
+the TPM's PCR 10 contains extends that IMA never logged, so no log can
+ever replay to it — attestation is impossible for the rest of the boot.
+Observed cause on this rig: a warm `sudo reboot` does not reset the SPI
+TPM (its reset line is not tied to the SoC reset). The kernel then finds
+an already-started TPM, skips `TPM2_Startup(CLEAR)`, and the previous
+boot's PCR 10 survives with the new boot's measurements folded on top —
+IMA's own counters (`runtime_measurements_count`, `violations`) stay
+consistent with the log, which is how you tell it apart from log
+corruption. **Fix: full power-cycle (unplug ≥10 s), never trust a warm
+reboot before a demo.** The agent detects this case and says so instead
+of retrying.
+
+**Clean attest comes back COMPROMISED naming repo files** (`agent.py`,
+`__pycache__/*.pyc`): the allowlist predates a code edit. Re-run
+`dev/prepare_demo.sh` on a clean boot and re-ship the allowlist.
+
+**Verifier unreachable** (preflight error): on the laptop, start
+`python3 verifier/server.py --host 0.0.0.0`, allow inbound TCP 5000
+through its firewall, and check the hotspot IP in the error's hint line.

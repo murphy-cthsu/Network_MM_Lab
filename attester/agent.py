@@ -17,8 +17,10 @@ extending PCR 10 whenever a new file is read by root or executed, so a log
 snapshot and a quote taken at different instants can disagree. A bundle is
 consistent iff replaying the SHIPPED log reproduces exactly the PCR-10
 value inside the quote (sha256(replayed PCR) == the quote's pcrDigest).
-The agent reads the log, quotes, replays its own snapshot, and retries
-(bounded) until that holds; only a consistent bundle is shipped. The
+The agent quotes FIRST, then reads the append-only log and TRIMS it to
+the prefix that replays to the quoted digest — the exact state the TPM
+signed — so capture converges in one attempt regardless of how fast the
+system is measuring (first boot minutes, desktop churn, ...). The
 verifier replays the log it was GIVEN, never "the current log".
 
 The IMA log path is configurable so the identical code reads
@@ -34,7 +36,6 @@ Exit code: 0 = TRUSTED, 2 = COMPROMISED, 1 = error.
 
 import argparse
 import base64
-import hashlib
 import json
 import os
 import secrets
@@ -51,7 +52,7 @@ from tpm2_pytss import (
     TPMT_SIG_SCHEME,
 )
 
-from ima_replay import replay_sha256_pcr10
+from ima_replay import consistent_prefix, replay_sha256_pcr10
 from tpmconn import open_esapi
 
 ATTESTER_DIR = os.path.dirname(os.path.abspath(__file__))
@@ -83,31 +84,56 @@ def make_quote(esys, ak_handle, nonce_hex):
 
 def capture_consistent_bundle(esys, ak_handle, nonce_hex, ima_log_path,
                               max_attempts):
-    """Read log -> quote -> check replay(shipped log) == PCR-10-in-quote.
+    """Quote FIRST, then trim the log to the prefix the TPM signed.
 
-    Reading the log BEFORE quoting means a measurement landing in between
-    leaves the quote ahead of the snapshot — detected by the replay check
-    and retried. Once the loop's own files have been measured (first run),
-    PCR 10 only moves when something new is read/executed, so this
-    converges almost always on attempt 1.
+    The IMA log is append-only, so a log read after the quote contains
+    every entry up to the quote plus whatever landed later; the prefix
+    whose replay hashes to the quote's pcrDigest is the exact signed
+    state (ima_replay.consistent_prefix). One attempt suffices at any
+    measurement rate — the retries only guard pathological cases (log
+    corrupted, wrong PCR bank).
     """
     for attempt in range(1, max_attempts + 1):
+        attest_blob, sig_blob = make_quote(esys, ak_handle, nonce_hex)
         with open(ima_log_path, "r") as f:
             ima_log = f.read()
-        attest_blob, sig_blob = make_quote(esys, ak_handle, nonce_hex)
-        computed, count = replay_sha256_pcr10(ima_log)
-
         attest, _ = TPMS_ATTEST.unmarshal(attest_blob)
         quoted_pcr_digest = bytes(attest.attested.quote.pcrDigest)
-        if hashlib.sha256(bytes.fromhex(computed)).digest() == quoted_pcr_digest:
-            print(f"consistent bundle on attempt {attempt}: "
-                  f"{count} entries replay to quoted PCR 10 = {computed}")
-            return attest_blob, sig_blob, ima_log, computed, attempt
-        print(f"attempt {attempt}: PCR 10 moved between log read and quote, "
+
+        match = consistent_prefix(ima_log, quoted_pcr_digest)
+        if match is not None:
+            prefix, pcr10, count = match
+            trimmed = len(ima_log.splitlines()) - len(prefix.splitlines())
+            print(f"consistent bundle on attempt {attempt}: {count} entries "
+                  f"replay to quoted PCR 10 = {pcr10}"
+                  + (f" ({trimmed} entries measured after the quote were "
+                     f"trimmed)" if trimmed else ""))
+            return attest_blob, sig_blob, prefix, pcr10, attempt
+
+        # No prefix matched. Distinguish a transient race from a true
+        # log/PCR desync: if even the FULL log does not replay to the live
+        # PCR, the PCR holds extends IMA never logged — seen when a warm
+        # reboot leaves the SPI TPM un-reset, so the previous boot's PCR 10
+        # survives underneath this boot's measurements. No retry can fix
+        # that; only a power-cycle resets the chip.
+        computed, count = replay_sha256_pcr10(ima_log)
+        _, _, digests = esys.pcr_read(TPML_PCR_SELECTION.parse(PCR_SELECTION))
+        live = bytes(digests[0]).hex()
+        if computed != live:
+            raise RuntimeError(
+                f"IMA log / PCR-10 desync: replaying all {count} logged "
+                f"entries yields {computed} but the TPM holds {live} — "
+                f"PCR 10 contains extends IMA never logged, so this boot "
+                f"cannot attest. POWER-CYCLE the Pi (a warm reboot can "
+                f"leave the SPI TPM un-reset) and re-run. See "
+                f"docs/DEMO_RUNBOOK.md, Troubleshooting."
+            )
+        print(f"attempt {attempt}: quote matched no prefix, but the full "
+              f"log now replays to the live PCR (in-flight churn) — "
               f"retrying")
     raise RuntimeError(
-        f"no consistent quote+log bundle in {max_attempts} attempts — "
-        f"the system is measuring new files too fast; retry when quieter"
+        f"the quote matched no prefix of the IMA log in {max_attempts} "
+        f"attempts despite log/PCR agreement — log corrupt or wrong AK"
     )
 
 
