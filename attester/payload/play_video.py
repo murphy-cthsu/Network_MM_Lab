@@ -89,13 +89,13 @@ def pick_approval():
 def unseal_key(approval):
     esys = open_esapi()
     try:
-        primary = sealing.create_storage_primary(esys)
+        primary, persistent = sealing.get_storage_primary(esys)
         with open(sealing.SEALED_PRIV, "rb") as f:
             priv, _ = TPM2B_PRIVATE.unmarshal(f.read())
         with open(sealing.SEALED_PUB, "rb") as f:
             pub, _ = TPM2B_PUBLIC.unmarshal(f.read())
         sealed = esys.load(primary, priv, pub)
-        esys.flush_context(primary)
+        esys.tr_close(primary) if persistent else esys.flush_context(primary)
         session = sealing.start_authorized_pcr_session(esys, approval)
         try:
             return bytes(esys.unseal(sealed, session1=session))

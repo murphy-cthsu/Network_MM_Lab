@@ -39,6 +39,7 @@ from tpm2_pytss import (
     TPM2B_PUBLIC,
     TPM2B_SENSITIVE_CREATE,
     TPM2_ALG,
+    TPM2_HANDLE,
     TPM2_RH,
     TPM2_SE,
     TPM2_ST,
@@ -47,6 +48,7 @@ from tpm2_pytss import (
     TPMT_SIGNATURE,
     TPMT_SYM_DEF,
     TPMT_TK_VERIFIED,
+    TSS2_Exception,
 )
 
 ATTESTER_DIR = os.path.dirname(os.path.abspath(__file__))
@@ -64,6 +66,10 @@ STORAGE_PRIMARY_TEMPLATE = TPM2B_PUBLIC.parse(
     objectAttributes="fixedtpm|fixedparent|sensitivedataorigin|userwithauth"
                      "|restricted|decrypt|noda",
 )
+# seal.py persists the primary here: recreating an RSA2048 primary is the
+# slowest operation the SPI TPM does (seconds of prime generation per
+# gated playback); a persistent handle makes it a lookup.
+STORAGE_PRIMARY_HANDLE = 0x81010001
 
 
 def create_storage_primary(esys):
@@ -71,6 +77,18 @@ def create_storage_primary(esys):
         TPM2B_SENSITIVE_CREATE(), STORAGE_PRIMARY_TEMPLATE, ESYS_TR.OWNER
     )
     return primary
+
+
+def get_storage_primary(esys):
+    """The persistent storage primary if seal.py persisted one, else a
+    transient recreation (same key either way — deterministic template).
+    Returns (handle, is_persistent); close persistent handles with
+    tr_close, transient ones with flush_context."""
+    try:
+        return esys.tr_from_tpmpublic(
+            TPM2_HANDLE(STORAGE_PRIMARY_HANDLE)), True
+    except TSS2_Exception:
+        return create_storage_primary(esys), False
 
 
 def load_policy_pub(esys, pem_path=DEFAULT_POLICY_PUB):

@@ -24,6 +24,7 @@ import sys
 
 from cryptography.hazmat.primitives.ciphers.aead import AESGCM
 from tpm2_pytss import (
+    ESYS_TR,
     TPM2B_PUBLIC,
     TPM2B_SENSITIVE_CREATE,
     TPM2B_SENSITIVE_DATA,
@@ -31,6 +32,7 @@ from tpm2_pytss import (
 )
 
 import sealing
+from provision import evict_if_present
 from tpmconn import open_esapi
 
 GCM_NONCE_BYTES = 12
@@ -94,7 +96,15 @@ def main():
             ),
             template,
         )
+        # persist the primary so the gated payload skips the seconds-long
+        # RSA primary regeneration on every unseal (sealing.py)
+        evict_if_present(esys, sealing.STORAGE_PRIMARY_HANDLE)
+        persistent = esys.evict_control(ESYS_TR.OWNER, primary,
+                                        sealing.STORAGE_PRIMARY_HANDLE)
+        esys.tr_close(persistent)
         esys.flush_context(primary)
+        print(f"storage primary persisted at "
+              f"{sealing.STORAGE_PRIMARY_HANDLE:#x}")
     finally:
         esys.close()
 

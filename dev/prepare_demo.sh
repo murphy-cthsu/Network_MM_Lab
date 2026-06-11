@@ -26,22 +26,36 @@ BUNDLE=/tmp/clean_boot_bundle.json
 
 step() { printf '\n\033[1m== %s ==\033[0m\n' "$*"; }
 
-step "1/5 measure the watched binary"
+step "1/6 measure the watched binary"
 "$WATCH"
 
-step "2/5 warm-up attestation (first root run measures the agent's own files)"
+step "2/6 warm-up attestation (first root run measures the agent's own files)"
 sudo PYTHONWARNINGS="$PYW" "$PY" attester/agent.py --offline --out /tmp/prepare_warmup.json
 
-step "3/5 clean-boot bundle"
+step "3/6 warm-up the gated payload + decoder"
+# everything play_video touches must be measured BEFORE the allowlist
+# bundle, or its first real run extends PCR 10 between verdict and unseal
+# and burns the fresh authorization. The gate-closed run (no authorization
+# exists yet) measures its imports; the cat covers the gated assets it
+# only reads on a successful unseal; the ffmpeg no-op covers the decoder.
+sudo PYTHONWARNINGS="$PYW" "$PY" attester/payload/play_video.py \
+    --no-display --max-gate-attempts 1 || true
+sudo sh -c "cat '$REPO_ROOT'/attester/out/clip.enc \
+    '$REPO_ROOT'/attester/out/sealed_key.priv \
+    '$REPO_ROOT'/attester/out/sealed_key.pub >/dev/null"
+ffmpeg -loglevel error -f lavfi -i testsrc2=duration=0.1:size=64x64:rate=5 \
+    -f null - 2>/dev/null || true
+
+step "4/6 clean-boot bundle"
 sudo PYTHONWARNINGS="$PYW" "$PY" attester/agent.py --offline --out "$BUNDLE"
 
-step "4/5 regenerate the allowlist for the current code"
+step "5/6 regenerate the allowlist for the current code"
 PYTHONWARNINGS="$PYW" "$PY" verifier/make_allowlist.py --bundle "$BUNDLE" \
     --watch "$WATCH" \
     --exclude-prefix /home/team2/ \
     --keep-prefix "$REPO_ROOT/"
 
-step "5/5 offline-verify the bundle against the new allowlist"
+step "6/6 offline-verify the bundle against the new allowlist"
 if PYTHONWARNINGS="$PYW" "$PY" verifier/verify.py "$BUNDLE" >/tmp/prepare_verdict.json; then
     echo "offline verdict: TRUSTED"
 else
