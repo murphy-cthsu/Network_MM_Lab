@@ -1,35 +1,99 @@
 <!DOCTYPE html>
-<!-- Minimal dashboard stub (task 1.5 — full UI comes later).
-     Polls /status and shows TRUSTED (green) / COMPROMISED (red)
-     plus any failing measurement entries. -->
+<!-- Attestation dashboard (task 1.5). Polls /status: verdict badge,
+     protocol checks, watched binaries, offending entries, log tail. -->
 <html>
 <head>
 <meta charset="utf-8">
 <title>Attestation Dashboard</title>
 <style>
-  body { font-family: sans-serif; margin: 2rem; }
-  #verdict { font-size: 2.5rem; font-weight: bold; padding: 1rem; border-radius: 8px; display: inline-block; }
-  .TRUSTED { background: #1a7f37; color: white; }
-  .COMPROMISED { background: #cf222e; color: white; }
-  .UNKNOWN { background: #6e7781; color: white; }
-  pre { background: #f6f8fa; padding: 1rem; border-radius: 6px; overflow-x: auto; }
+  :root { --green:#1a7f37; --red:#cf222e; --grey:#6e7781; --bg:#f6f8fa; }
+  body { font-family: system-ui, sans-serif; margin: 2rem auto; max-width: 70rem; padding: 0 1rem; color:#1f2328; }
+  h1 { margin-bottom: .2rem; }
+  .sub { color: var(--grey); margin-bottom: 1.2rem; }
+  #verdict { font-size: 3rem; font-weight: 700; padding: 1rem 2.5rem; border-radius: 10px; display:inline-block; color:#fff; }
+  .TRUSTED { background: var(--green); } .COMPROMISED { background: var(--red); } .UNKNOWN { background: var(--grey); }
+  .meta { margin:.6rem 0 1.4rem; color:var(--grey); }
+  table { border-collapse: collapse; width:100%; margin:.4rem 0 1.2rem; }
+  th, td { text-align:left; padding:.35rem .6rem; border-bottom:1px solid #d0d7de; font-size:.92rem; }
+  th { background:var(--bg); }
+  td.mono, .mono { font-family: ui-monospace, monospace; font-size:.82rem; word-break: break-all; }
+  .pass { color:var(--green); font-weight:600; } .fail { color:var(--red); font-weight:600; } .warn { color:#9a6700; font-weight:600; }
+  tr.offender { background:#ffebe9; }
+  .pill { padding:.1rem .55rem; border-radius:999px; color:#fff; font-size:.8rem; font-weight:600; }
+  .pill.OK { background:var(--green); } .pill.TAMPERED { background:var(--red); } .pill.other { background:var(--grey); }
+  details { margin-bottom:1.2rem; } summary { cursor:pointer; }
+  #failsec h2 { color: var(--red); }
 </style>
 </head>
 <body>
   <h1>Device Integrity</h1>
+  <div class="sub">TPM-attested platform state — PCR 10 (IMA runtime measurements)</div>
   <div id="verdict" class="UNKNOWN">UNKNOWN</div>
-  <h2>Details</h2>
-  <pre id="details">waiting for first attestation…</pre>
+  <div class="meta" id="meta">waiting for first attestation…</div>
+
+  <h2>Protocol checks</h2>
+  <table><tbody id="checks"></tbody></table>
+
+  <h2>Watched binaries</h2>
+  <table id="watched"><thead><tr><th>path</th><th>status</th><th>last measured hash</th></tr></thead><tbody></tbody></table>
+
+  <div id="failsec" style="display:none">
+    <h2>Offending measurements</h2>
+    <table id="fails"><thead><tr><th>log line</th><th>path</th><th>measured hash</th><th>why it fails</th></tr></thead><tbody></tbody></table>
+  </div>
+
+  <details><summary id="tailsum">Measurement log tail</summary>
+    <table id="tail"><thead><tr><th>line</th><th>path</th><th>hash</th></tr></thead><tbody></tbody></table>
+  </details>
+  <details><summary id="unknownsum">Unknown paths (reported, not compromising)</summary>
+    <div id="unknown" class="mono"></div>
+  </details>
+
 <script>
+function cls(v) { return v === 'TRUSTED' || v === 'COMPROMISED' ? v : 'UNKNOWN'; }
+function fillRows(tbody, rows) { tbody.innerHTML = rows.join(''); }
+function esc(s) { const d = document.createElement('div'); d.textContent = s ?? ''; return d.innerHTML; }
+
 async function refresh() {
-  try {
-    const r = await fetch('/status');
-    const s = await r.json();
-    const v = document.getElementById('verdict');
-    v.textContent = s.verdict;
-    v.className = s.verdict;
-    document.getElementById('details').textContent = JSON.stringify(s, null, 2);
-  } catch (e) { /* verifier restarting; keep last state */ }
+  let s;
+  try { s = await (await fetch('/status')).json(); }
+  catch (e) { return; /* verifier restarting; keep last state */ }
+
+  const v = document.getElementById('verdict');
+  v.textContent = s.verdict; v.className = cls(s.verdict);
+
+  const when = s.timestamp ? new Date(s.timestamp * 1000).toLocaleString() : '—';
+  document.getElementById('meta').textContent = s.verdict === 'UNKNOWN'
+    ? (s.detail || 'no attestation yet')
+    : `device ${s.device_id} · ${when} · ${s.entry_count ?? '?'} measurements · ` +
+      `capture attempts ${s.capture_attempts ?? '?'} · quoted PCR10 ${ (s.quoted_pcr10 || '').slice(0,16) }…`;
+
+  fillRows(document.querySelector('#checks'), Object.entries(s.checks || {}).map(([k, val]) => {
+    const c = String(val).startsWith('PASS') ? 'pass' : String(val).startsWith('FAIL') ? 'fail' : 'warn';
+    return `<tr><td>${esc(k)}</td><td class="${c}">${esc(val)}</td></tr>`;
+  }));
+
+  fillRows(document.querySelector('#watched tbody'), Object.entries(s.watched || {}).map(([p, w]) =>
+    `<tr><td class="mono">${esc(p)}</td><td><span class="pill ${w.status === 'OK' ? 'OK' : w.status === 'TAMPERED' ? 'TAMPERED' : 'other'}">${esc(w.status)}</span></td><td class="mono">${esc(w.hash || '—')}</td></tr>`
+  ));
+
+  const fails = s.failed_entries || [];
+  document.getElementById('failsec').style.display = fails.length ? '' : 'none';
+  fillRows(document.querySelector('#fails tbody'), fails.map(f =>
+    `<tr class="offender"><td>${esc(f.lineno)}</td><td class="mono">${esc(f.path)}</td><td class="mono">${esc(f.file_hash)}</td><td>${esc(f.reason)}</td></tr>`
+  ));
+
+  fillRows(document.querySelector('#tail tbody'), (s.log_tail || []).map(t =>
+    `<tr><td>${esc(t.lineno)}</td><td class="mono">${esc(t.path)}</td><td class="mono">${esc(t.file_hash)}</td></tr>`
+  ));
+  document.getElementById('tailsum').textContent =
+    `Measurement log tail (last ${ (s.log_tail || []).length } of ${ s.entry_count ?? '?' })`;
+
+  const up = s.unknown_paths || {count: 0, sample: []};
+  document.getElementById('unknownsum').textContent =
+    `Unknown paths (reported, not compromising): ${up.count}`;
+  document.getElementById('unknown').innerHTML =
+    (up.sample || []).map(esc).join('<br>') + (up.count > (up.sample || []).length ? '<br>…' : '');
 }
 refresh();
 setInterval(refresh, 2000);

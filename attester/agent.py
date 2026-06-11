@@ -2,25 +2,37 @@
 
 Protocol steps 2-3 (docs/SPEC_EN.md §7):
   1. GET  <verifier>/nonce
-  2. esapi.quote over PCR 10 with the persisted AK, nonce as qualifying data;
-     esapi.pcr_read for the reported PCR values
-  3. read the IMA ASCII measurement log
-  4. POST {quote, signature, pcr_values, ima_log} to <verifier>/evidence
+  2. capture one CONSISTENT (quote, IMA log) bundle — see below
+  3. POST {quote, signature, pcr_values, ima_log} to <verifier>/evidence
+  4. save the verifier's response (incl. the unseal authorization on
+     TRUSTED) to attester/out/approval.json for payload/play_video.py
+
+Atomic capture — PCR 10 is LIVE: under ima_policy=tcb the kernel keeps
+extending PCR 10 whenever a new file is read by root or executed, so a log
+snapshot and a quote taken at different instants can disagree. A bundle is
+consistent iff replaying the SHIPPED log reproduces exactly the PCR-10
+value inside the quote (sha256(replayed PCR) == the quote's pcrDigest).
+The agent reads the log, quotes, replays its own snapshot, and retries
+(bounded) until that holds; only a consistent bundle is shipped. The
+verifier replays the log it was GIVEN, never "the current log".
 
 The IMA log path is configurable so the identical code reads
 dev/sample_ima_log/*.log on the laptop (IMA cannot be emulated there —
 Constraint 3) and /sys/kernel/security/ima/ascii_runtime_measurements on
-the Pi.
+the Pi (root needed to read it: run under sudo).
 
 Usage:
-  python3 attester/agent.py --ima-log dev/sample_ima_log/clean.log
+  sudo .venv/bin/python attester/agent.py [--verifier-url URL]
+  sudo .venv/bin/python attester/agent.py --out bundle.json --offline
 Exit code: 0 = TRUSTED, 2 = COMPROMISED, 1 = error.
 """
 
 import argparse
 import base64
+import hashlib
 import json
 import os
+import secrets
 import socket
 import sys
 
@@ -30,21 +42,20 @@ from tpm2_pytss import (
     TPM2_ALG,
     TPM2_HANDLE,
     TPML_PCR_SELECTION,
+    TPMS_ATTEST,
     TPMT_SIG_SCHEME,
 )
 
+from ima_replay import replay_sha256_pcr10
 from tpmconn import open_esapi
 
+ATTESTER_DIR = os.path.dirname(os.path.abspath(__file__))
 DEFAULT_IMA_LOG = os.environ.get(
     "IMA_LOG_PATH", "/sys/kernel/security/ima/ascii_runtime_measurements"
 )
+DEFAULT_APPROVAL = os.path.join(ATTESTER_DIR, "out", "approval.json")
 DEFAULT_AK_HANDLE = 0x81010002
 PCR_SELECTION = "sha256:10"
-
-
-def read_pcr10(esys):
-    _, _, digests = esys.pcr_read(TPML_PCR_SELECTION.parse(PCR_SELECTION))
-    return bytes(digests[0]).hex()
 
 
 def make_quote(esys, ak_handle, nonce_hex):
@@ -63,6 +74,36 @@ def make_quote(esys, ak_handle, nonce_hex):
     return bytes(quoted), signature.marshal()
 
 
+def capture_consistent_bundle(esys, ak_handle, nonce_hex, ima_log_path,
+                              max_attempts):
+    """Read log -> quote -> check replay(shipped log) == PCR-10-in-quote.
+
+    Reading the log BEFORE quoting means a measurement landing in between
+    leaves the quote ahead of the snapshot — detected by the replay check
+    and retried. Once the loop's own files have been measured (first run),
+    PCR 10 only moves when something new is read/executed, so this
+    converges almost always on attempt 1.
+    """
+    for attempt in range(1, max_attempts + 1):
+        with open(ima_log_path, "r") as f:
+            ima_log = f.read()
+        attest_blob, sig_blob = make_quote(esys, ak_handle, nonce_hex)
+        computed, count = replay_sha256_pcr10(ima_log)
+
+        attest, _ = TPMS_ATTEST.unmarshal(attest_blob)
+        quoted_pcr_digest = bytes(attest.attested.quote.pcrDigest)
+        if hashlib.sha256(bytes.fromhex(computed)).digest() == quoted_pcr_digest:
+            print(f"consistent bundle on attempt {attempt}: "
+                  f"{count} entries replay to quoted PCR 10 = {computed}")
+            return attest_blob, sig_blob, ima_log, computed, attempt
+        print(f"attempt {attempt}: PCR 10 moved between log read and quote, "
+              f"retrying")
+    raise RuntimeError(
+        f"no consistent quote+log bundle in {max_attempts} attempts — "
+        f"the system is measuring new files too fast; retry when quieter"
+    )
+
+
 def main():
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--verifier-url", default="http://127.0.0.1:5000")
@@ -72,21 +113,39 @@ def main():
                         help="path to the IMA ASCII measurement log "
                              "(dev: a file under dev/sample_ima_log/)")
     parser.add_argument("--device-id", default=socket.gethostname())
+    parser.add_argument("--max-attempts", type=int, default=5,
+                        help="quote+log consistency retries (PCR 10 is live)")
+    parser.add_argument("--out", metavar="BUNDLE_JSON",
+                        help="also write the evidence bundle to this file")
+    parser.add_argument("--offline", action="store_true",
+                        help="don't contact the verifier: use a locally "
+                             "generated nonce and just write --out (for "
+                             "transferring a bundle to the laptop by hand)")
+    parser.add_argument("--approval-out", default=DEFAULT_APPROVAL,
+                        help="where to store the verifier response for the "
+                             "gated payload")
     args = parser.parse_args()
 
-    nonce = requests.get(f"{args.verifier_url}/nonce", timeout=10).json()["nonce"]
-    print(f"nonce: {nonce}")
+    if args.offline:
+        if not args.out:
+            parser.error("--offline requires --out")
+        # an offline bundle has no server-issued nonce: the verifier CLI can
+        # still check signature/replay/allowlist, but not freshness
+        nonce = secrets.token_hex(32)
+        print(f"offline mode: self-generated nonce {nonce}")
+    else:
+        nonce = requests.get(f"{args.verifier_url}/nonce",
+                             timeout=10).json()["nonce"]
+        print(f"nonce: {nonce}")
 
     esys = open_esapi()
     try:
-        pcr10 = read_pcr10(esys)
-        attest_blob, sig_blob = make_quote(esys, args.ak_handle, nonce)
+        attest_blob, sig_blob, ima_log, pcr10, attempts = \
+            capture_consistent_bundle(
+                esys, args.ak_handle, nonce, args.ima_log, args.max_attempts
+            )
     finally:
         esys.close()
-    print(f"quoted; current PCR 10 = {pcr10}")
-
-    with open(args.ima_log, "r") as f:
-        ima_log = f.read()
 
     evidence = {
         "device_id": args.device_id,
@@ -95,10 +154,29 @@ def main():
         "signature_b64": base64.b64encode(sig_blob).decode(),
         "pcr_values": {"sha256": {"10": pcr10}},
         "ima_log": ima_log,
+        "capture_attempts": attempts,
     }
-    resp = requests.post(f"{args.verifier_url}/evidence", json=evidence, timeout=30)
+
+    if args.out:
+        with open(args.out, "w") as f:
+            json.dump(evidence, f)
+        print(f"evidence bundle written to {args.out}")
+        if args.offline:
+            return
+
+    resp = requests.post(f"{args.verifier_url}/evidence", json=evidence,
+                         timeout=30)
     result = resp.json()
-    print(json.dumps(result, indent=2))
+    print(json.dumps({k: v for k, v in result.items() if k != "approval"},
+                     indent=2))
+
+    os.makedirs(os.path.dirname(args.approval_out), exist_ok=True)
+    with open(args.approval_out, "w") as f:
+        json.dump(result, f, indent=2)
+    has_approval = bool(result.get("approval"))
+    print(f"verifier response saved to {args.approval_out} "
+          f"(unseal authorization: {'yes' if has_approval else 'NO'})")
+
     print(f"\nVERDICT: {result.get('verdict')}")
     sys.exit(0 if result.get("verdict") == "TRUSTED" else 2)
 

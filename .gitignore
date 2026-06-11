@@ -9,7 +9,10 @@ sealed_*
 *.pem.priv
 
 # NOTE: AK *public* material is allowed in git (verifier/ak.pub, verifier/ak_pub.pem)
-# and is explicitly NOT ignored.
+# and is explicitly NOT ignored. Same for the policy public (attester/policy_pub.pem).
+
+# verifier's policy-authorization private key (signs unseal authorizations)
+verifier/policy_key.pem
 
 # --- swtpm state (contains the software TPM's seed/NV state) ---
 dev/swtpm-state/

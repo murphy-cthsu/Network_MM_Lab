@@ -39,7 +39,8 @@ step "3. start verifier"
 VERIFIER_LOG="${TMPDIR:-/tmp}/network_mm_verifier.log"
 # direct child (no subshell) so the EXIT trap can kill it; own log file so it
 # doesn't hold this script's stdout open after we exit
-python3 verifier/server.py --port "$PORT" >"$VERIFIER_LOG" 2>&1 &
+python3 verifier/server.py --port "$PORT" \
+    --allowlist dev/sample_ima_log/allowlist.dev.json >"$VERIFIER_LOG" 2>&1 &
 VERIFIER_PID=$!
 echo "verifier pid $VERIFIER_PID, log: $VERIFIER_LOG"
 for _ in $(seq 1 30); do

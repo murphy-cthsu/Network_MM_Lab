@@ -12,6 +12,10 @@ the fixtures replay to a self-consistent PCR-10 value.
 - tampered.log : clean.log + one extra entry — the same path re-measured
                  with a different hash, exactly what IMA appends after a
                  binary is modified and re-executed. NOT on the allowlist.
+- allowlist.dev.json : matching allowlist (the REAL verifier/allowlist.json
+                 is generated from a Pi clean-boot bundle by
+                 verifier/make_allowlist.py; pass this dev one to
+                 server.py/verify.py with --allowlist)
 
 Run from the repo root: python3 dev/sample_ima_log/gen_fixtures.py
 """
@@ -57,12 +61,16 @@ def main():
     with open(os.path.join(HERE, "tampered.log"), "w") as f:
         f.write("\n".join(tampered) + "\n")
 
-    allowlist = {p: [sample_hash(p)] for p in CLEAN_PATHS}
-    with open(os.path.join(REPO_ROOT, "verifier", "allowlist.json"), "w") as f:
+    allowlist = {
+        "comment": "dev fixture allowlist (gen_fixtures.py) — not the Pi's",
+        "watched": [TAMPERED_PATH],
+        "paths": {p: [sample_hash(p)] for p in CLEAN_PATHS},
+    }
+    with open(os.path.join(HERE, "allowlist.dev.json"), "w") as f:
         json.dump(allowlist, f, indent=2)
         f.write("\n")
 
-    print("wrote clean.log, tampered.log, verifier/allowlist.json")
+    print("wrote clean.log, tampered.log, allowlist.dev.json")
 
 
 if __name__ == "__main__":
