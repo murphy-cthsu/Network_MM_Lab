@@ -144,7 +144,15 @@ def attest(verifier_url=DEFAULT_VERIFIER_URL, ak_handle=DEFAULT_AK_HANDLE,
     the unseal authorization when TRUSTED — is also saved to approval_out
     for the gated payload.
     """
-    nonce = requests.get(f"{verifier_url}/nonce", timeout=10).json()["nonce"]
+    try:
+        nonce = requests.get(f"{verifier_url}/nonce", timeout=10).json()["nonce"]
+    except requests.exceptions.RequestException as e:
+        raise RuntimeError(
+            f"verifier unreachable at {verifier_url} "
+            f"({e.__class__.__name__}) — on the laptop: run "
+            f"'python3 verifier/server.py --host 0.0.0.0' and allow inbound "
+            f"TCP {verifier_url.rsplit(':', 1)[-1]} in its firewall"
+        ) from e
     print(f"nonce: {nonce}")
     evidence = build_evidence(nonce, ak_handle, ima_log_path, device_id,
                               max_attempts)
@@ -153,9 +161,15 @@ def attest(verifier_url=DEFAULT_VERIFIER_URL, ak_handle=DEFAULT_AK_HANDLE,
             json.dump(evidence, f)
         print(f"evidence bundle written to {bundle_out}")
 
-    resp = requests.post(f"{verifier_url}/evidence", json=evidence,
-                         timeout=30)
-    result = resp.json()
+    try:
+        resp = requests.post(f"{verifier_url}/evidence", json=evidence,
+                             timeout=30)
+        result = resp.json()
+    except requests.exceptions.RequestException as e:
+        raise RuntimeError(
+            f"evidence POST to {verifier_url} failed "
+            f"({e.__class__.__name__}) — verifier went away mid-attestation"
+        ) from e
 
     os.makedirs(os.path.dirname(approval_out), exist_ok=True)
     with open(approval_out, "w") as f:
@@ -189,23 +203,28 @@ def main():
                              "gated payload")
     args = parser.parse_args()
 
-    if args.offline:
-        if not args.out:
-            parser.error("--offline requires --out")
-        # an offline bundle has no server-issued nonce: the verifier CLI can
-        # still check signature/replay/allowlist, but not freshness
-        nonce = secrets.token_hex(32)
-        print(f"offline mode: self-generated nonce {nonce}")
-        evidence = build_evidence(nonce, args.ak_handle, args.ima_log,
-                                  args.device_id, args.max_attempts)
-        with open(args.out, "w") as f:
-            json.dump(evidence, f)
-        print(f"evidence bundle written to {args.out}")
-        return
+    try:
+        if args.offline:
+            if not args.out:
+                parser.error("--offline requires --out")
+            # an offline bundle has no server-issued nonce: the verifier CLI
+            # can still check signature/replay/allowlist, but not freshness
+            nonce = secrets.token_hex(32)
+            print(f"offline mode: self-generated nonce {nonce}")
+            evidence = build_evidence(nonce, args.ak_handle, args.ima_log,
+                                      args.device_id, args.max_attempts)
+            with open(args.out, "w") as f:
+                json.dump(evidence, f)
+            print(f"evidence bundle written to {args.out}")
+            return
 
-    result = attest(args.verifier_url, args.ak_handle, args.ima_log,
-                    args.device_id, args.max_attempts, args.approval_out,
-                    bundle_out=args.out)
+        result = attest(args.verifier_url, args.ak_handle, args.ima_log,
+                        args.device_id, args.max_attempts, args.approval_out,
+                        bundle_out=args.out)
+    except RuntimeError as e:
+        # exit 1 (error), NOT 2 (COMPROMISED): a network failure or capture
+        # timeout is not a verdict, and scripts must not score it as one
+        sys.exit(f"ERROR: {e}")
     print(json.dumps({k: v for k, v in result.items() if k != "approval"},
                      indent=2))
     print(f"\nVERDICT: {result.get('verdict')}")
