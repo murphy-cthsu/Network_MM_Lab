@@ -14,12 +14,13 @@ Run:  python3 verifier/server.py [--port 5000] [--allowlist F] [--policy-key F]
 """
 
 import argparse
+import io
 import os
 import secrets
 import threading
 import time
 
-from flask import Flask, jsonify, request, send_from_directory
+from flask import Flask, jsonify, request, send_from_directory, Response
 
 import verify
 
@@ -33,6 +34,7 @@ app.config["POLICY_KEY"] = verify.DEFAULT_POLICY_KEY
 _lock = threading.Lock()
 _nonces = {}  # nonce hex -> expiry unix time
 _last_result = None
+_clip_data = None   # in-memory mp4 bytes from the Pi
 
 
 @app.get("/nonce")
@@ -98,6 +100,33 @@ def get_status():
         # don't re-publish it on the open status endpoint
         return jsonify({k: v for k, v in _last_result.items()
                         if k != "approval"})
+
+
+@app.post("/upload-clip")
+def upload_clip():
+    """Receive the decrypted mp4 from the Pi after a successful unseal."""
+    global _clip_data
+    data = request.get_data()
+    if not data:
+        return jsonify({"error": "empty body"}), 400
+    with _lock:
+        _clip_data = data
+    return jsonify({"ok": True, "bytes": len(data)})
+
+
+@app.get("/clip")
+def get_clip():
+    """Serve the latest decrypted clip to the dashboard."""
+    with _lock:
+        data = _clip_data
+    if data is None:
+        return jsonify({"error": "no clip available yet"}), 404
+    return Response(
+        io.BytesIO(data),
+        mimetype="video/mp4",
+        headers={"Content-Length": str(len(data)),
+                 "Accept-Ranges": "bytes"},
+    )
 
 
 @app.get("/")
