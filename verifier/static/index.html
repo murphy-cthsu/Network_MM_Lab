@@ -5,147 +5,206 @@
 <head>
 <meta charset="utf-8">
 <title>Attestation Dashboard</title>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@latest/tabler-icons.min.css">
 <style>
-  :root { --green:#1a7f37; --red:#cf222e; --grey:#6e7781; --bg:#f6f8fa; }
-  body { font-family: system-ui, sans-serif; margin: 2rem auto; max-width: 70rem; padding: 0 1rem; color:#1f2328; }
-  h1 { margin-bottom: .2rem; }
-  .sub { color: var(--grey); margin-bottom: 1.2rem; }
-  #verdict { font-size: 3rem; font-weight: 700; padding: 1rem 2.5rem; border-radius: 10px; display:inline-block; color:#fff; }
-  .TRUSTED { background: var(--green); } .COMPROMISED { background: var(--red); } .UNKNOWN { background: var(--grey); }
-  .meta { margin:.6rem 0 1.4rem; color:var(--grey); }
-  table { border-collapse: collapse; width:100%; margin:.4rem 0 1.2rem; }
-  th, td { text-align:left; padding:.35rem .6rem; border-bottom:1px solid #d0d7de; font-size:.92rem; }
-  th { background:var(--bg); }
-  td.mono, .mono { font-family: ui-monospace, monospace; font-size:.82rem; word-break: break-all; }
-  .pass { color:var(--green); font-weight:600; } .fail { color:var(--red); font-weight:600; } .warn { color:#9a6700; font-weight:600; }
-  tr.offender { background:#ffebe9; }
-  .pill { padding:.1rem .55rem; border-radius:999px; color:#fff; font-size:.8rem; font-weight:600; }
-  .pill.OK { background:var(--green); } .pill.TAMPERED { background:var(--red); } .pill.other { background:var(--grey); }
-  details { margin-bottom:1.2rem; } summary { cursor:pointer; }
-  #failsec h2 { color: var(--red); }
+  :root {
+    --green-bg: #EAF3DE; --green-text: #27500A; --green-mid: #3B6D11;
+    --red-bg: #FCEBEB; --red-border: #F7C1C1; --red-text: #791F1F; --red-mid: #A32D2D;
+    --amber-text: #854F0B;
+    --bg: #f6f8fa; --surface: #ffffff; --border: rgba(0,0,0,0.1);
+    --text: #1f2328; --text-muted: #6e7781; --text-hint: #9ca3af;
+    --radius-md: 8px; --radius-lg: 12px;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { font-family: system-ui, sans-serif; background: var(--bg); color: var(--text); padding: 2rem 1rem; max-width: 70rem; margin: 0 auto; }
+  h1 { font-size: 22px; font-weight: 500; margin-bottom: 4px; }
+  .sub { font-size: 13px; color: var(--text-muted); margin-bottom: 1.5rem; }
+  .top-row { display: grid; grid-template-columns: auto 1fr; gap: 16px; align-items: center; margin-bottom: 1.5rem; }
+  .verdict-badge { display: inline-flex; align-items: center; gap: 10px; padding: 14px 28px; border-radius: var(--radius-lg); font-size: 26px; font-weight: 500; }
+  .verdict-badge i { font-size: 28px; }
+  .verdict-TRUSTED   { background: var(--green-bg); color: var(--green-text); }
+  .verdict-COMPROMISED { background: var(--red-bg);   color: var(--red-text); }
+  .verdict-UNKNOWN   { background: var(--bg); color: var(--text-muted); border: 0.5px solid var(--border); }
+  .meta-card { background: var(--surface); border: 0.5px solid var(--border); border-radius: var(--radius-md); padding: 12px 16px; font-size: 12px; color: var(--text-muted); line-height: 1.8; }
+  .meta-card span { color: var(--text); font-weight: 500; }
+  .mono { font-family: ui-monospace, monospace; font-size: 11px; color: var(--text-muted); word-break: break-all; }
 
-  /* video / failed panel */
-  #media-panel { margin: 1.4rem 0; }
-  #video-wrap { background:#000; border-radius:10px; overflow:hidden; display:none; }
-  #video-wrap video { width:100%; max-height:480px; display:block; }
-  #failed-wrap {
-    display:none; background:var(--red); border-radius:10px;
-    padding: 3rem 2rem; text-align:center;
-  }
-  #failed-wrap .failed-text {
-    font-size: 4rem; font-weight:800; color:#fff; letter-spacing:.04em;
-  }
-  #failed-wrap .failed-sub { color:#ffc0c0; margin-top:.5rem; font-size:1rem; }
+  /* media panel */
+  .media-panel { margin-bottom: 1.5rem; }
+  .video-wrap { background: #0a0a0a; border-radius: var(--radius-lg); overflow: hidden; display: none; border: 0.5px solid var(--border); }
+  .video-wrap video { width: 100%; max-height: 520px; min-height: 280px; display: block; }
+  .failed-wrap { display: none; border-radius: var(--radius-lg); padding: 3rem 2rem; text-align: center; background: var(--red-bg); border: 0.5px solid var(--red-border); }
+  .failed-icon { font-size: 48px; color: var(--red-mid); margin-bottom: 12px; }
+  .failed-text { font-size: 32px; font-weight: 500; color: var(--red-text); margin-bottom: 6px; }
+  .failed-sub  { font-size: 13px; color: var(--red-mid); }
+
+  /* sections */
+  .section-label { font-size: 11px; font-weight: 500; text-transform: uppercase; letter-spacing: .08em; color: var(--text-hint); margin-bottom: 8px; margin-top: 1.25rem; }
+  .section-label.danger { color: var(--red-mid); }
+  .card { background: var(--surface); border: 0.5px solid var(--border); border-radius: var(--radius-lg); overflow: hidden; margin-bottom: 1rem; }
+  table { width: 100%; border-collapse: collapse; font-size: 13px; }
+  th { font-size: 11px; font-weight: 500; color: var(--text-muted); background: var(--bg); padding: 8px 12px; text-align: left; border-bottom: 0.5px solid var(--border); }
+  td { padding: 9px 12px; border-bottom: 0.5px solid var(--border); color: var(--text); vertical-align: middle; }
+  tr:last-child td { border-bottom: none; }
+  tr.offender td { background: var(--red-bg); }
+  .pass { color: var(--green-mid); font-weight: 500; display: flex; align-items: center; gap: 5px; }
+  .fail { color: var(--red-mid);   font-weight: 500; display: flex; align-items: center; gap: 5px; }
+  .warn { color: var(--amber-text); font-weight: 500; }
+  .pill { padding: 2px 10px; border-radius: 999px; font-size: 11px; font-weight: 500; display: inline-block; }
+  .pill-ok       { background: var(--green-bg); color: var(--green-text); }
+  .pill-tampered { background: var(--red-bg);   color: var(--red-text); }
+  .pill-other    { background: var(--bg); color: var(--text-muted); }
+  .empty-row td  { color: var(--text-hint); font-style: italic; text-align: center; padding: 1.5rem; }
+  details { margin-bottom: 1rem; }
+  summary { font-size: 13px; color: var(--text-muted); cursor: pointer; padding: 10px 12px; background: var(--surface); border-radius: var(--radius-md); border: 0.5px solid var(--border); list-style: none; display: flex; align-items: center; gap: 6px; }
+  summary::-webkit-details-marker { display: none; }
+  details[open] summary { border-radius: var(--radius-md) var(--radius-md) 0 0; border-bottom: none; }
+  details[open] .detail-body { border: 0.5px solid var(--border); border-top: none; border-radius: 0 0 var(--radius-md) var(--radius-md); overflow: hidden; }
+  .detail-mono { padding: 12px; font-family: ui-monospace, monospace; font-size: 11px; color: var(--text-muted); line-height: 1.8; }
 </style>
 </head>
 <body>
-  <h1>Device Integrity</h1>
-  <div class="sub">TPM-attested platform state — PCR 10 (IMA runtime measurements)</div>
-  <div id="verdict" class="UNKNOWN">UNKNOWN</div>
-  <div class="meta" id="meta">waiting for first attestation…</div>
 
-  <div id="media-panel">
-    <div id="video-wrap">
+  <h1><i class="ti ti-shield-check" style="font-size:20px;vertical-align:-2px;margin-right:6px;" aria-hidden="true"></i>Device integrity</h1>
+  <div class="sub">TPM-attested platform state — PCR 10 (IMA runtime measurements)</div>
+
+  <div class="top-row">
+    <div id="verdict" class="verdict-badge verdict-UNKNOWN">
+      <i class="ti ti-help-circle" aria-hidden="true"></i>
+      <span id="verdict-text">Unknown</span>
+    </div>
+    <div class="meta-card" id="meta">Waiting for first attestation…</div>
+  </div>
+
+  <div class="media-panel">
+    <div class="video-wrap" id="video-wrap">
       <video id="clip" controls autoplay>
         <source src="/clip" type="video/mp4">
       </video>
     </div>
-    <div id="failed-wrap">
-      <div class="failed-text">FAILED</div>
-      <div class="failed-sub">Device integrity compromised — playback denied</div>
+    <div class="failed-wrap" id="failed-wrap">
+      <div class="failed-icon"><i class="ti ti-shield-x" aria-hidden="true"></i></div>
+      <div class="failed-text">Playback denied</div>
+      <div class="failed-sub">Device integrity compromised — unseal authorization refused</div>
     </div>
   </div>
 
-  <h2>Protocol checks</h2>
-  <table><tbody id="checks"></tbody></table>
-
-  <h2>Watched binaries</h2>
-  <table id="watched"><thead><tr><th>path</th><th>status</th><th>last measured hash</th></tr></thead><tbody></tbody></table>
-
-  <div id="failsec" style="display:none">
-    <h2>Offending measurements</h2>
-    <table id="fails"><thead><tr><th>log line</th><th>path</th><th>measured hash</th><th>why it fails</th></tr></thead><tbody></tbody></table>
+  <p class="section-label">Protocol checks</p>
+  <div class="card">
+    <table><tbody id="checks"><tr class="empty-row"><td>No attestation yet</td></tr></tbody></table>
   </div>
 
-  <details><summary id="tailsum">Measurement log tail</summary>
-    <table id="tail"><thead><tr><th>line</th><th>path</th><th>hash</th></tr></thead><tbody></tbody></table>
+  <p class="section-label">Watched binaries</p>
+  <div class="card">
+    <table>
+      <thead><tr><th>Path</th><th>Status</th><th>Last measured hash</th></tr></thead>
+      <tbody id="watched-body"><tr class="empty-row"><td colspan="3">No data yet</td></tr></tbody>
+    </table>
+  </div>
+
+  <div id="failsec" style="display:none">
+    <p class="section-label danger">Offending measurements</p>
+    <div class="card">
+      <table>
+        <thead><tr><th>Line</th><th>Path</th><th>Measured hash</th><th>Reason</th></tr></thead>
+        <tbody id="fails-body"></tbody>
+      </table>
+    </div>
+  </div>
+
+  <details>
+    <summary><i class="ti ti-list" aria-hidden="true"></i><span id="tailsum">Measurement log tail</span></summary>
+    <div class="detail-body">
+      <table>
+        <thead><tr><th>Line</th><th>Path</th><th>Hash</th></tr></thead>
+        <tbody id="tail-body"></tbody>
+      </table>
+    </div>
   </details>
-  <details><summary id="unknownsum">Unknown paths (reported, not compromising)</summary>
-    <div id="unknown" class="mono"></div>
+
+  <details>
+    <summary><i class="ti ti-file-unknown" aria-hidden="true"></i><span id="unknownsum">Unknown paths</span></summary>
+    <div class="detail-body">
+      <div class="detail-mono" id="unknown">—</div>
+    </div>
   </details>
 
 <script>
-function cls(v) { return v === 'TRUSTED' || v === 'COMPROMISED' ? v : 'UNKNOWN'; }
-function fillRows(tbody, rows) { tbody.innerHTML = rows.join(''); }
 function esc(s) { const d = document.createElement('div'); d.textContent = s ?? ''; return d.innerHTML; }
+function fillRows(tbody, rows) { tbody.innerHTML = rows.join(''); }
 
+const ICONS  = { TRUSTED: 'ti-shield-check', COMPROMISED: 'ti-shield-x', UNKNOWN: 'ti-help-circle' };
+const LABELS = { TRUSTED: 'Trusted', COMPROMISED: 'Compromised', UNKNOWN: 'Unknown' };
 let lastVerdict = null;
 
 function updateMedia(verdict) {
-  const videoWrap  = document.getElementById('video-wrap');
-  const failedWrap = document.getElementById('failed-wrap');
-  const videoEl    = document.getElementById('clip');
-
+  const vw = document.getElementById('video-wrap');
+  const fw = document.getElementById('failed-wrap');
+  const ve = document.getElementById('clip');
   if (verdict === 'TRUSTED') {
-    failedWrap.style.display = 'none';
-    videoWrap.style.display  = 'block';
-    if (lastVerdict !== 'TRUSTED') {
-      videoEl.load();
-      videoEl.play().catch(() => {});
-    }
+    fw.style.display = 'none'; vw.style.display = 'block';
+    if (lastVerdict !== 'TRUSTED') { ve.load(); ve.play().catch(() => {}); }
   } else if (verdict === 'COMPROMISED') {
-    videoWrap.style.display  = 'none';
-    failedWrap.style.display = 'block';
-    videoEl.pause();
+    vw.style.display = 'none'; fw.style.display = 'block'; ve.pause();
   } else {
-    videoWrap.style.display  = 'none';
-    failedWrap.style.display = 'none';
+    vw.style.display = 'none'; fw.style.display = 'none';
   }
 }
 
 async function refresh() {
   let s;
-  try { s = await (await fetch('/status')).json(); }
-  catch (e) { return; }
+  try { s = await (await fetch('/status')).json(); } catch(e) { return; }
 
-  const v = document.getElementById('verdict');
-  v.textContent = s.verdict; v.className = cls(s.verdict);
+  const v = s.verdict || 'UNKNOWN';
+  const el = document.getElementById('verdict');
+  el.className = 'verdict-badge verdict-' + (v === 'TRUSTED' || v === 'COMPROMISED' ? v : 'UNKNOWN');
+  el.innerHTML = `<i class="ti ${ICONS[v] || ICONS.UNKNOWN}" aria-hidden="true"></i><span>${LABELS[v] || v}</span>`;
 
   const when = s.timestamp ? new Date(s.timestamp * 1000).toLocaleString() : '—';
-  document.getElementById('meta').textContent = s.verdict === 'UNKNOWN'
-    ? (s.detail || 'no attestation yet')
-    : `device ${s.device_id} · ${when} · ${s.entry_count ?? '?'} measurements · ` +
-      `capture attempts ${s.capture_attempts ?? '?'} · quoted PCR10 ${ (s.quoted_pcr10 || '').slice(0,16) }…`;
+  const meta = document.getElementById('meta');
+  if (v === 'UNKNOWN') {
+    meta.innerHTML = s.detail || 'No attestation yet';
+  } else {
+    meta.innerHTML = `Device <span>${esc(s.device_id)}</span> &nbsp;·&nbsp; <span>${when}</span> &nbsp;·&nbsp; <span>${s.entry_count ?? '?'}</span> measurements &nbsp;·&nbsp; attempts <span>${s.capture_attempts ?? '?'}</span> &nbsp;·&nbsp; PCR10 <span class="mono">${(s.quoted_pcr10||'').slice(0,16)}…</span>`;
+  }
 
-  updateMedia(s.verdict);
-  lastVerdict = s.verdict;
+  updateMedia(v);
+  lastVerdict = v;
 
   fillRows(document.querySelector('#checks'), Object.entries(s.checks || {}).map(([k, val]) => {
-    const c = String(val).startsWith('PASS') ? 'pass' : String(val).startsWith('FAIL') ? 'fail' : 'warn';
-    return `<tr><td>${esc(k)}</td><td class="${c}">${esc(val)}</td></tr>`;
+    const isPass = String(val).startsWith('PASS');
+    const isFail = String(val).startsWith('FAIL');
+    const cls  = isPass ? 'pass' : isFail ? 'fail' : 'warn';
+    const icon = isPass ? 'ti-check' : isFail ? 'ti-x' : 'ti-alert-triangle';
+    return `<tr><td>${esc(k)}</td><td><span class="${cls}"><i class="ti ${icon}" aria-hidden="true"></i>${esc(val)}</span></td></tr>`;
   }));
+  if (!Object.keys(s.checks || {}).length)
+    document.querySelector('#checks').innerHTML = '<tr class="empty-row"><td colspan="2">No checks yet</td></tr>';
 
-  fillRows(document.querySelector('#watched tbody'), Object.entries(s.watched || {}).map(([p, w]) =>
-    `<tr><td class="mono">${esc(p)}</td><td><span class="pill ${w.status === 'OK' ? 'OK' : w.status === 'TAMPERED' ? 'TAMPERED' : 'other'}">${esc(w.status)}</span></td><td class="mono">${esc(w.hash || '—')}</td></tr>`
-  ));
+  fillRows(document.querySelector('#watched-body'), Object.entries(s.watched || {}).map(([p, w]) => {
+    const ok = w.status === 'OK', tm = w.status === 'TAMPERED';
+    return `<tr><td class="mono">${esc(p)}</td><td><span class="pill ${ok?'pill-ok':tm?'pill-tampered':'pill-other'}">${esc(w.status)}</span></td><td class="mono">${esc(w.hash||'—')}</td></tr>`;
+  }));
+  if (!Object.keys(s.watched || {}).length)
+    document.querySelector('#watched-body').innerHTML = '<tr class="empty-row"><td colspan="3">No watched binaries</td></tr>';
 
   const fails = s.failed_entries || [];
   document.getElementById('failsec').style.display = fails.length ? '' : 'none';
-  fillRows(document.querySelector('#fails tbody'), fails.map(f =>
+  fillRows(document.querySelector('#fails-body'), fails.map(f =>
     `<tr class="offender"><td>${esc(f.lineno)}</td><td class="mono">${esc(f.path)}</td><td class="mono">${esc(f.file_hash)}</td><td>${esc(f.reason)}</td></tr>`
   ));
 
-  fillRows(document.querySelector('#tail tbody'), (s.log_tail || []).map(t =>
+  const tail = s.log_tail || [];
+  fillRows(document.querySelector('#tail-body'), tail.map(t =>
     `<tr><td>${esc(t.lineno)}</td><td class="mono">${esc(t.path)}</td><td class="mono">${esc(t.file_hash)}</td></tr>`
   ));
-  document.getElementById('tailsum').textContent =
-    `Measurement log tail (last ${ (s.log_tail || []).length } of ${ s.entry_count ?? '?' })`;
+  document.getElementById('tailsum').textContent = `Measurement log tail (last ${tail.length} of ${s.entry_count ?? '?'})`;
 
   const up = s.unknown_paths || {count: 0, sample: []};
-  document.getElementById('unknownsum').textContent =
-    `Unknown paths (reported, not compromising): ${up.count}`;
-  document.getElementById('unknown').innerHTML =
-    (up.sample || []).map(esc).join('<br>') + (up.count > (up.sample || []).length ? '<br>…' : '');
+  document.getElementById('unknownsum').textContent = `Unknown paths — ${up.count} total`;
+  const unknownEl = document.getElementById('unknown');
+  unknownEl.innerHTML = up.count === 0 ? 'None' :
+    (up.sample||[]).map(esc).join('<br>') + (up.count > (up.sample||[]).length ? '<br>…' : '');
 }
 refresh();
 setInterval(refresh, 2000);
