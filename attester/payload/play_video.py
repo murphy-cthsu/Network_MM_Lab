@@ -110,6 +110,13 @@ def unseal_with_retry(verifier_url, max_attempts):
     """Bounded live-PCR retry: TPM refusal -> re-attest -> re-authorize ->
     re-unseal. Returns the unsealed key or exits via gate_closed()."""
     approval, kind = pick_approval()
+    # if the latest verdict is already COMPROMISED, skip retry entirely —
+    # re-attesting will not change the outcome and just wastes time
+    if os.path.exists(APPROVAL_PATH):
+        with open(APPROVAL_PATH) as f:
+            _resp = json.load(f)
+        if _resp.get("verdict") == "COMPROMISED":
+            max_attempts = 1
     for attempt in range(1, max_attempts + 1):
         if approval is None:
             gate_closed("no unseal authorization available — attest first "
