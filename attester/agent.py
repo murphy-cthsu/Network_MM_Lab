@@ -56,7 +56,7 @@ from ima_replay import consistent_prefix, replay_sha256_pcr10
 from tpmconn import open_esapi
 
 ATTESTER_DIR = os.path.dirname(os.path.abspath(__file__))
-DEFAULT_VERIFIER_URL = os.environ.get("VERIFIER_URL", "http://172.20.10.4:5000")
+DEFAULT_VERIFIER_URL = os.environ.get("VERIFIER_URL", "http://172.20.10.5:5000")
 DEFAULT_IMA_LOG = os.environ.get(
     "IMA_LOG_PATH", "/sys/kernel/security/ima/ascii_runtime_measurements"
 )
