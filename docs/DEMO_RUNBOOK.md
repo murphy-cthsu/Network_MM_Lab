@@ -28,7 +28,15 @@ python3 verifier/server.py --host 0.0.0.0      # leave running
 git pull
 cp verifier/policy_pub.pem attester/policy_pub.pem   # enroll the new public
 git add attester/policy_pub.pem && git commit
-.venv/bin/python attester/provision.py               # only if the AK is gone
+
+### AK Genearation : run if you don't have one or you want a new one ###
+# pi
+.venv/bin/python attester/provision.py               
+git add verifier/ak_pub.pem verifier/ak.pub && git commit && git push
+# laptop
+git pull
+### AK Genearation Done ###
+
 .venv/bin/python attester/seal.py                    # re-seal to the new key
 ```
 
@@ -80,6 +88,7 @@ sudo .venv/bin/python attester/agent.py
 sudo .venv/bin/python attester/payload/play_video.py        # --no-display over SSH
 # 3. pi: live tamper (one keystroke)
 tamper/tamper_binary.sh
+# IMPORTANT: Remember to remove the new [gate_prelude] line in attester/payload/gated_prelude.sh, or video playing will fail even after reboot
 # 4. pi: re-attest -> dashboard RED, offending entry named
 sudo .venv/bin/python attester/agent.py                     # exits 2
 # 5. pi: gated function again -> TPM refuses unseal -> NO playback
