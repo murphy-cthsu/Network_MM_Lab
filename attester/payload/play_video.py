@@ -33,6 +33,7 @@ import os
 import subprocess
 import sys
 import tempfile
+import urllib.request
 
 PAYLOAD_DIR = os.path.dirname(os.path.abspath(__file__))
 ATTESTER_DIR = os.path.dirname(PAYLOAD_DIR)
@@ -89,13 +90,13 @@ def pick_approval():
 def unseal_key(approval):
     esys = open_esapi()
     try:
-        primary, persistent = sealing.get_storage_primary(esys)
+        primary = sealing.create_storage_primary(esys)
         with open(sealing.SEALED_PRIV, "rb") as f:
             priv, _ = TPM2B_PRIVATE.unmarshal(f.read())
         with open(sealing.SEALED_PUB, "rb") as f:
             pub, _ = TPM2B_PUBLIC.unmarshal(f.read())
         sealed = esys.load(primary, priv, pub)
-        esys.tr_close(primary) if persistent else esys.flush_context(primary)
+        esys.flush_context(primary)
         session = sealing.start_authorized_pcr_session(esys, approval)
         try:
             return bytes(esys.unseal(sealed, session1=session))
@@ -177,6 +178,20 @@ def main():
         blob = f.read()
     clip = AESGCM(key).decrypt(blob[:GCM_NONCE_BYTES],
                                blob[GCM_NONCE_BYTES:], None)
+
+    # push the decrypted clip to the verifier so the dashboard can play it
+    try:
+        req = urllib.request.Request(
+            f"{args.verifier_url}/upload-clip",
+            data=clip,
+            method="POST",
+            headers={"Content-Type": "video/mp4"},
+        )
+        urllib.request.urlopen(req, timeout=30)
+        print(f"clip uploaded to verifier ({len(clip)} bytes)")
+    except Exception as e:
+        print(f"[warn] could not upload clip to verifier: {e}")
+
     with tempfile.NamedTemporaryFile(suffix=".mp4", delete=False) as f:
         f.write(clip)
         tmp = f.name

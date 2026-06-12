@@ -23,6 +23,19 @@
   .pill.OK { background:var(--green); } .pill.TAMPERED { background:var(--red); } .pill.other { background:var(--grey); }
   details { margin-bottom:1.2rem; } summary { cursor:pointer; }
   #failsec h2 { color: var(--red); }
+
+  /* video / failed panel */
+  #media-panel { margin: 1.4rem 0; }
+  #video-wrap { background:#000; border-radius:10px; overflow:hidden; display:none; }
+  #video-wrap video { width:100%; max-height:480px; display:block; }
+  #failed-wrap {
+    display:none; background:var(--red); border-radius:10px;
+    padding: 3rem 2rem; text-align:center;
+  }
+  #failed-wrap .failed-text {
+    font-size: 4rem; font-weight:800; color:#fff; letter-spacing:.04em;
+  }
+  #failed-wrap .failed-sub { color:#ffc0c0; margin-top:.5rem; font-size:1rem; }
 </style>
 </head>
 <body>
@@ -30,6 +43,18 @@
   <div class="sub">TPM-attested platform state — PCR 10 (IMA runtime measurements)</div>
   <div id="verdict" class="UNKNOWN">UNKNOWN</div>
   <div class="meta" id="meta">waiting for first attestation…</div>
+
+  <div id="media-panel">
+    <div id="video-wrap">
+      <video id="clip" controls autoplay>
+        <source src="/clip" type="video/mp4">
+      </video>
+    </div>
+    <div id="failed-wrap">
+      <div class="failed-text">FAILED</div>
+      <div class="failed-sub">Device integrity compromised — playback denied</div>
+    </div>
+  </div>
 
   <h2>Protocol checks</h2>
   <table><tbody id="checks"></tbody></table>
@@ -54,10 +79,34 @@ function cls(v) { return v === 'TRUSTED' || v === 'COMPROMISED' ? v : 'UNKNOWN';
 function fillRows(tbody, rows) { tbody.innerHTML = rows.join(''); }
 function esc(s) { const d = document.createElement('div'); d.textContent = s ?? ''; return d.innerHTML; }
 
+let lastVerdict = null;
+
+function updateMedia(verdict) {
+  const videoWrap  = document.getElementById('video-wrap');
+  const failedWrap = document.getElementById('failed-wrap');
+  const videoEl    = document.getElementById('clip');
+
+  if (verdict === 'TRUSTED') {
+    failedWrap.style.display = 'none';
+    videoWrap.style.display  = 'block';
+    if (lastVerdict !== 'TRUSTED') {
+      videoEl.load();
+      videoEl.play().catch(() => {});
+    }
+  } else if (verdict === 'COMPROMISED') {
+    videoWrap.style.display  = 'none';
+    failedWrap.style.display = 'block';
+    videoEl.pause();
+  } else {
+    videoWrap.style.display  = 'none';
+    failedWrap.style.display = 'none';
+  }
+}
+
 async function refresh() {
   let s;
   try { s = await (await fetch('/status')).json(); }
-  catch (e) { return; /* verifier restarting; keep last state */ }
+  catch (e) { return; }
 
   const v = document.getElementById('verdict');
   v.textContent = s.verdict; v.className = cls(s.verdict);
@@ -67,6 +116,9 @@ async function refresh() {
     ? (s.detail || 'no attestation yet')
     : `device ${s.device_id} · ${when} · ${s.entry_count ?? '?'} measurements · ` +
       `capture attempts ${s.capture_attempts ?? '?'} · quoted PCR10 ${ (s.quoted_pcr10 || '').slice(0,16) }…`;
+
+  updateMedia(s.verdict);
+  lastVerdict = s.verdict;
 
   fillRows(document.querySelector('#checks'), Object.entries(s.checks || {}).map(([k, val]) => {
     const c = String(val).startsWith('PASS') ? 'pass' : String(val).startsWith('FAIL') ? 'fail' : 'warn';
