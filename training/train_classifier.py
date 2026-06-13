@@ -136,7 +136,8 @@ class FaceDataset(Dataset):
         self.samples = samples
         if train:
             self.tf = transforms.Compose([
-                transforms.Resize((INPUT_SIZE, INPUT_SIZE)),
+                transforms.Resize((256, 256)),        # slightly larger before crop
+                transforms.RandomCrop(INPUT_SIZE),    # random spatial crop -> sees different face regions
                 # --- geometric ---
                 transforms.RandomHorizontalFlip(),
                 transforms.RandomRotation(degrees=15),
@@ -144,7 +145,7 @@ class FaceDataset(Dataset):
                 # --- colour / lighting ---
                 transforms.ColorJitter(
                     brightness=0.4, contrast=0.4, saturation=0.3, hue=0.05),
-                transforms.RandomGrayscale(p=0.1),
+                transforms.RandomGrayscale(p=0.3),    # 0.1->0.3: harder to rely on clothing colour
                 transforms.RandomAutocontrast(p=0.3),
                 transforms.RandomEqualize(p=0.2),
                 # --- blur ---
@@ -160,7 +161,8 @@ class FaceDataset(Dataset):
             ])
         else:
             self.tf = transforms.Compose([
-                transforms.Resize((INPUT_SIZE, INPUT_SIZE)),
+                transforms.Resize((256, 256)),
+                transforms.CenterCrop(INPUT_SIZE),    # consistent center crop for val/test
                 transforms.ToTensor(),
                 transforms.Normalize(NORM_MEAN, NORM_STD),
             ])
