@@ -53,6 +53,7 @@ step "5/6 regenerate the allowlist for the current code"
 PYTHONWARNINGS="$PYW" "$PY" verifier/make_allowlist.py --bundle "$BUNDLE" \
     --watch "$WATCH" \
     --exclude-prefix /home/team2/ \
+    --exclude-prefix /var/log/ \
     --keep-prefix "$REPO_ROOT/"
 
 step "6/6 offline-verify the bundle against the new allowlist"

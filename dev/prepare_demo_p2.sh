@@ -70,10 +70,16 @@ step "5/6 regenerate the allowlist for the current code + model"
 # The model is --watch'd too: it gets a dedicated dashboard row and becomes the
 # named offender on a swap. --keep-prefix re-includes the repo subtree (incl. the
 # model) that --exclude-prefix /home/team2/ would otherwise drop.
+# /var/log/ is VOLATILE (wtmp, lastlog, ... change on every login/sudo session):
+# if allowlisted, the next session's new hash flips the verdict to COMPROMISED.
+# Excluded, those churning entries fall into unknown-paths (never compromising) —
+# code/model/watched files stay fully checked. This is what --exclude-prefix is
+# for; it is not weakening the integrity claim (logs are not the boundary).
 PYTHONWARNINGS="$PYW" "$PY" verifier/make_allowlist.py --bundle "$BUNDLE" \
     --watch "$WATCH" \
     --watch "$MODEL" \
     --exclude-prefix /home/team2/ \
+    --exclude-prefix /var/log/ \
     --keep-prefix "$REPO_ROOT/"
 
 step "6/6 offline-verify the bundle against the new allowlist"

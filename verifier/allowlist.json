@@ -1,6 +1,7 @@
 {
-  "comment": "generated from clean boot: clean_boot_bundle.json",
+  "comment": "generated from clean boot: clean_boot_bundle_p2.json",
   "watched": [
+    "/home/team2/Network_MM_Lab/attester/models/face_classifier.hef",
     "/home/team2/Network_MM_Lab/attester/payload/gated_prelude.sh"
   ],
   "paths": {
@@ -122,7 +123,7 @@
       "55a4f0d1ea45ee24954b6e9548b9c2a6c1a95e125e0b173fe7ff3a6f2760d16e"
     ],
     "/etc/cups/subscriptions.conf": [
-      "3195b1fe302dda8f8f0d61a07506d2ed2310f98b8604faf37058f299f3cd28ca"
+      "7ae43ad2a429fdf6fd8a82d5255e6e85a50ec4f55f94c9922184406e89eab5cd"
     ],
     "/etc/default/cron": [
       "b87c80139e47ecd361dae32bfcae5f233ffe6d4a906345a8073348a681469879"
@@ -222,6 +223,9 @@
     ],
     "/etc/hosts.deny": [
       "1d0a326106184ef6c389d685e061ba7737de6f7f60c600ec66b19682c53c08d1"
+    ],
+    "/etc/inputrc": [
+      "f585e6174d258118dbcf1b412a1d0486eefbe3b5afc7ca780d555c2437ff1a99"
     ],
     "/etc/issue": [
       "3ba7bf07910930e9e943e6131ece3f3182f1d3be607a0a4cbf21ce665e5c43a2"
@@ -326,37 +330,12 @@
       "a7e904d179598c9c0224ecefe8e35d70cfed5d5c5457f1a5b98458c843a1f738"
     ],
     "/etc/resolv.conf": [
-      "8904dddc31dc8218bde89daeeb5150279acf0baef5b827005a2ed17dbe803b6e",
-      "97652bc6c9c9b5013cadc4f4588a4047b93389f86d0771098f3b4316e79b10a0"
+      "8904dddc31dc8218bde89daeeb5150279acf0baef5b827005a2ed17dbe803b6e"
     ],
-    "/etc/resolv.conf.6OTFQ3": [
+    "/etc/resolv.conf.1J0RQ3": [
       "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
     ],
-    "/etc/resolv.conf.A2YGQ3": [
-      "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
-    ],
-    "/etc/resolv.conf.DDTDQ3": [
-      "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
-    ],
-    "/etc/resolv.conf.DI9EQ3": [
-      "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
-    ],
-    "/etc/resolv.conf.FE7FQ3": [
-      "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
-    ],
-    "/etc/resolv.conf.R18SQ3": [
-      "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
-    ],
-    "/etc/resolv.conf.V8XFQ3": [
-      "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
-    ],
-    "/etc/resolv.conf.WU8PQ3": [
-      "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
-    ],
-    "/etc/resolv.conf.WZPQQ3": [
-      "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
-    ],
-    "/etc/resolv.conf.XY8EQ3": [
+    "/etc/resolv.conf.9MPLQ3": [
       "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
     ],
     "/etc/rpi/swap.conf": [
@@ -530,11 +509,26 @@
     "/home/team2/Network_MM_Lab/.venv/lib/python3.13/site-packages/cryptography/hazmat/backends/__pycache__/__init__.cpython-313.pyc": [
       "1843b82679b4e9bc34df49240abedec8e013205f3f60dacf280079f2ca637289"
     ],
+    "/home/team2/Network_MM_Lab/.venv/lib/python3.13/site-packages/cryptography/hazmat/backends/openssl/__pycache__/__init__.cpython-313.pyc": [
+      "c341f7cddd7f8bbddbe2a2e67a5110e4360c3cca8b1801ab5bb7af624743c621"
+    ],
+    "/home/team2/Network_MM_Lab/.venv/lib/python3.13/site-packages/cryptography/hazmat/backends/openssl/__pycache__/backend.cpython-313.pyc": [
+      "485c01f40d40a1ab360fe58e3eae37135cfb884a070efb8c04c451bc1a6ab8b8"
+    ],
     "/home/team2/Network_MM_Lab/.venv/lib/python3.13/site-packages/cryptography/hazmat/bindings/__pycache__/__init__.cpython-313.pyc": [
       "44731f356cd89a37c8ac345f4f77c72c1ddfab7dee67b59f06e415c4965f5a57"
     ],
     "/home/team2/Network_MM_Lab/.venv/lib/python3.13/site-packages/cryptography/hazmat/bindings/_rust.abi3.so": [
       "71acdef4eb5b2bedda8f1b605c464e6c54e18bf072301055ac1ffb0d3d28fced"
+    ],
+    "/home/team2/Network_MM_Lab/.venv/lib/python3.13/site-packages/cryptography/hazmat/bindings/openssl/__pycache__/__init__.cpython-313.pyc": [
+      "e0d935c63bf28f6e846f881711477884756322f6bdcd9e739cd54ab4ab3009e7"
+    ],
+    "/home/team2/Network_MM_Lab/.venv/lib/python3.13/site-packages/cryptography/hazmat/bindings/openssl/__pycache__/_conditional.cpython-313.pyc": [
+      "0c6ec0d8172c2f039e581cc5e7aec831dc94bb83bf15f775eaede5fe1900128f"
+    ],
+    "/home/team2/Network_MM_Lab/.venv/lib/python3.13/site-packages/cryptography/hazmat/bindings/openssl/__pycache__/binding.cpython-313.pyc": [
+      "528ff7eb1ab44087775fca19692f91ced90f29d9a577c0d36089b1c403a08805"
     ],
     "/home/team2/Network_MM_Lab/.venv/lib/python3.13/site-packages/cryptography/hazmat/decrepit/__pycache__/__init__.cpython-313.pyc": [
       "8aacd7b0973f42c5ffe840da92b87487b10a15870b3c1568f1edb4ec90ecd826"
@@ -617,9 +611,6 @@
     "/home/team2/Network_MM_Lab/.venv/lib/python3.13/site-packages/cryptography/hazmat/primitives/ciphers/__pycache__/__init__.cpython-313.pyc": [
       "29e5b31f420a8740c216fe4c63f566cb398dbec3af24f6553124b2ab1914c29f"
     ],
-    "/home/team2/Network_MM_Lab/.venv/lib/python3.13/site-packages/cryptography/hazmat/primitives/ciphers/__pycache__/aead.cpython-313.pyc": [
-      "72fc8b68475ca4abe87c06a836355ac6ce350049fb1495a044cf705d4bf591ce"
-    ],
     "/home/team2/Network_MM_Lab/.venv/lib/python3.13/site-packages/cryptography/hazmat/primitives/ciphers/__pycache__/algorithms.cpython-313.pyc": [
       "13df26364e36eeea808c229b1adf31a99f5ca0bf4aca2431f2cf408dbec290b9"
     ],
@@ -685,6 +676,9 @@
     ],
     "/home/team2/Network_MM_Lab/.venv/lib/python3.13/site-packages/idna/__pycache__/package_data.cpython-313.pyc": [
       "e36b5744293d28dd75a93445efbbd7260dd5f6273538af1ef5962aa6af8c0d96"
+    ],
+    "/home/team2/Network_MM_Lab/.venv/lib/python3.13/site-packages/markupsafe/_speedups.cpython-313-aarch64-linux-gnu.so": [
+      "7e463d86e5d5efd445e51685f47c0fbefe3d3a7b220866b90902c9b1b0368862"
     ],
     "/home/team2/Network_MM_Lab/.venv/lib/python3.13/site-packages/requests/__pycache__/__init__.cpython-313.pyc": [
       "018defbf88b429a993cdb171990b5c14db54f5563d73879dde6c1f79624b2bcd"
@@ -879,11 +873,13 @@
       "d4bd533ce689970a1dbb3afc075339c5dbb21485f6c04fcfede79b62424c7d67"
     ],
     "/home/team2/Network_MM_Lab/.venv/pyvenv.cfg": [
-      "7992af82934f2f9f1333ba02afb5fa96be6ca1eaceb4f27b95240b1f59b1fae7"
+      "4e759451c53a2da1ea45ca25a8ddb99da366ab045c346beb07a65836f1a75c1e"
     ],
     "/home/team2/Network_MM_Lab/attester/__pycache__/agent.cpython-313.pyc": [
-      "3a815492480dd1b8a8694b4fc4974a76cd5e80c1f380fed3d8f28af38b27fde2",
-      "f39774731e9d5a73bedeb6a4fc0b14ad5d0e37eda517aaea4b1b0c68b050b7de"
+      "d4f2da0620657fabec78ad274b0942817fdc1300d377e90ca870f0ee0ae44ee6"
+    ],
+    "/home/team2/Network_MM_Lab/attester/__pycache__/gate.cpython-313.pyc": [
+      "4a0e8731a927dfafff155389ac30c54138159bfb95a6afdf40db27ea87b02427"
     ],
     "/home/team2/Network_MM_Lab/attester/__pycache__/ima_replay.cpython-313.pyc": [
       "414998d1e0c82fdf6af62cb0e2fadc23e8fd3d18bcb125c0d0a33f87f887680b"
@@ -895,43 +891,54 @@
       "a525576e3560c2a2f0865fb5289aeffc7504e64ffcfc8132e3aff5e03d30e04a"
     ],
     "/home/team2/Network_MM_Lab/attester/agent.py": [
-      "dde64fc94ef01eebfb8f307dbf40dcafad4a9648997af818a1fda187dba62d5f",
       "c23df5f9c009eb777a3e2df00a2cf631b44789c43b61ff802293e9092e497310"
     ],
-    "/home/team2/Network_MM_Lab/attester/out/clip.enc": [
-      "4641d533351d79ff039cc389949597fd9f1ae967588ba32a11d7987c3b12adb2"
+    "/home/team2/Network_MM_Lab/attester/models/face_classifier.hef": [
+      "8493b64ed9ae7f22cb7cb54828b6f4a5f6ffb7979017bfb1d83ed104dd0efefc"
     ],
     "/home/team2/Network_MM_Lab/attester/out/sealed_key.priv": [
-      "9f61aa1e6907ed90c6c5f7b432fe933ca9cbb1e98aedca864f46b08600243787"
+      "39e9a2bbb19748422d2391537269b97d8b9bc99214c2480de8bb2d142519c22d"
     ],
     "/home/team2/Network_MM_Lab/attester/out/sealed_key.pub": [
-      "4799a6433521c7b5fe680998cebbb25db8911483d23e3a221d8b837b906d83af"
+      "0036c37cbbb5f20a12a0c861b156d89bf0fa63e212e64fe485dbcf4dfa5824de"
+    ],
+    "/home/team2/Network_MM_Lab/attester/payload/__pycache__/recognizer.cpython-313.pyc": [
+      "0fee5e63917e0f627e08fa841ed4a9dab0290c3bc00a33fffa9cb2ddc52796ff"
     ],
     "/home/team2/Network_MM_Lab/attester/payload/gated_prelude.sh": [
       "1adecd9cab9d711bff0be3df8c3ca094f427ede6d78158e17b89f49c1c36dc3e"
     ],
-    "/home/team2/Network_MM_Lab/attester/payload/play_video.py": [
-      "4a6e676baa2db2a4d0e544c559b535f3be02ee9c9ada7ebd7725d1abd480c1ae"
+    "/home/team2/Network_MM_Lab/attester/payload/infer_door.py": [
+      "cfaf721f57d2699ea3b2c1f0fbccd2e395bb021219314a7a5183c5f082773501"
     ],
-    "/home/team2/Network_MM_Lab/dev/prepare_demo.sh": [
-      "a644eea1bf422d14797376ab789d8b6b76b66fd7c96e52312ee970031cd255f3"
+    "/home/team2/Network_MM_Lab/attester/policy_pub.pem": [
+      "35d1aad32ea2f7ee516b00c2a2a9f048ed31e2f6428ee266a047b5f3da14d8c7"
     ],
-    "/home/team2/Network_MM_Lab/dev/run_pi_demo.sh": [
-      "7a8eeb016a0a2738a8a524c6167f9c414f1023515b4c9c7dc58dc27234d41a12",
-      "3ec3e81d58ca70beaccebf233208f7a0040b9abe16f1bd599829b14a66dca9ee",
-      "4f6571a1296ee242feacc17d2ce736586e66f9c44bb477f26e14bc73d7cc7ab4"
+    "/home/team2/Network_MM_Lab/dev/prepare_demo_p2.sh": [
+      "e8b296099fd13e2ca190e32634d3b0531e696ae9c7ee11ee0fde28388e5c782f",
+      "5f47b6de8c569938da2d2e67b59e7f14d9638e10838e3bb78f3d441ab881e298"
+    ],
+    "/home/team2/Network_MM_Lab/training/testset/A.jpg": [
+      "0128775043593ff2cb361651fea38415dcb6c0f755e7bf6067f5e2c5ad10a2fc"
+    ],
+    "/home/team2/Network_MM_Lab/training/testset/B.jpg": [
+      "be932c72b0e21fe14955c1ef10addf514ad0d795748e4d4cd26a25839fb76a09"
+    ],
+    "/home/team2/Network_MM_Lab/training/testset/others.jpg": [
+      "8e8bb4eeed62b77412cafea0f15b9d968332fb416cc3b73c7a189b4fa4ce90be"
+    ],
+    "/root/.python_history": [
+      "b8e29249a07d7e60e052c3f2240d21d338ee16c448536dc00d07a18a63b1b517",
+      "81490a270fd5882a171f721348c0a58ee42e90240606cfc98ce8d493e444fc52"
     ],
     "/usr/bin/aarch64-linux-gnu-strings": [
       "c5797a5f36aecf64af1e7cd1e383e86555a9276f6f685f697623e04b38f6a6e3"
     ],
-    "/usr/bin/apt-config": [
-      "be26a131ad92fb3eb495f91cfb506f7b1c1b99fe6739148c5df0131fa58c4cc2"
-    ],
-    "/usr/bin/apt-get": [
-      "8124a02e29b28b0f0164a816f4b2ad5ceae457cfa49fe75d89dc5d4ff52754ef"
-    ],
     "/usr/bin/autotouch": [
       "a0b0b505fb89f37b9c1ac5c482751959b7adcfc5aca0686bfeb08685bc02858e"
+    ],
+    "/usr/bin/basename": [
+      "e5f735ef1e239481d53e44dae4217948198ac93f319cbd0df58a9e9a507d91c7"
     ],
     "/usr/bin/bash": [
       "ccbd5106945d1095474e5ee47317266f5918aa37fc671829192a007918b1413a"
@@ -1002,17 +1009,14 @@
     "/usr/bin/env": [
       "a1a366aeec990c18d7ff97358e523925e449e2df224029fe048fc3ae35a97720"
     ],
-    "/usr/bin/ffmpeg": [
-      "3e6d46c21d04e56e1c30749fe0d7be4f913440fd299bea3d5ae8ae72285c85f3"
+    "/usr/bin/file": [
+      "71691ad44ec682de7a40535a38cc2048badf34748e3ca391b7e7ca47d0f2ee20"
     ],
     "/usr/bin/find": [
       "a0a346a409b0637a251b82c95a90e4ee7be329ebfe37df357e9387385404942a"
     ],
     "/usr/bin/findmnt": [
       "6bbe81dadf28c8e1c361a3dbc933bcc0347370d85547f678f2ae460b577b1cc4"
-    ],
-    "/usr/bin/flock": [
-      "73c9aa86e45e2215e3e04633efaffea2dd3096fdd46663b4d1b3763e2fe5ee88"
     ],
     "/usr/bin/fusermount3": [
       "96a341712e078b819fb341b6cbfdd944abd0fb68e5c0954fb24c0f5097744e44"
@@ -1025,9 +1029,6 @@
     ],
     "/usr/bin/git": [
       "a0e562e4bd3c4c79379e91d8c07a10104b2cefe8fac966dc6bd4874a57a807f3"
-    ],
-    "/usr/bin/gnome-keyring-daemon": [
-      "50e07155e84313a0c4aa58b523a60f53dfc3c8e83f7a0363874528275d8029dc"
     ],
     "/usr/bin/gpg-agent": [
       "03d58f5d54dfc3fb4bff044e2765d33599f8d7d05d18cfa96698b6f664d6f308"
@@ -1056,9 +1057,6 @@
     "/usr/bin/id": [
       "9099881905b68f7831560a3cccef1a04d475568f985b97da51a9d88db84b9415"
     ],
-    "/usr/bin/install": [
-      "9b55c1c1d6c20ea4092d28a2d9700ef633c036b97f5731c5920b72f83755ba23"
-    ],
     "/usr/bin/ip": [
       "ff59d8e63fe2ba155578a2cd892be84b85508c1de11c74739b737195e56315f4"
     ],
@@ -1079,9 +1077,6 @@
     ],
     "/usr/bin/labwc-pi": [
       "516e5096faa39db9401daf7e249745d6034c1dda75f08b3fe671a4a83203c580"
-    ],
-    "/usr/bin/less": [
-      "7e7be069547925a0c4cacbfa391a8d80c7aab8689f06c0dbd278b05d64da2cac"
     ],
     "/usr/bin/libinput": [
       "840a3a65e72366d4140d8b1c6d24dd17c2e59344e9101eaaf488dc6451076daa"
@@ -1104,12 +1099,6 @@
     "/usr/bin/lxsession-xdg-autostart": [
       "a58fabb42ef5cb633305e1059f070c2a101073df0c4c19c7e23b9df704fb43d6"
     ],
-    "/usr/bin/lxterminal": [
-      "1d22fae0d45c217cf2ec4883d73a47aa88811fd0419d8a1342fc5dd8074a8e0a"
-    ],
-    "/usr/bin/mandb": [
-      "b27df89b3cdfa054e722a0a794de7b29968905dc1afe2d3212baeda69ca5c117"
-    ],
     "/usr/bin/mawk": [
       "f1fdae58b46515eb6631dd55b99be603f2b133376cd694e78927a121c7648353"
     ],
@@ -1127,9 +1116,6 @@
     ],
     "/usr/bin/mv": [
       "f1bc7dd4e9fd6d11791ab70901239dd4fa57f00d18be26c9d82603f6a985ff2e"
-    ],
-    "/usr/bin/nano": [
-      "876b60f582976c31fb6d2e516f2cbc22bd12e80102fabc536e9c275e42e44bb2"
     ],
     "/usr/bin/nc.openbsd": [
       "1bd30fad66f1ad6d0cd563354b50756b4a644b70beb4993493d1939591c7e998"
@@ -1151,9 +1137,6 @@
     ],
     "/usr/bin/pgrep": [
       "b5c2b737f46503a9100d0225d567d9a1344834a791a9786c04697ce2e2ceb6f0"
-    ],
-    "/usr/bin/ping": [
-      "f8432cc609e0a178a7b442d256ba36fd6640b121bb3735aa2d5e6b88da092c60"
     ],
     "/usr/bin/pipewire": [
       "e80c98bc69492568ffcfbf86399b3483a9c1709dbb4f3c5f6bce241f5f00fc22"
@@ -1194,6 +1177,12 @@
     "/usr/bin/sed": [
       "8a495ad93852a6ae0d409dac21c9f81f40aab24a49da9e01a849a8d3edbea396"
     ],
+    "/usr/bin/seq": [
+      "b597d04caa08ed39d9906f90361b3558fc5e65ae7eae6724f958ca7224eb80f0"
+    ],
+    "/usr/bin/sha256sum": [
+      "7911a1f0aec4678c540bd78ff886f48d42790c8689a82ed0ae25ed79ed5dd512"
+    ],
     "/usr/bin/sleep": [
       "f42cf7276848ac3dfd4d90295233c1f12f5cdc7da2e5715e75a15f2c790acbd6"
     ],
@@ -1205,9 +1194,6 @@
     ],
     "/usr/bin/sqv": [
       "0bb84a94982de8ce5481d2d32b91bc14d7510c6665d6714bef01ad57c3aee061"
-    ],
-    "/usr/bin/ss": [
-      "8dd59ce132a09f5ebcfd2db1ad4cd44b99843d1bb9b8fb7e55d34117ed1013d6"
     ],
     "/usr/bin/ssh-agent": [
       "6d525f2f36fb5f9a15f8e1fc9d9803cd9e4caa6ddcde4ad201be676ed5b7a4d3"
@@ -1274,6 +1260,9 @@
     ],
     "/usr/bin/wlr-randr": [
       "1803679c2cb50c66a0cc0877f2ad8765a2bc1cf59e59b9e53f6de069b7a2a3dc"
+    ],
+    "/usr/bin/xargs": [
+      "ca6dfe9cc2dc6dd37b251a51e8b29cf4e82d66334c46b604023964cf4dc8d680"
     ],
     "/usr/bin/xauth": [
       "09e10b73ad2e639edf205bda54caa1aa3186f5fba8f6787ea78e8ad6c63f5ace"
@@ -1497,9 +1486,6 @@
     "/usr/lib/aarch64-linux-gnu/gconv/gconv-modules.cache": [
       "c4c52c0df6f3809f1b85927a85f322d102cffebb6b517b44b37048f6fd620c01"
     ],
-    "/usr/lib/aarch64-linux-gnu/gdk-pixbuf-2.0/2.10.0/loaders/libpixbufloader_svg.so": [
-      "349f9191d59c72460f0c987edaacfc932fbde36ce225e6b13e8611c8f30f6288"
-    ],
     "/usr/lib/aarch64-linux-gnu/gio/modules/giomodule.cache": [
       "8d894c49f85c81f3862ab5c6e3f83a95cea06e76f6514604df6a9b6dd3818848"
     ],
@@ -1517,12 +1503,6 @@
     ],
     "/usr/lib/aarch64-linux-gnu/gio/modules/libgvfsdbus.so": [
       "cf2468ac47b91f9b30275281dd76175d8a0e2bb5bb4966e3b06a8962456d30f0"
-    ],
-    "/usr/lib/aarch64-linux-gnu/glib-2.0/gio-launch-desktop": [
-      "3d27fe4e3f4ffdba7fb16523fbd27ec4805a16c9f57a667e997244771001481e"
-    ],
-    "/usr/lib/aarch64-linux-gnu/gtk-3.0/3.0.0/immodules/im-wayland.so": [
-      "5aa596053d42fbfd540b252791073f0f197a09b8ec5d0ee4e27e5fc58f169029"
     ],
     "/usr/lib/aarch64-linux-gnu/gvfs/libgvfscommon.so": [
       "b2b2925b7b57b8059428fdba65a16c1c9d17722ed427747cef3360b0aa9154a5"
@@ -1545,14 +1525,8 @@
     "/usr/lib/aarch64-linux-gnu/libFLAC.so.14.0.0": [
       "e766917a53fe2f4cb588147ebe2cea59cfd316869541781068568bfbbd15cddd"
     ],
-    "/usr/lib/aarch64-linux-gnu/libGL.so.1.7.0": [
-      "9dfd95cbf8b066680e367384c86455dec857836b155b83a4fcafbf41667c21d4"
-    ],
     "/usr/lib/aarch64-linux-gnu/libGLESv2.so.2.1.0": [
       "955d7bf5a98cbcdf3a52c3e9160acfccc6e36efee479502a66c629bc68a89f05"
-    ],
-    "/usr/lib/aarch64-linux-gnu/libGLX.so.0.0.0": [
-      "60e1341ba6d6c894fc69d0a511da703c2c2d8754aaac885cf67ada97f5de8154"
     ],
     "/usr/lib/aarch64-linux-gnu/libGLdispatch.so.0.0.0": [
       "4edb1144c2ef58c8402c3c93a07e19c45ddd62046f16da0761cf06c236e8ee5e"
@@ -1562,15 +1536,6 @@
     ],
     "/usr/lib/aarch64-linux-gnu/libLerc.so.4": [
       "e365ccd59a08752ba3ed96cb644e9455a207a55d993cf12349ec201c5d699d24"
-    ],
-    "/usr/lib/aarch64-linux-gnu/libOpenCL.so.1.0.0": [
-      "3460c933751763524a417eaa1255b8e9a00a0ef277e40301e33e5309c87b1759"
-    ],
-    "/usr/lib/aarch64-linux-gnu/libSDL2-2.0.so.0.3200.4": [
-      "6e4be9d6b75dc75e7ed44b61d681649e4fc0389182f50350f980ee8105bf62fa"
-    ],
-    "/usr/lib/aarch64-linux-gnu/libSvtAv1Enc.so.2.3.0": [
-      "0c6142116c2b20af63b6ad9652df2861ae88cf26c2bdb8e0efa138a07bbf2d76"
     ],
     "/usr/lib/aarch64-linux-gnu/libX11-xcb.so.1.0.0": [
       "3827c0df48c2fbcaecc42531a90cda1ce20744e9bad813170b1e3bcf2413e094"
@@ -1613,12 +1578,6 @@
     ],
     "/usr/lib/aarch64-linux-gnu/libXrender.so.1.3.0": [
       "33fe5e2aefc2e3b63699cc856a6703a871b6f54f8d187ce0424fae64042af102"
-    ],
-    "/usr/lib/aarch64-linux-gnu/libXss.so.1.0.0": [
-      "c683ed386e09bd5ab0045b39d1f261d8ef9801fc8e6089d9be2aea3ebde15e6f"
-    ],
-    "/usr/lib/aarch64-linux-gnu/libXv.so.1.0.0": [
-      "7ea3eff8d5275227eeb65f6e1e40309d91dc0d9a77752fc12380563dcd4ca402"
     ],
     "/usr/lib/aarch64-linux-gnu/libabsl_base.so.20240722.0.0": [
       "360bf656a5249795befa01e3781fec728f785a76bf706d0fc5da2bb879aed65a"
@@ -1761,9 +1720,6 @@
     "/usr/lib/aarch64-linux-gnu/libacl.so.1.1.2302": [
       "10300360cefba2fbd4af5c6036c449bbf04a48d5c808dc14c71e711747625275"
     ],
-    "/usr/lib/aarch64-linux-gnu/libaom.so.3.12.1": [
-      "3b9bd343cf7b6e54f610ae7916132418a1d9a7f508d3c0e8166ae3eda2d867b3"
-    ],
     "/usr/lib/aarch64-linux-gnu/libapparmor.so.1.24.2": [
       "4255686d741fac69e1f23a7ef9cec3ba923e0187aff6c11f91bd14987c89a650"
     ],
@@ -1773,14 +1729,8 @@
     "/usr/lib/aarch64-linux-gnu/libapt-pkg.so.7.0.0": [
       "d90696f339830485f1f1d146df1cd76bf5adf9da61ee5bf4f627330c9f6e1390"
     ],
-    "/usr/lib/aarch64-linux-gnu/libapt-private.so.0.0.0": [
-      "0dab59763473c7ed11b43299205e94d3255d756919d8db2e6d506fa22cbee407"
-    ],
     "/usr/lib/aarch64-linux-gnu/libasound.so.2.0.0": [
       "9f8d4335961d3cacb1329bf2b94ba04248dfd729e1c99cc12c49e14f078f5bde"
-    ],
-    "/usr/lib/aarch64-linux-gnu/libass.so.9.3.1": [
-      "4b42b7b32d287fc32ce79e61fbb06629b61f1927c8e491dc20fc6cd37ac1f1a3"
     ],
     "/usr/lib/aarch64-linux-gnu/libassuan.so.9.0.2": [
       "b541835f89c9f238e2d8802b96c0a07e2612fb4fd4f33f70cfb9549ea72b5ffc"
@@ -1823,24 +1773,6 @@
     ],
     "/usr/lib/aarch64-linux-gnu/libavahi-glib.so.1.0.2": [
       "fbed6921b43971ba4f05da63904939646e974686083d062e6bcb06a4b73f2f7b"
-    ],
-    "/usr/lib/aarch64-linux-gnu/libavc1394.so.0.3.0": [
-      "f8d36cade01fb87ad6ebe905d5c6121ec325b1aa4cb3ec72c2b7379f5569566a"
-    ],
-    "/usr/lib/aarch64-linux-gnu/libavcodec.so.61.19.101": [
-      "417564b0056db70e583f9940190f941586fc313c8c7941f3e01ba647ee242702"
-    ],
-    "/usr/lib/aarch64-linux-gnu/libavdevice.so.61.3.100": [
-      "6cf8e5c7f2bf1d742b0e885230b85d1f60f944b8cd5fb0f9fd02651b07285383"
-    ],
-    "/usr/lib/aarch64-linux-gnu/libavfilter.so.10.4.100": [
-      "59c02356c4309ae51fbb45ea295951d191fc71f9cba621355fa99ffb6f4fa86b"
-    ],
-    "/usr/lib/aarch64-linux-gnu/libavformat.so.61.7.100": [
-      "fc80bafdaf370dfa2f8f82db8308b286767f9ad8d26f6e46d089687c6ce99700"
-    ],
-    "/usr/lib/aarch64-linux-gnu/libavutil.so.59.39.100": [
-      "0ef2f28c1390eeec5cb0917b5e544482f56eaecf04afdeac94edfbf928067b29"
     ],
     "/usr/lib/aarch64-linux-gnu/libbd_crypto.so.3.0.0": [
       "4454654f768076558c82bfa5d6dd30e03cbc440c05d8f80eef4ffd8aac908509"
@@ -1899,12 +1831,6 @@
     "/usr/lib/aarch64-linux-gnu/libbrotlidec.so.1.1.0": [
       "3ac5116be503e51a11954f9b4dff0932319368501eb26be8ff06f0618eac624e"
     ],
-    "/usr/lib/aarch64-linux-gnu/libbrotlienc.so.1.1.0": [
-      "fc9dbb9aafcfd962630d8516686178fc10cee5b48c769836c7723fa82d21159a"
-    ],
-    "/usr/lib/aarch64-linux-gnu/libbs2b.so.0.0.0": [
-      "f3d920f439b98f9b718f2107b5975781761b786121af81a58ce9de1d4b410095"
-    ],
     "/usr/lib/aarch64-linux-gnu/libbsd.so.0.12.2": [
       "9b1bb9f8b294e61b41312193ccb77176f4068215ed27e8039fbc592fa179798c"
     ],
@@ -1916,9 +1842,6 @@
     ],
     "/usr/lib/aarch64-linux-gnu/libc.so.6": [
       "22e183b61a7f7d7a60aa999ec0eead8b5883ac68a388520e77d1aa05765c0297"
-    ],
-    "/usr/lib/aarch64-linux-gnu/libcaca.so.0.99.20": [
-      "ba5402b7319acb5f41eeb4bc6f73182f7df3b077598d35fdbda6d70e63cb7bf5"
     ],
     "/usr/lib/aarch64-linux-gnu/libcairo-gobject.so.2.11804.4": [
       "ddad19717038ec7a8dfcbea070c246e82974ead6437c25b0b2ab96d34e9415ad"
@@ -1938,8 +1861,20 @@
     "/usr/lib/aarch64-linux-gnu/libcamera/ipa/ipa_rpi_pisp.so": [
       "8ffcc2152fb5b89be787a812c80c8ed19d7e35d0033f02aecd01bc76ec4ad8bd"
     ],
-    "/usr/lib/aarch64-linux-gnu/libcanberra-0.30/libcanberra-alsa.so": [
-      "72f7008d031e2d082da07a52efd2412515b9ca253b7f1450b14089ca5378433b"
+    "/usr/lib/aarch64-linux-gnu/libcamera/ipa/ipa_rpi_pisp.so.sign": [
+      "2a0a4515bac2fb273a53250147c131790d41d99f5f214fc34021e80c10f8fc00"
+    ],
+    "/usr/lib/aarch64-linux-gnu/libcamera/ipa/ipa_rpi_vc4.so": [
+      "4dafe66f69e1429f12511f3dbf477c3e7b517866e283827e98bb86fc57e55caa"
+    ],
+    "/usr/lib/aarch64-linux-gnu/libcamera/ipa/ipa_rpi_vc4.so.sign": [
+      "1d509c6ea29c24c32f55382fe0bc76f7ea9e1162aedc858776423991f5f0d158"
+    ],
+    "/usr/lib/aarch64-linux-gnu/libcamera/ipa/ipa_vimc.so": [
+      "9dcf8152133a3cceeb8477da97757dce4ec3bf6cc58dfc77a866470e7f96f81f"
+    ],
+    "/usr/lib/aarch64-linux-gnu/libcamera/ipa/ipa_vimc.so.sign": [
+      "2bdeb9e3207495896dbf310aa1c05a2ac10b858a307a891fc335f4061275539b"
     ],
     "/usr/lib/aarch64-linux-gnu/libcanberra.so.0.2.5": [
       "aff365d8fff4500bbcadb280b1a236fa179c517185783b4e396bd8773e06dc2b"
@@ -1950,26 +1885,8 @@
     "/usr/lib/aarch64-linux-gnu/libcap.so.2.75": [
       "c3f03de8984413b0d3f90e5586019538308537604f18880752f065d8d9b2ee90"
     ],
-    "/usr/lib/aarch64-linux-gnu/libcdio.so.19.0.0": [
-      "7e42d4f62db95a0d8a5967ee371b3597b125efcbcf785251e2f5d768c1d5d859"
-    ],
-    "/usr/lib/aarch64-linux-gnu/libcdio_cdda.so.2.0.0": [
-      "c17501956fe34911deacb4ae6c35bd7fbd72ae1bcafec4600f74998f36c29ef7"
-    ],
-    "/usr/lib/aarch64-linux-gnu/libcdio_paranoia.so.2.0.0": [
-      "130961d7b1863e51940c3b476e5d913b4a77d6ee8f397e826674babed2e9cc70"
-    ],
-    "/usr/lib/aarch64-linux-gnu/libchromaprint.so.1.5.1": [
-      "8354cb5316131cab1dde7d86a0fb27964757c41f6fe477fc02cef10941a17dd6"
-    ],
-    "/usr/lib/aarch64-linux-gnu/libcjson.so.1.7.18": [
-      "16f5c7745c2c1cd39b20c0965f6b6f91d80f6afb96e48bc124f3833aedbf11fd"
-    ],
     "/usr/lib/aarch64-linux-gnu/libcloudproviders.so.0.3.6": [
       "cce1cc0c45dabcc886d39488fb9b4c22e74f68f58a6e808232ce32d4a82e105c"
-    ],
-    "/usr/lib/aarch64-linux-gnu/libcodec2.so.1.2": [
-      "257c8e12c163ecb6427b0359a76df731ea07c4cefc0ad4ea183adc2f91d11e4c"
     ],
     "/usr/lib/aarch64-linux-gnu/libcom_err.so.2.1": [
       "6a3258ad8e42f54f4333b8a5b6c671922a4482d261a89f75114b0de3ef565013"
@@ -2007,9 +1924,6 @@
     "/usr/lib/aarch64-linux-gnu/libdav1d.so.7.0.0": [
       "de01e4bfa4f37cff13fec31c310fdf115e7c1342900452e4ae6c1e56bf7c844b"
     ],
-    "/usr/lib/aarch64-linux-gnu/libdb-5.3.so": [
-      "a9d28b0f7bbe2e391ea2d42ec89d3a2e6908a4bbf36b71462e487541e47ad06b"
-    ],
     "/usr/lib/aarch64-linux-gnu/libdbus-1.so.3.38.3": [
       "33dc83ad1eb603068542245eab12d67bca6c6f8323c08fe4600ef3b0868966af"
     ],
@@ -2021,12 +1935,6 @@
     ],
     "/usr/lib/aarch64-linux-gnu/libdbusmenu-gtk3.so.4.0.12": [
       "a00a91297e6f010bbb3bdb946edecd69bb2949ee58906ce98cd5b317fe35295f"
-    ],
-    "/usr/lib/aarch64-linux-gnu/libdc1394.so.25.0.0": [
-      "7a7538858d498e58da8d8362c03d404fe1f221b502c37b614af8b5514c443d95"
-    ],
-    "/usr/lib/aarch64-linux-gnu/libdecor-0.so.0.200.2": [
-      "ffe467568ba9f19dc7073860dee9945144b117246e38f93cdd07f64a9196c5d9"
     ],
     "/usr/lib/aarch64-linux-gnu/libdeflate.so.0": [
       "b04eeb6d40708bddf45876a92261b3e8a28bef367ae7e2a07f55cd85ba0a2e86"
@@ -2048,12 +1956,6 @@
     ],
     "/usr/lib/aarch64-linux-gnu/libduktape.so.207": [
       "f4c3d5a9e2416154f57d0dc552d4ec05c08aed3dd36439b8819b955c12352927"
-    ],
-    "/usr/lib/aarch64-linux-gnu/libdvdnav.so.4.3.0": [
-      "a4e7aec22df7312d7dbbe1cc1e40339252ddc74a4d7631c65cf02b0b74af4249"
-    ],
-    "/usr/lib/aarch64-linux-gnu/libdvdread.so.8.0.0": [
-      "6690a42c60520c0ca357470bcb79594481c0e558e1c1d6557d99f1826cad1d15"
     ],
     "/usr/lib/aarch64-linux-gnu/libdw-0.192.so": [
       "1cce3fec6e174c5898c09ce8efcf718cbd69319a45d8ef7a6fd492af12ca3be0"
@@ -2094,33 +1996,6 @@
     "/usr/lib/aarch64-linux-gnu/libffi.so.8.1.4": [
       "f0527ef7efeaf85fc2f5855d68fddb63bf7b3b90f1228c6b49fb6020b0dca490"
     ],
-    "/usr/lib/aarch64-linux-gnu/libfftw3.so.3.6.10": [
-      "419e655bef06202f66626268e94ce13a37586b805ff7c941d533fbd239061148"
-    ],
-    "/usr/lib/aarch64-linux-gnu/libflite.so.2.2": [
-      "f07aa839ee07f3c0a2b467b864276f750572a0c311ffc63429138ba3b5a3f750"
-    ],
-    "/usr/lib/aarch64-linux-gnu/libflite_cmu_us_awb.so.2.2": [
-      "d51ab77516f0b6155df20d8c69e9287de2a13a4505b333f75d29867126d4a0df"
-    ],
-    "/usr/lib/aarch64-linux-gnu/libflite_cmu_us_kal.so.2.2": [
-      "bb0e100d0494d84f192c11de9c578f6ff25078a14dcb923e868f1ca98b9cbc80"
-    ],
-    "/usr/lib/aarch64-linux-gnu/libflite_cmu_us_kal16.so.2.2": [
-      "c9e61c8473646ebc7fa519a3a564cdb2ddb4b6d4f8aff3090964a81ee5750557"
-    ],
-    "/usr/lib/aarch64-linux-gnu/libflite_cmu_us_rms.so.2.2": [
-      "f5af22359575e1935e7e5c91d9a77e1a41b4be42e9f85b3b92df87fe7b4a7e74"
-    ],
-    "/usr/lib/aarch64-linux-gnu/libflite_cmu_us_slt.so.2.2": [
-      "7e48f63669e101099143a319553bf7e8be787292cc63d874fc23dc826eabbbe1"
-    ],
-    "/usr/lib/aarch64-linux-gnu/libflite_cmulex.so.2.2": [
-      "960b37ab3ec06f7dcd4a6115164d60defd9bb54061647c8c4502d19855833c3d"
-    ],
-    "/usr/lib/aarch64-linux-gnu/libflite_usenglish.so.2.2": [
-      "9a246a6d048d323509193064d65edcbfd594536b6f0014495c3bbc6d8ad0c060"
-    ],
     "/usr/lib/aarch64-linux-gnu/libfm-extra.so.4.2.0": [
       "de8302a9205f4676dfcec7a93a442798d6d9a65201f0f72294262c2d7817072f"
     ],
@@ -2148,6 +2023,9 @@
     "/usr/lib/aarch64-linux-gnu/libfm/modules/vfs-search.so": [
       "123e1ad7c09f11a39c10ccf1e51792485ac2302472b40c7788fce13860bd9f64"
     ],
+    "/usr/lib/aarch64-linux-gnu/libfmt.so.10.1.0": [
+      "d68ff102acad198a5831ae65e834518c83002e84dbe0ae732b834bd136b8af6f"
+    ],
     "/usr/lib/aarch64-linux-gnu/libfontconfig.so.1.12.1": [
       "6a9db1b9262267a0c291de43c0e827263fed8d3f39138d1d7853d2a8d45ba8ad"
     ],
@@ -2172,23 +2050,14 @@
     "/usr/lib/aarch64-linux-gnu/libgcc_s.so.1": [
       "9a146967dc38c3820c5dc21c3209812655f66b6551264072b187bd0e787947e0"
     ],
-    "/usr/lib/aarch64-linux-gnu/libgck-1.so.0.0.0": [
-      "74ae244eb9ecf19de3eb18500c2728dfe4a6d0fe3bf26ac4fd7c389a97fc7e58"
-    ],
     "/usr/lib/aarch64-linux-gnu/libgck-2.so.2.4.0": [
       "ff36317417c3fdcb509b0a435e27f08e95fe7dcfc4a2ce37751b4d6b566740e0"
     ],
     "/usr/lib/aarch64-linux-gnu/libgcr-4.so.4.4.0": [
       "5fdd7d52bd801da1d1d4725e4bde43e1020f1983d2d69f40e61f558b58fc079c"
     ],
-    "/usr/lib/aarch64-linux-gnu/libgcr-base-3.so.1.0.0": [
-      "95ee4ed86f8b75c941a03c3eedc54dd633e8bc2380384760e2aeaeef1c81ba71"
-    ],
     "/usr/lib/aarch64-linux-gnu/libgcrypt.so.20.5.0": [
       "55cdb8bc8c4452bc8d4768a29de620cd1e91709ba2886210056ed1ecaf501668"
-    ],
-    "/usr/lib/aarch64-linux-gnu/libgdbm.so.6.0.0": [
-      "34cac747bb20d56694673cb527ef7f38abbb5f1ad0550462553e18b4d667245e"
     ],
     "/usr/lib/aarch64-linux-gnu/libgdk-3.so.0.2417.32": [
       "0bd54fa59826675e35207741e850511cecda543d719b5adbd12136210a4fcc26"
@@ -2213,9 +2082,6 @@
     ],
     "/usr/lib/aarch64-linux-gnu/libglibmm-2.4.so.1.3.0": [
       "e90c0b38691c364c140bd9f90a5d2781d1f58cbe34352be56fe1b485d5af5b30"
-    ],
-    "/usr/lib/aarch64-linux-gnu/libgme.so.0.6.3": [
-      "9a6bbd1af04cf7eaf063891dee0f9b574beb9861b70fcc144bcf720d424472a7"
     ],
     "/usr/lib/aarch64-linux-gnu/libgmobile.so.0": [
       "293fea732d72571c6cfa92551bb51d912472a8eb3669d9599107606dcd6f35bc"
@@ -2259,9 +2125,6 @@
     "/usr/lib/aarch64-linux-gnu/libgraphite2.so.3.2.1": [
       "e429689818c47c7eb3033cf7410a1d8dfb49891dc6ffe9c8a54a28d5bf15b208"
     ],
-    "/usr/lib/aarch64-linux-gnu/libgsm.so.1.0.19": [
-      "d14a1df9d69d84d747fca6b5beea8cc05c77bb57b3131a719c05a001a6ac26fa"
-    ],
     "/usr/lib/aarch64-linux-gnu/libgsound.so.0.0.2": [
       "9a3d28386e82d0a616b58020dc82963a067ec900b3c87d01314fcf5dc3c449a8"
     ],
@@ -2289,20 +2152,11 @@
     "/usr/lib/aarch64-linux-gnu/libhogweed.so.6.10": [
       "047d4fde470f4664a0e84ce80c84c9b03672948214be50f51f3915070c9ca4b6"
     ],
-    "/usr/lib/aarch64-linux-gnu/libhwy.so.1.2.0": [
-      "8986a9d0b1aec6708fa96fab98d3690a949cf04acb2ac795c4a38ffee9f2a82a"
-    ],
-    "/usr/lib/aarch64-linux-gnu/libicudata.so.76.1": [
-      "b1c6ed9d0c4efef8034d101e17a8521128a616aeed3f128644cb4d1696476165"
-    ],
-    "/usr/lib/aarch64-linux-gnu/libicuuc.so.76.1": [
-      "4eb85e84e80c9b2f0ec719fb4a2acaadffad677c0c75408599187a2363f738d3"
-    ],
     "/usr/lib/aarch64-linux-gnu/libidn2.so.0.4.0": [
       "6ce57885b9ff21ba3fa902c1c515050230d8d6703f12f9a7d1e3d4e27279966e"
     ],
-    "/usr/lib/aarch64-linux-gnu/libiec61883.so.0.1.1": [
-      "3907f1e863d684dc24ee1c7ef00e8bb74072b60793ca60cfa73bb9325c8128ff"
+    "/usr/lib/aarch64-linux-gnu/libimagequant.so.0": [
+      "b5081783ccc1115a284066c0cedc714006ea7971a57e722c07cb72e1e65f3e1f"
     ],
     "/usr/lib/aarch64-linux-gnu/libimobiledevice-1.0.so.6.0.0": [
       "fe8688469c3f79249e39eb8c6e72e1e04621e7c83b770a93ab9e12c51da0df51"
@@ -2315,9 +2169,6 @@
     ],
     "/usr/lib/aarch64-linux-gnu/libinput.so.10.13.0": [
       "51b8ba858a4e8506946bd5e1aeeeea5f67390655837df6c8c69cbeeee6f3e35b"
-    ],
-    "/usr/lib/aarch64-linux-gnu/libjack.so.0.1.0": [
-      "e4e13a1bd571a00d87a07c2c3cc6266e08af8d05b633b1c61e2634720f6d873f"
     ],
     "/usr/lib/aarch64-linux-gnu/libjansson.so.4.14.0": [
       "b7830632c6245b8805ce05240c6818eb77644adef86a55d754acfd93bbf0fb6b"
@@ -2334,15 +2185,6 @@
     "/usr/lib/aarch64-linux-gnu/libjson-glib-1.0.so.0.1000.6": [
       "bd01ac6c02fb1dfb16d8223f8bc1fa9b8419cd07946ba5fff7c34c6aceca8672"
     ],
-    "/usr/lib/aarch64-linux-gnu/libjxl.so.0.11.1": [
-      "3c7eb3062ce8837e28edfe7792edcb87e7625941f30dd8a42c1761b542d7638d"
-    ],
-    "/usr/lib/aarch64-linux-gnu/libjxl_cms.so.0.11.1": [
-      "bcb806ce890be3f06e57ff3285a450d6e4a865ed01356f49a27a42b185a7ae6e"
-    ],
-    "/usr/lib/aarch64-linux-gnu/libjxl_threads.so.0.11.1": [
-      "75c74e7f6e1b5d8ff28fa446bb9b632866b341fae50751b9d8fbfb1ecec88c8d"
-    ],
     "/usr/lib/aarch64-linux-gnu/libk5crypto.so.3.1": [
       "1adc1ede9262ea7961702bf8398c12e4878784a9be337bdfde8bfbb0bccdf3d2"
     ],
@@ -2351,6 +2193,12 @@
     ],
     "/usr/lib/aarch64-linux-gnu/libkmod.so.2.5.1": [
       "ee13c99cb34f809b3c96b23cb34f5883ccc619f5ef3fe03088b2e8428dbd7267"
+    ],
+    "/usr/lib/aarch64-linux-gnu/libkms++.so.0.0.0": [
+      "b875a35dcf2fbf8d9e9a5ce21a5dc163f5c715d979eac0fc735f71a72e2c0f37"
+    ],
+    "/usr/lib/aarch64-linux-gnu/libkms++util.so.0.0.0": [
+      "b829fe7f3d8d935f3569b4d895c7fde79071082571106134a334a3572d4056eb"
     ],
     "/usr/lib/aarch64-linux-gnu/libkrb5.so.3.3": [
       "0444bba23bc163adb90a2818b9326dc7f89649f3d9d7841658557fdbb97c4f9d"
@@ -2379,9 +2227,6 @@
     "/usr/lib/aarch64-linux-gnu/libliftoff.so.0.5.0": [
       "b1cb461c790f77b9fad260a18cbc281a1cb08d7d22f8bc4f8117f4ade3add43d"
     ],
-    "/usr/lib/aarch64-linux-gnu/liblilv-0.so.0.24.26": [
-      "b1626acf6666055b737d13c783ba2ff2be4b10ac50dd2396b045a43fa9895900"
-    ],
     "/usr/lib/aarch64-linux-gnu/libltdl.so.7.3.3": [
       "da6f50bb6e3e5da94598b3da5237f193c9cd0bdb76cc646325a66ddfb200ba34"
     ],
@@ -2406,8 +2251,8 @@
     "/usr/lib/aarch64-linux-gnu/libm.so.6": [
       "a8afb2d1f4a0c5e14c0fc82f794ec839eafe29738907aa92895410f57630bbe2"
     ],
-    "/usr/lib/aarch64-linux-gnu/libmbedcrypto.so.3.6.5": [
-      "a68a45fb67da16b2e9ecb34c9cb26366634e48ab77ce51867a4a2ab67dad0751"
+    "/usr/lib/aarch64-linux-gnu/libmagic.so.1.0.0": [
+      "b322f83513af72e56420f15f070f4b6eab4648e110bf7758d6d0575850a165b0"
     ],
     "/usr/lib/aarch64-linux-gnu/libmbim-glib.so.4.9.0": [
       "ca9b2f0b45fc80825cf4853cc5c0500d8ef28ce2315511190dd08b3ad6ebecf3"
@@ -2438,12 +2283,6 @@
     ],
     "/usr/lib/aarch64-linux-gnu/libmtdev.so.1.0.0": [
       "128112bf68ee3f64705dac5e96e40b0a3501641d5c572346b8cb0adf0a1c9c57"
-    ],
-    "/usr/lib/aarch64-linux-gnu/libmvec.so.1": [
-      "8c07d4136fdc50d44f10c8bb4d905f461c38db064bd687c44aec1b74e4859bde"
-    ],
-    "/usr/lib/aarch64-linux-gnu/libmysofa.so.1.3.3": [
-      "b2ceab1473515034621870c8cf3c77794921c7102fb80f60745d839623e9fad5"
     ],
     "/usr/lib/aarch64-linux-gnu/libncursesw.so.6.5": [
       "c686275a2b0129ff95a17e09dc0c58a44fb306386e472212ca541951e527c91c"
@@ -2484,9 +2323,6 @@
     "/usr/lib/aarch64-linux-gnu/libnma.so.0.0.0": [
       "e10e753e09ec8f8e0e1c05c75a96508f7e2e31f45c8c392d3174c1d6e1c7f08a"
     ],
-    "/usr/lib/aarch64-linux-gnu/libnorm.so.1": [
-      "42bdb74f60635bde30093addd9fa69b5973403da40dd82f458cc54226d67d78a"
-    ],
     "/usr/lib/aarch64-linux-gnu/libnpth.so.0.3.0": [
       "00e69f7071b5699895e15214929e5154bbc6ffc1383d9b025902ad5f24ec392e"
     ],
@@ -2514,14 +2350,8 @@
     "/usr/lib/aarch64-linux-gnu/libogg.so.0.8.5": [
       "faac9822d3667bbf735633005142ab314a62a00c1bc6c33acb97bc0cc5c17c23"
     ],
-    "/usr/lib/aarch64-linux-gnu/libopenal.so.1.24.2": [
-      "5f9846beb2b4647c4bbf7c3b5504da3ae5b141ab358271321e7518bb99090293"
-    ],
     "/usr/lib/aarch64-linux-gnu/libopenjp2.so.2.5.3": [
       "3d3363ab44ac942d4ff10885ca55989be7f50180efbd535aac15b22d85e33af4"
-    ],
-    "/usr/lib/aarch64-linux-gnu/libopenmpt.so.0.4.4": [
-      "9ec9808d91a44f861f6a5cfeca3c513680cba621b37393db590fe95a58f760fc"
     ],
     "/usr/lib/aarch64-linux-gnu/libopus.so.0.10.1": [
       "7dcca79810c46e4a8e0ce2b337565007c9e856fc0c9741e74fe0156be118cce9"
@@ -2559,12 +2389,6 @@
     "/usr/lib/aarch64-linux-gnu/libpcsclite.so.1": [
       "01de2d0aadbff7c28e027a6425999ef2a2dd648b1d06cea08e72bc3d270f2bca"
     ],
-    "/usr/lib/aarch64-linux-gnu/libpgm-5.3.so.0.0.128": [
-      "92a33f80d9b6f0d63c7a75c30ea77ff97a7f82dda8fbc8f72222fc33fca80985"
-    ],
-    "/usr/lib/aarch64-linux-gnu/libpipeline.so.1.5.8": [
-      "60bd8911da53b21080673c84380060ef119e27ad5389d73a35de0194d6c65be8"
-    ],
     "/usr/lib/aarch64-linux-gnu/libpipewire-0.3.so.0.1402.0": [
       "0e669577507f47840c584eaf992b79a4bc2c9583b992a1128733e25b70f17cda"
     ],
@@ -2573,9 +2397,6 @@
     ],
     "/usr/lib/aarch64-linux-gnu/libpixman-1.so.0.46.4": [
       "a592c5b6c3e4a17ebadfb10f76721df44ec11d353208bedb65432c55677427aa"
-    ],
-    "/usr/lib/aarch64-linux-gnu/libplacebo.so.349": [
-      "d6b8c107e4f21ddcb8d6bc17907e4256322b6ed86c91fc62b8663cb6ac98a914"
     ],
     "/usr/lib/aarch64-linux-gnu/libplc4.so": [
       "b60e885a26b70575b1219c8d0fae0a64c02991ebb736b2100757cadd558c933f"
@@ -2598,17 +2419,11 @@
     "/usr/lib/aarch64-linux-gnu/libpng16.so.16.48.0": [
       "d5e34dbebaee8f578441557340d32bb6697ca079ff1416c33a02be7c2e764b0b"
     ],
-    "/usr/lib/aarch64-linux-gnu/libpocketsphinx.so.3.0.0": [
-      "81be7251134b5feb8957063efba94b7508de6306b29f52eee44ecea850c985a2"
-    ],
     "/usr/lib/aarch64-linux-gnu/libpolkit-agent-1.so.0.0.0": [
       "c192e11743fb0f5933a4f4655f354d61347e235bbe7cdd68e7fe6cf29c5e6097"
     ],
     "/usr/lib/aarch64-linux-gnu/libpolkit-gobject-1.so.0.0.0": [
       "3eeebda4e7de009bce47498de5ce6d82a14888c0bd2f2dcf227c71e07af97b5f"
-    ],
-    "/usr/lib/aarch64-linux-gnu/libpostproc.so.58.3.100": [
-      "0ba5f329c38723a9bfe7584a454402b5827d53cb89da56f3bd4d6950c90107ca"
     ],
     "/usr/lib/aarch64-linux-gnu/libproc2.so.0.0.2": [
       "edb1e9823b60ea9bc4dc244445b4802863c745ec804e4318a16a131699b5383d"
@@ -2634,23 +2449,11 @@
     "/usr/lib/aarch64-linux-gnu/libqrtr-glib.so.0.0.0": [
       "d255d687d2abda1822c962c716d0901c0e627adac4add4696e8df6c6bf25d2ce"
     ],
-    "/usr/lib/aarch64-linux-gnu/librabbitmq.so.0.15.0": [
-      "b27689266884cf79689ac0b37730c55153d7d40a02a5e1701d85535d980389e3"
-    ],
-    "/usr/lib/aarch64-linux-gnu/librav1e.so.0.7.2": [
-      "86abf82f2f856855e872566b6716c689c20dde636853a04b5e4f34e0ac83a041"
-    ],
-    "/usr/lib/aarch64-linux-gnu/libraw1394.so.11.1.0": [
-      "5d7b5522fb562c8d43149895ad1afaa9655efed6fa685e5ca005cc07f48f760c"
+    "/usr/lib/aarch64-linux-gnu/libreadline.so.8.2": [
+      "41eaf42757798c29d7dd13f519f76a91cd06847a068ed29a7912b343b60c48b3"
     ],
     "/usr/lib/aarch64-linux-gnu/libresolv.so.2": [
       "cb9756963306434c0fbe3351ded4041a5cc6e6ce37efc175de1093e13b3747fc"
-    ],
-    "/usr/lib/aarch64-linux-gnu/librist.so.4.4.0": [
-      "a4752c68b11075166b6743df78d4539e6cc2c4a2581c0f0830b4b0ab4edeaced"
-    ],
-    "/usr/lib/aarch64-linux-gnu/librom1394.so.0.3.0": [
-      "cedc1ed49f28d60877a3514972d0e63fc971b29d3933caab7a6ecb9f1db98db0"
     ],
     "/usr/lib/aarch64-linux-gnu/librsvg-2.so.2.60.0": [
       "86a4abcfbc9cecb695330afb5f5d7b45b6a265a6d82bcd4d05da136ec38626d7"
@@ -2660,12 +2463,6 @@
     ],
     "/usr/lib/aarch64-linux-gnu/librtmp.so.1": [
       "52aab346adb8506ce39846ead65f99ee398142865a4185fd5a9a0aa8504b2d74"
-    ],
-    "/usr/lib/aarch64-linux-gnu/librubberband.so.2.3.0": [
-      "2aba6c5a046b7b0bd72024242d83e9960390f36a66e5a3b96c43283ef6cdc809"
-    ],
-    "/usr/lib/aarch64-linux-gnu/libsamplerate.so.0.2.2": [
-      "46179ed56dd2986661925cbcb7ab48f5863655c1e4c717330c49286dd20782c6"
     ],
     "/usr/lib/aarch64-linux-gnu/libsasl2.so.2.0.25": [
       "8bfeedd24d410b345ac39c26dfa9970609fe0ca6738a20fd6ac154a232aec152"
@@ -2688,9 +2485,6 @@
     "/usr/lib/aarch64-linux-gnu/libsensors.so.5.0.0": [
       "7fefcb398a7386c568acc007790efb168eac346d63c0ee201f80da26ac4890eb"
     ],
-    "/usr/lib/aarch64-linux-gnu/libserd-0.so.0.32.4": [
-      "0375646bf061e055e51872afca7eaacd9d94c51c7830ed89e9c920fdfac6bbba"
-    ],
     "/usr/lib/aarch64-linux-gnu/libsfdo-basedir.so.0": [
       "f9c6e0b4723b5a52f90b721649edf019f6849e3c52635bfb69708a8f05a7d506"
     ],
@@ -2709,14 +2503,8 @@
     "/usr/lib/aarch64-linux-gnu/libsharpyuv.so.0.1.1": [
       "b68429dfdfad881c8b22915d9cc70085c641ac04476445e79bbf6ea9190afe72"
     ],
-    "/usr/lib/aarch64-linux-gnu/libshine.so.3.0.1": [
-      "9f6b5eb97436e19419001de746670932defc4e6cc2b7bd8a4d80ab7f9cdf672b"
-    ],
     "/usr/lib/aarch64-linux-gnu/libsigc-2.0.so.0.0.0": [
       "22dd9dd81eb70fe619e69ef6e27ca4f8f782cc57de85c7e7576faa0707bb663c"
-    ],
-    "/usr/lib/aarch64-linux-gnu/libslang.so.2.3.3": [
-      "9567cdd8a8519208ee262fef85902283cea5042f8d16d56171d7192ee5d70ede"
     ],
     "/usr/lib/aarch64-linux-gnu/libsmartcols.so.1.1.0": [
       "8cb29b67179fca2ade60a4b125c9b617be37cf7b63e9ea6101b9f1ffb5ef4e88"
@@ -2724,38 +2512,14 @@
     "/usr/lib/aarch64-linux-gnu/libsmime3.so": [
       "2177122a49c7faabffc323b57013573d43815c761d1e02feaf8c29fcac696c11"
     ],
-    "/usr/lib/aarch64-linux-gnu/libsnappy.so.1.2.2": [
-      "fecf9cffa4d9003c4ccaf4136e7d8d37262dd50510933ada40cc6aee58fcae03"
-    ],
     "/usr/lib/aarch64-linux-gnu/libsndfile.so.1.0.37": [
       "7588158a49a7417621c405b57cc5fc698ec4e4e1143ed49721ebbf9f570ae511"
     ],
     "/usr/lib/aarch64-linux-gnu/libsodium.so.23.3.0": [
       "c1e6ec0bd6437fd85a64bc1f6dc22ec290aa40f963ba39662a8ab8971197a096"
     ],
-    "/usr/lib/aarch64-linux-gnu/libsord-0.so.0.16.18": [
-      "785e88a85b93a7d39e004f600c4bca40570078564f833c1756f1af272fe46fd8"
-    ],
-    "/usr/lib/aarch64-linux-gnu/libsoxr.so.0.1.2": [
-      "1ebf05fea8ed275a3de2286119df9a52db7b6c4563ca55e8a6d6a3c8c6865be2"
-    ],
-    "/usr/lib/aarch64-linux-gnu/libspeex.so.1.5.2": [
-      "a3e2fae4428292bc7565ae9eefe49d184317f93b738fbeb1aefa205b525158d3"
-    ],
-    "/usr/lib/aarch64-linux-gnu/libsphinxbase.so.3.0.0": [
-      "8e57a6e044c916d71451cc66b9796ca9fdac021bc004e23b81cbd4c7ff721a6c"
-    ],
     "/usr/lib/aarch64-linux-gnu/libsqlite3.so.0.8.6": [
       "9fb3adada4c3b580cbd8f5c1f754efad79a1096fa89575c265eeebbdf5654a4a"
-    ],
-    "/usr/lib/aarch64-linux-gnu/libsratom-0.so.0.6.18": [
-      "955d683c1e49e8534874e581b36245e3d05d99fe14a80dbc42cffeddaddc4e3b"
-    ],
-    "/usr/lib/aarch64-linux-gnu/libsrt-gnutls.so.1.5.4": [
-      "6f18471507870531c1909762039bf758b5c545ecba52217ea1f6b2951026177c"
-    ],
-    "/usr/lib/aarch64-linux-gnu/libssh.so.4.10.2": [
-      "9a9d7a72946a07b05bc7be40f468d6bb0d0f6ae075905c2562229b2f115134d8"
     ],
     "/usr/lib/aarch64-linux-gnu/libssh2.so.1.0.1": [
       "88e96dec88023455a09c1907ea7f79bb346c97ac80b11efecaf7a55629cfd6e4"
@@ -2768,12 +2532,6 @@
     ],
     "/usr/lib/aarch64-linux-gnu/libstemmer.so.0d.0.0": [
       "e01daabae29e758d52f67083c10ab0cd82d7d9607ba68b5ebc514015f5c441f3"
-    ],
-    "/usr/lib/aarch64-linux-gnu/libswresample.so.5.3.100": [
-      "a8d165a79183fbb58946c317a79497b4cb8e60466d4127ba6f4a0f4a611b7d49"
-    ],
-    "/usr/lib/aarch64-linux-gnu/libswscale.so.8.3.100": [
-      "676305d48f152f3157b57a4a093ed27d62975789f315388d8a7ff400bc762664"
     ],
     "/usr/lib/aarch64-linux-gnu/libsystemd.so.0.40.0": [
       "ef4748dd987f958e7fd54e6aadff301ad3d42b7605882b560b2bdfd49b0e0ca8"
@@ -2792,12 +2550,6 @@
     ],
     "/usr/lib/aarch64-linux-gnu/libthai.so.0.3.1": [
       "d43ce32ea48bfb639c884200ed0a69efc61defb6ad7af48d96ba2e25053a89f7"
-    ],
-    "/usr/lib/aarch64-linux-gnu/libtheoradec.so.1.1.5": [
-      "c3368420ac280403b7b2df898a94a667518aaefef0804aaf768f008516dc2731"
-    ],
-    "/usr/lib/aarch64-linux-gnu/libtheoraenc.so.1.2.0": [
-      "38e352438b50ba6b56fbdfb3731b3ac5d839ed9c37f98c41631b24c424d464f7"
     ],
     "/usr/lib/aarch64-linux-gnu/libtiff.so.6.1.0": [
       "cb1a7f725c476e6dd7ebcacd2f8eee124b35a0ac2a0d7cf59b1b00b446c00a2e"
@@ -2835,8 +2587,8 @@
     "/usr/lib/aarch64-linux-gnu/libtss2-tctildr.so.0.0.0": [
       "2403ee36194718de83acb1f50ae53bea48fcc187a226506a5d62536c2e0555e4"
     ],
-    "/usr/lib/aarch64-linux-gnu/libtwolame.so.0.0.0": [
-      "01ed28791fd530215ce86d556f6a4ec5c5e578d49554ac69c4992cf745b2003d"
+    "/usr/lib/aarch64-linux-gnu/libturbojpeg.so.0.2.0": [
+      "d8e4a12770bcdbcf027a401836f062c8596336082103543b1ecdb97c763037e4"
     ],
     "/usr/lib/aarch64-linux-gnu/libudev.so.1.7.10": [
       "2cb78eb9f3503ab27fe9b1735bf30b070128f0f8f41b8ad6531ce0b71840bfce"
@@ -2846,9 +2598,6 @@
     ],
     "/usr/lib/aarch64-linux-gnu/libudisks2.so.0.0.0": [
       "109ef8d3886e1e068b765b37f10a3160caf29f8b99ee9e28511039600c60f358"
-    ],
-    "/usr/lib/aarch64-linux-gnu/libunibreak.so.6.0.1": [
-      "fd87440974286d43fe3896f0fff4ac6bc12d566fbcc168dad2192f0fe50f5830"
     ],
     "/usr/lib/aarch64-linux-gnu/libunistring.so.5.2.0": [
       "26bda6bd707b57c7d02bb6331adda65906950d4ef8ad7ed82901a7cf81a4d44f"
@@ -2862,21 +2611,6 @@
     "/usr/lib/aarch64-linux-gnu/libuuid.so.1.3.0": [
       "fb496f44458dc566a03cda9d8d969aeb7a5020ade5ac3738c049161de7d9f91b"
     ],
-    "/usr/lib/aarch64-linux-gnu/libva-drm.so.2.2200.0": [
-      "3702c3347277f58892aee3403462a9e82e9057d92842fa3ea1be08996d57bb11"
-    ],
-    "/usr/lib/aarch64-linux-gnu/libva-x11.so.2.2200.0": [
-      "4b32ea751ada2d0370774560973d7abb62139293929657e9b0693cc4890fc1e6"
-    ],
-    "/usr/lib/aarch64-linux-gnu/libva.so.2.2200.0": [
-      "0f680ae765ac5b3d1b5fcd3bb06318d948aeaa64d03495c2541cb474b7cd1e78"
-    ],
-    "/usr/lib/aarch64-linux-gnu/libvdpau.so.1.0.0": [
-      "f3963e4a38636b65eaada9d9e37a9adeb2715924a434c1009278da3724cc8899"
-    ],
-    "/usr/lib/aarch64-linux-gnu/libvidstab.so.1.1": [
-      "df84c49ec2b4ece1687f03a56cc2cb052c36b2d9e8cb85a647dcdbd0932dbca2"
-    ],
     "/usr/lib/aarch64-linux-gnu/libvolume_key.so.1.2.3": [
       "7ae23aa2340bec48b9b5e68f9d26f02c24aba8164ae965c0f26c43a7ef877b76"
     ],
@@ -2888,12 +2622,6 @@
     ],
     "/usr/lib/aarch64-linux-gnu/libvorbisfile.so.3.3.8": [
       "41e06a310ee6c4adc89711b5d9471730d576fd54455e23bb7800419b1b292ef3"
-    ],
-    "/usr/lib/aarch64-linux-gnu/libvpx.so.9.1.0": [
-      "335c1eb6502b1bcf6101e034f895270a3ba2c645f552ca73179c6c5c8917b058"
-    ],
-    "/usr/lib/aarch64-linux-gnu/libvte-2.91.so.0.8000.1": [
-      "d6debe1b1e2a27b1b5d42358f80da2073bfbb48ad7cafa79cf6725e0ac6cc9d3"
     ],
     "/usr/lib/aarch64-linux-gnu/libvulkan.so.1.4.309": [
       "22b6ce3145007566e3e47ce1f379135ba9b83e734cba2edc2d0c3e1b28ffeea7"
@@ -2916,9 +2644,6 @@
     "/usr/lib/aarch64-linux-gnu/libwebp.so.7.1.10": [
       "979c17adab6dff218b8bae090e8ec9a1ca1af0116f6c7e0e107f670eacddaed4"
     ],
-    "/usr/lib/aarch64-linux-gnu/libwebpmux.so.3.1.1": [
-      "c5916a3ca1d5c2572c9da12ccd25f78e33079fc24c96045db980f15876e3ae78"
-    ],
     "/usr/lib/aarch64-linux-gnu/libwireplumber-0.5.so.0.508.0": [
       "c06d03f10bd8e6e7fdb6dbcd697fa9cf121857c742d2567861b04c2258dfc0f4"
     ],
@@ -2930,12 +2655,6 @@
     ],
     "/usr/lib/aarch64-linux-gnu/libwtmpdb.so.0.73.0": [
       "a3e39d5725babc0e1aa3292901e2681925b718a3a674b39e98f83ae17762fb94"
-    ],
-    "/usr/lib/aarch64-linux-gnu/libx264.so.164": [
-      "d2800083965a5f23f2d771a8891fcfe5e67447b4f17ae2efa783e4d907238526"
-    ],
-    "/usr/lib/aarch64-linux-gnu/libx265.so.215": [
-      "65d308d98a5fe8466808ca1aec54722db842d141ccc1a0757fbfa4b0d1c063f7"
     ],
     "/usr/lib/aarch64-linux-gnu/libxcb-composite.so.0.0.0": [
       "1d5fe74a08e4cf63bccecd8bf8c1fe5657be2ba2598f7a024d8123506e83dd19"
@@ -2967,9 +2686,6 @@
     "/usr/lib/aarch64-linux-gnu/libxcb-res.so.0.0.0": [
       "1aae18659a07ae6647d7e315c62e0aea95093dbc294ff3d31a458d8d24944e83"
     ],
-    "/usr/lib/aarch64-linux-gnu/libxcb-shape.so.0.0.0": [
-      "d8f5967acb68c016dcb02fe52659901325c60309bd93722e1633ffc1b558ccf2"
-    ],
     "/usr/lib/aarch64-linux-gnu/libxcb-shm.so.0.0.0": [
       "70176ec6e656846387f537996bd5fdfabfcc174da6ba815f579f0ec98cc5fca0"
     ],
@@ -3000,9 +2716,6 @@
     "/usr/lib/aarch64-linux-gnu/libxshmfence.so.1.0.0": [
       "5f201d5fb65642fb898a7d89591e1bbd72a71a16ef9295f45c09ea029a44917c"
     ],
-    "/usr/lib/aarch64-linux-gnu/libxvidcore.so.4.3": [
-      "43c809c0c4900a7fafece33e25b81163c998a8c6fe744aa2a9e2a33abcd466b7"
-    ],
     "/usr/lib/aarch64-linux-gnu/libxxhash.so.0.8.3": [
       "574e6a1156f27d9bf8fa3f7e926330b61fba4b328c66c54b341459cb229ff4fb"
     ],
@@ -3018,20 +2731,8 @@
     "/usr/lib/aarch64-linux-gnu/libz3.so.4": [
       "cb5320742a56e44ed0d86e14acc4b44a8862ca2a9a1af894dc0ad1862ff7fb6e"
     ],
-    "/usr/lib/aarch64-linux-gnu/libzimg.so.2.0.0": [
-      "b70aa6651253cd4e1a606f9368cbb6eb543e47ad10e7c7b87bc5bd82a9707980"
-    ],
-    "/usr/lib/aarch64-linux-gnu/libzix-0.so.0.6.2": [
-      "8c2ba16a8c366cc9cb4b698b51db314a12a048e3417e3004f996d01e628f1e8a"
-    ],
-    "/usr/lib/aarch64-linux-gnu/libzmq.so.5.2.5": [
-      "852f5ce6b4ed6d31b4d7399c3a4221f4e2bda8dc0a99d53634aa09fe8c4b99d2"
-    ],
     "/usr/lib/aarch64-linux-gnu/libzstd.so.1.5.7": [
       "1279c4edfbfb08878b5b7fb40d392c1bdc9b30100d9b7a019d4aefaf10d2046c"
-    ],
-    "/usr/lib/aarch64-linux-gnu/libzvbi.so.0.13.2": [
-      "ffe27d1e9649715a24543ddb71b2611a0fe1f50765af9039d98a37561f88d545"
     ],
     "/usr/lib/aarch64-linux-gnu/ossl-modules/legacy.so": [
       "323b38f3ab1af0baa4f15337e967879683a019472e00631383e477f245ef0583"
@@ -3086,9 +2787,6 @@
     ],
     "/usr/lib/aarch64-linux-gnu/pipewire-0.3/libpipewire-module-spa-node-factory.so": [
       "1f6e199cfd140309556c0f1796a859757b572d7eadd962cce1fe3b326ce2502c"
-    ],
-    "/usr/lib/aarch64-linux-gnu/pkcs11/p11-kit-trust.so": [
-      "05c64b11a611cf1e54836357ffb28421888076d4635699308c8da4c6797b0f42"
     ],
     "/usr/lib/aarch64-linux-gnu/plymouth/label-pango.so": [
       "a299f3693c62846477a685c385a2ef0836eb14771285863ac396d2de5fc2d133"
@@ -3291,20 +2989,11 @@
     "/usr/lib/aarch64-linux-gnu/wireplumber-0.5/libwireplumber-module-standard-event-source.so": [
       "baff60812ebee5f7e9b7b6cebd92e12a973b0b7553f82dc9e9a7312e7bf14f63"
     ],
-    "/usr/lib/apt/apt-helper": [
-      "4a317aaf367a70deb4f784032f3c4ee969dd26b7f27b74b86aa9e8b49a6abf1f"
-    ],
-    "/usr/lib/apt/apt.systemd.daily": [
-      "4949c220a844071ee4709115aadfc00684578d5c7dda9c1b5a5c65a75de9d50f"
-    ],
     "/usr/lib/apt/methods/http": [
       "9dc6d38448a820aa9fcd40a347c9f7da43198dc1772599daa899e83fbb9ae361"
     ],
     "/usr/lib/apt/methods/sqv": [
       "d1906dc9c1795947ea3913c9881728473b2fa277871605e516ab448e6209ff08"
-    ],
-    "/usr/lib/apt/methods/store": [
-      "4bb116dbb32212c588a24bddeadb86278444b31cce219b4bda3884a35ef628a2"
     ],
     "/usr/lib/binfmt.d/python3.13.conf": [
       "10f7fd39c493a458d54cc84ed3711a2510d853c2f6396384a6a40e2dab1a60d2"
@@ -3335,6 +3024,9 @@
     ],
     "/usr/lib/firmware/cypress/cyfmac43455-sdio.clm_blob": [
       "9823842cae9fb9a5dd1e5fb31f595516ec7deee341354bef30bb3026eee29cc1"
+    ],
+    "/usr/lib/firmware/hailo/hailo8_fw.4.23.0.bin": [
+      "5c77066dab786d6b89bcdcf0cb01535170456276c0434cb114f9d029e6ce81ee"
     ],
     "/usr/lib/firmware/raspberrypi/bootloader-2712/default/pieeprom-2025-12-08.bin": [
       "3fcc73903807dfbebb50697c3e4f2a6f09d5a3c5348b6ba8d00a2f179050c022"
@@ -3392,12 +3084,6 @@
     ],
     "/usr/lib/locale/locale-archive": [
       "60c5de27bd080e2b31bbc99360ef32f3539e060a66c1cc193f09a2421c8dc034"
-    ],
-    "/usr/lib/man-db/libman-2.13.1.so": [
-      "092a9cd9beeba07a74a8621e60ed783d0f70541c0f6b3fe5e297257434633918"
-    ],
-    "/usr/lib/man-db/libmandb-2.13.1.so": [
-      "e44a5adf34ee1d318f37a8f3d531d1e7265235cd6fa8694e12ac00a16e2f578a"
     ],
     "/usr/lib/menu-cache/menu-cache-gen": [
       "c716d8444999e7dbc5e0e12ad34f09af90922cf9dd973a39455d2fab15b7a678"
@@ -3651,14 +3337,8 @@
     "/usr/lib/modules/6.12.93-v8-16k-ima+/kernel/net/bluetooth/rfcomm/rfcomm.ko.xz": [
       "33a1c3c15116f7c85f390d6e6db3f1de759bd7fd09b2d165049b4b623127b835"
     ],
-    "/usr/lib/modules/6.12.93-v8-16k-ima+/kernel/net/ipv4/inet_diag.ko.xz": [
-      "7b38335d8468caa151d71cc5dd1d65008862ff04a55748075cb74fe5cbe87f2b"
-    ],
     "/usr/lib/modules/6.12.93-v8-16k-ima+/kernel/net/ipv4/netfilter/ip_tables.ko.xz": [
       "03606e997882366609de793d2080484be188db20bd22671d7a05a442da8eca31"
-    ],
-    "/usr/lib/modules/6.12.93-v8-16k-ima+/kernel/net/ipv4/tcp_diag.ko.xz": [
-      "cfd028faf54a5024e915feddf9dcefc72b18e718372e9ec8d0627435a58f1ea8"
     ],
     "/usr/lib/modules/6.12.93-v8-16k-ima+/kernel/net/ipv6/ipv6.ko.xz": [
       "1893f19ac3984891030165f72f643e357b5071add2fddefebe6fc507a0dfe242"
@@ -3712,10 +3392,10 @@
       "2962ec8318bf41f7894892921696a18e8e79d434f3e9595a97346eaab1ff4f38"
     ],
     "/usr/lib/modules/6.12.93-v8-16k-ima+/modules.alias": [
-      "4a1ca7a61406ffa1a3806a44bfb2de1a790f6ac624198445f3d9257d05f24e35"
+      "82092ab9864f3b278875b83d377ec9a95c4a5e701b9ee9ee35cf8721d8d7ff37"
     ],
     "/usr/lib/modules/6.12.93-v8-16k-ima+/modules.alias.bin": [
-      "a54660713b6e4e453dfc742a294fbfda3ca77588f20d7dad591e06762fabc8e3"
+      "ab145d47bdce55d9c2ac731cdcd063b792f014068db9903a0c968c37ec8a98c1"
     ],
     "/usr/lib/modules/6.12.93-v8-16k-ima+/modules.builtin.alias.bin": [
       "e4eaeb675f64fab93c2e1c39c4ae23c3e1aa20750469f80750ae1e463314a6cc"
@@ -3724,7 +3404,7 @@
       "e064d86398293d6bcc2c9fbe1302e6764584c727ce2156fc81f7778355442b40"
     ],
     "/usr/lib/modules/6.12.93-v8-16k-ima+/modules.dep.bin": [
-      "4c6a0ce530576a234c7163c21d99b41b7a80355c567a3c001c233c36122bd9c3"
+      "82df24c34f31e5a497fd605e507cc3b16c4abb6e6aad6b49bee77fe7a3645624"
     ],
     "/usr/lib/modules/6.12.93-v8-16k-ima+/modules.devname": [
       "44e284a04cbe33b1be6906b27a9e1c1581096be2fc29c0f516ab97dac1f783ca"
@@ -3737,6 +3417,9 @@
     ],
     "/usr/lib/modules/6.12.93-v8-16k-ima+/modules.weakdep": [
       "a1fffe1059d8150b5d402b3f284f507025a8d4b5881810cb17b3fda8b8ab9304"
+    ],
+    "/usr/lib/modules/6.12.93-v8-16k-ima+/updates/dkms/hailo_pci.ko.xz": [
+      "51a9fa3876c43594bf7f4740b6e11241b08d9cb2cd402fe9f4dc7bd1176ca305"
     ],
     "/usr/lib/netplan/00-network-manager-all.yaml": [
       "71d2f3a0d872d07f435b830a6316af92b24f3b29af3622a193c3283f73d4ab45"
@@ -3798,6 +3481,12 @@
     "/usr/lib/python3.13/__pycache__/calendar.cpython-313.pyc": [
       "52128aa07704ab90a0e03a1d4bae3c81288e66489afd37207d3c45b73670cce4"
     ],
+    "/usr/lib/python3.13/__pycache__/code.cpython-313.pyc": [
+      "132d0d5c2b8c902938733ae9f2cf1b3e890b2623de86f859e1ac410af2ec8b74"
+    ],
+    "/usr/lib/python3.13/__pycache__/codeop.cpython-313.pyc": [
+      "b8b2e579709a64707539819922fb633baec2b391b0e10b986c160bebd74f86fb"
+    ],
     "/usr/lib/python3.13/__pycache__/colorsys.cpython-313.pyc": [
       "8a2044f937f507833c96e38f5d4847989e4b68ba693be28cd3b8b32a4b5a52c0"
     ],
@@ -3806,6 +3495,9 @@
     ],
     "/usr/lib/python3.13/__pycache__/contextlib.cpython-313.pyc": [
       "dd838f0dbdb50a2bcc440f919411fed599bc000ffef4aa9fb88bceb50831c77f"
+    ],
+    "/usr/lib/python3.13/__pycache__/contextvars.cpython-313.pyc": [
+      "076a5c19a1c8013fe7eaddf75ca418dea967957fc3d90a5d5646370f771b4c58"
     ],
     "/usr/lib/python3.13/__pycache__/copy.cpython-313.pyc": [
       "de8e1c13b164b3270dbd65cb49f3a751916e164c51cdf49b75f7f63bf35ddbce"
@@ -3915,6 +3607,9 @@
     "/usr/lib/python3.13/__pycache__/reprlib.cpython-313.pyc": [
       "799ca0a347771c1b12eb59460355a67458446e43bedfd2673de73e5c7f84f6e7"
     ],
+    "/usr/lib/python3.13/__pycache__/rlcompleter.cpython-313.pyc": [
+      "c62dfca402d1684abcb6f3cb3adf298d5db1bcb9b047cce78b9371522d58d68a"
+    ],
     "/usr/lib/python3.13/__pycache__/secrets.cpython-313.pyc": [
       "b39dc29362006a91454300d8180bfc02f58d344da1c2429e384f020fe6bd54c9"
     ],
@@ -3986,6 +3681,66 @@
     ],
     "/usr/lib/python3.13/__pycache__/weakref.cpython-313.pyc": [
       "cc7a2abcac7c24ce1f43bdaeb9da00f18ab8e5665435f6abf055e25283773715"
+    ],
+    "/usr/lib/python3.13/_pyrepl/__pycache__/__init__.cpython-313.pyc": [
+      "971fe2729325a032bcef224ab4b6ecdf3f6f3452bb16d4cc1de0c0133aa29afa"
+    ],
+    "/usr/lib/python3.13/_pyrepl/__pycache__/__main__.cpython-313.pyc": [
+      "0656fff191108be707e6b82f5dacce5cf78070443a5e2f659dca797c1a2553db"
+    ],
+    "/usr/lib/python3.13/_pyrepl/__pycache__/base_eventqueue.cpython-313.pyc": [
+      "e50a423bdb88c5d6d7ee21f8d6419baa0d275f5d6d2e976e0f0a5acf77211cb7"
+    ],
+    "/usr/lib/python3.13/_pyrepl/__pycache__/commands.cpython-313.pyc": [
+      "6fc201c2b7012eef8af4931db42b65b4466ef83a11bc24e9e8d49522bd3986f5"
+    ],
+    "/usr/lib/python3.13/_pyrepl/__pycache__/completing_reader.cpython-313.pyc": [
+      "2819cdc7ba004d5fe5333ee24c73855f32087d6cc0374fac44194bf17abbfdad"
+    ],
+    "/usr/lib/python3.13/_pyrepl/__pycache__/console.cpython-313.pyc": [
+      "2105c694f24a63520afd1a75fae935289a0c3a7e502281da43bbfcd483c41a15"
+    ],
+    "/usr/lib/python3.13/_pyrepl/__pycache__/curses.cpython-313.pyc": [
+      "b97b5312e77a8642b522720ec4ad8cb947e5b844ab18d0c5027eacbdd78dca91"
+    ],
+    "/usr/lib/python3.13/_pyrepl/__pycache__/fancy_termios.cpython-313.pyc": [
+      "52d4f0629c234ac98f735cffb046cec52613bd6e09fbfa22a35e417262131561"
+    ],
+    "/usr/lib/python3.13/_pyrepl/__pycache__/historical_reader.cpython-313.pyc": [
+      "0740047ebfac5b0cc71b7ad823fd3f0403872dbdab5e4053fc8780799a2dd503"
+    ],
+    "/usr/lib/python3.13/_pyrepl/__pycache__/input.cpython-313.pyc": [
+      "f431441855a5307cd48308afa7b9c852422e936002af4b2a9b6295dbb74cb261"
+    ],
+    "/usr/lib/python3.13/_pyrepl/__pycache__/keymap.cpython-313.pyc": [
+      "987471f3ee36d46247ebeb448914788d5192cbbb31e17b753a11ef54a6b43c89"
+    ],
+    "/usr/lib/python3.13/_pyrepl/__pycache__/main.cpython-313.pyc": [
+      "b36055bcfde381e4257a1d7389deeb020990222d0835d2c046c482c5ca00fac6"
+    ],
+    "/usr/lib/python3.13/_pyrepl/__pycache__/reader.cpython-313.pyc": [
+      "659d8e0b438ca6ca1c2e55ef46e431566886baf01b84ad2de1ceb60719cbf6ba"
+    ],
+    "/usr/lib/python3.13/_pyrepl/__pycache__/readline.cpython-313.pyc": [
+      "3ef0539d4b83c5b529f4d335aef454ba7d00ff9fe8760b9afd0d7f9bd7d66f7f"
+    ],
+    "/usr/lib/python3.13/_pyrepl/__pycache__/simple_interact.cpython-313.pyc": [
+      "3a8e702a4ced44cf59f01c25f5092cf932ad9d6daac11a25f0ce40a43b13dc7d"
+    ],
+    "/usr/lib/python3.13/_pyrepl/__pycache__/trace.cpython-313.pyc": [
+      "970dbe2135f2530b5d3e3dbe5e347433e7030758c71a8ca9509c07e44ea23a61"
+    ],
+    "/usr/lib/python3.13/_pyrepl/__pycache__/types.cpython-313.pyc": [
+      "ead3ce827f52b0b1e501e2b9dbcadca45fa6bb4cc46f0fc944af2689a8440910"
+    ],
+    "/usr/lib/python3.13/_pyrepl/__pycache__/unix_console.cpython-313.pyc": [
+      "f4228289b1be612752465ccff2b5720c49a1f93b6c15d00766f254e7dc5f5fe2"
+    ],
+    "/usr/lib/python3.13/_pyrepl/__pycache__/unix_eventqueue.cpython-313.pyc": [
+      "ac128458de509c1b9959dc43a0bd78ff5ffe7558a944c4320b59c224e311eaf9"
+    ],
+    "/usr/lib/python3.13/_pyrepl/__pycache__/utils.cpython-313.pyc": [
+      "1999e215e72ee84c9b961231cb6249e371aa1d447c469699cfd83e562c422e6f"
     ],
     "/usr/lib/python3.13/collections/__pycache__/__init__.cpython-313.pyc": [
       "7d71c4f466a422b6c522cf4387d721da59a1ff3dd2934ead8cf818ce7cb8cf65"
@@ -4470,8 +4225,14 @@
     "/usr/lib/python3.13/lib-dynload/_codecs_tw.cpython-313-aarch64-linux-gnu.so": [
       "53a960e82fa140287988cb5c7823ee41b074110780642a1639266a9838d16f19"
     ],
+    "/usr/lib/python3.13/lib-dynload/_contextvars.cpython-313-aarch64-linux-gnu.so": [
+      "22a1c9fedd93e6054dd2dce85679eed79d36579cea5964c08a869cee87ef3422"
+    ],
     "/usr/lib/python3.13/lib-dynload/_ctypes.cpython-313-aarch64-linux-gnu.so": [
       "21b7348c41890e15bb1a3fe1bd243fd295e0da3dba0e0bd7da0a18e885c70df9"
+    ],
+    "/usr/lib/python3.13/lib-dynload/_curses.cpython-313-aarch64-linux-gnu.so": [
+      "32a47661e30dca53c89c23f7a37db06460a565117a82d675a38f543ff2327ec6"
     ],
     "/usr/lib/python3.13/lib-dynload/_decimal.cpython-313-aarch64-linux-gnu.so": [
       "d0dd3d2c387bdf814ad7dfb4d59515dfef7da1efd5ead86048a2c53b83266751"
@@ -4494,6 +4255,12 @@
     "/usr/lib/python3.13/lib-dynload/_uuid.cpython-313-aarch64-linux-gnu.so": [
       "0fc4ce8fdc490360a5e34c0ec11742e013b5bda65d01104b147930f5d9203279"
     ],
+    "/usr/lib/python3.13/lib-dynload/mmap.cpython-313-aarch64-linux-gnu.so": [
+      "f1b295a0983aedf8ea01c08e98110bbbadc777b648def31fd82d54459314978d"
+    ],
+    "/usr/lib/python3.13/lib-dynload/readline.cpython-313-aarch64-linux-gnu.so": [
+      "92be2c21dbaff846f155af460f6e451b944ce2fdb4d6570f8ba7461961609489"
+    ],
     "/usr/lib/python3.13/lib-dynload/termios.cpython-313-aarch64-linux-gnu.so": [
       "e4479d3f5d4596950c4e914c77c4c8009814a420991acb874acc435ac19c7de0"
     ],
@@ -4505,6 +4272,18 @@
     ],
     "/usr/lib/python3.13/logging/__pycache__/handlers.cpython-313.pyc": [
       "f4d9ab373c584a7f22f1a5e9482d1801bc8bdadffe401c3b1e56910066d38c9c"
+    ],
+    "/usr/lib/python3.13/multiprocessing/__pycache__/__init__.cpython-313.pyc": [
+      "d656e7dec426bf041de5a5ebf99dda342f785211c4e457c778ecacacc2cb0880"
+    ],
+    "/usr/lib/python3.13/multiprocessing/__pycache__/context.cpython-313.pyc": [
+      "8aac65a32160a159e1398bdc07007c10eb1b07c5e6ece6486e7a5a419ac0f365"
+    ],
+    "/usr/lib/python3.13/multiprocessing/__pycache__/process.cpython-313.pyc": [
+      "71a5f6eca2f8f4c529112b453491272cd38251572285b8a82c657bc313f872b6"
+    ],
+    "/usr/lib/python3.13/multiprocessing/__pycache__/reduction.cpython-313.pyc": [
+      "d83b1f8c2f1f84e1beddc7528cf3b4c61ab0507063a67fa58793374ba0230238"
     ],
     "/usr/lib/python3.13/pathlib/__pycache__/__init__.cpython-313.pyc": [
       "9c56134172ee61a512a2b63070ae8fa6f36bd8498408e41958fab714a3531fb2"
@@ -4557,11 +4336,98 @@
     "/usr/lib/python3.13/zipfile/_path/__pycache__/glob.cpython-313.pyc": [
       "c0a3cbda3384be5b1212e9bdbe27f01bc07c5e5f73077114ba157a873e476c91"
     ],
+    "/usr/lib/python3/dist-packages/PIL/__pycache__/BmpImagePlugin.cpython-313.pyc": [
+      "f7c8443f9099783197a2aa72b3bc0ad09e0440e58cc5630b36904679076eeea7"
+    ],
+    "/usr/lib/python3/dist-packages/PIL/__pycache__/ExifTags.cpython-313.pyc": [
+      "5f27c6d2001edeeec9adf3f243f3660c02b2ce4358d4eeff7a38cdd4a83fd421"
+    ],
+    "/usr/lib/python3/dist-packages/PIL/__pycache__/GifImagePlugin.cpython-313.pyc": [
+      "7553eccbacd541e3ed3cd2b86ffc89dbf0a014b834804e63cc20386c06508431"
+    ],
+    "/usr/lib/python3/dist-packages/PIL/__pycache__/GimpGradientFile.cpython-313.pyc": [
+      "a4606fdafd2eb5d1d4fe7c9c75872624ab544d24502ec9411fa3b2abfe3eb908"
+    ],
+    "/usr/lib/python3/dist-packages/PIL/__pycache__/GimpPaletteFile.cpython-313.pyc": [
+      "d881e947a631d6f19ceb13351b38223ea9733836a446385df4902720e061bc05"
+    ],
+    "/usr/lib/python3/dist-packages/PIL/__pycache__/Image.cpython-313.pyc": [
+      "5b1caa7572ea4d2090bc56fb059a27d12e2526119d93b1b3368cf0ca7daa7ee6"
+    ],
+    "/usr/lib/python3/dist-packages/PIL/__pycache__/ImageChops.cpython-313.pyc": [
+      "76a258ca8843c91113a160ccb2369053f5dd43516b5c5d1059eb16914cf86834"
+    ],
+    "/usr/lib/python3/dist-packages/PIL/__pycache__/ImageColor.cpython-313.pyc": [
+      "963887383aec4c542db395d9c43fba893a702ae85ca1119be5519411c4958596"
+    ],
+    "/usr/lib/python3/dist-packages/PIL/__pycache__/ImageFile.cpython-313.pyc": [
+      "e3c257516e8e336a8c5b5d7a167101f2c1708aa3d5c093aaf9765a91acbd0025"
+    ],
+    "/usr/lib/python3/dist-packages/PIL/__pycache__/ImageMath.cpython-313.pyc": [
+      "94f6aa48b5d8e854366663605186491da7029ac65a39b159dbab67682f6f3d0d"
+    ],
+    "/usr/lib/python3/dist-packages/PIL/__pycache__/ImageMode.cpython-313.pyc": [
+      "c5669f1b43abdee5634c315759642697d732196a85c2abada54d11c74d6dd8b6"
+    ],
+    "/usr/lib/python3/dist-packages/PIL/__pycache__/ImageOps.cpython-313.pyc": [
+      "2ce78774cb6344a8131ddb54d98ba2c5171ce596282b0b8c39698f583f10e8ef"
+    ],
+    "/usr/lib/python3/dist-packages/PIL/__pycache__/ImagePalette.cpython-313.pyc": [
+      "4b26e6d6c22ed43c55688db08c3dffd0c1e0cc9ea110f807465a8ae7a5586e45"
+    ],
+    "/usr/lib/python3/dist-packages/PIL/__pycache__/ImageSequence.cpython-313.pyc": [
+      "b07d3ede9f91a05b68abda1510cfe0d348b59bc40eb6813bc4f9be7a476f3037"
+    ],
+    "/usr/lib/python3/dist-packages/PIL/__pycache__/JpegImagePlugin.cpython-313.pyc": [
+      "36176846543e139ff98698ed80cabc6b638ff5a0279437d9059c505b3c3e9aa3"
+    ],
+    "/usr/lib/python3/dist-packages/PIL/__pycache__/JpegPresets.cpython-313.pyc": [
+      "4b66d01fcff78264cd3d3da8fe221522e8c3ee7f07c8cb35b3e11b464aa6babb"
+    ],
+    "/usr/lib/python3/dist-packages/PIL/__pycache__/PaletteFile.cpython-313.pyc": [
+      "3e507872cd741a1c8e02b6b3bd61effa9ce81843e7e1e425531d7e3ac6c37a9a"
+    ],
+    "/usr/lib/python3/dist-packages/PIL/__pycache__/PngImagePlugin.cpython-313.pyc": [
+      "ff3f60c6234c651e557fb0313a50610e8245f4d571533de49991e86087fe15de"
+    ],
+    "/usr/lib/python3/dist-packages/PIL/__pycache__/PpmImagePlugin.cpython-313.pyc": [
+      "cde880b4149ab3263531c62254a4a509d4cd79f79b602d28106516e01953f2b4"
+    ],
+    "/usr/lib/python3/dist-packages/PIL/__pycache__/TiffTags.cpython-313.pyc": [
+      "16b6de72cc89b0c8206dd3a547099233f5373ffba879f087fd0c3c21aa0300c8"
+    ],
+    "/usr/lib/python3/dist-packages/PIL/__pycache__/__init__.cpython-313.pyc": [
+      "a2974e6ec1758dc4cdc214faf11107a4dc3f3abb2cac6e00f432a67663890c4a"
+    ],
+    "/usr/lib/python3/dist-packages/PIL/__pycache__/_binary.cpython-313.pyc": [
+      "e045ddbb4fbf5539550cb540c56d39e7cc33f6685e19500a0536689132d0897d"
+    ],
+    "/usr/lib/python3/dist-packages/PIL/__pycache__/_deprecate.cpython-313.pyc": [
+      "9809bade2aef57d90827e0c11b5a2cb2b2dc484df7e5147167684f4d7767704e"
+    ],
+    "/usr/lib/python3/dist-packages/PIL/__pycache__/_typing.cpython-313.pyc": [
+      "8579266dad1980bf8ade5665e940042db9881fa16435175949f442fda06d174d"
+    ],
+    "/usr/lib/python3/dist-packages/PIL/__pycache__/_util.cpython-313.pyc": [
+      "b1a39b20484d82e05a28a7d45678d8e7e3efc76d82bc6119cd68881dcae690f8"
+    ],
+    "/usr/lib/python3/dist-packages/PIL/__pycache__/_version.cpython-313.pyc": [
+      "9b6e2c5aa5606e45e89e28d7f0396951790aed948fdf3e9183ad456e0bb8934c"
+    ],
+    "/usr/lib/python3/dist-packages/PIL/_imaging.cpython-313-aarch64-linux-gnu.so": [
+      "c32574f928ad73dfcefd89f232bee19bff949557a675571c7cdea0495764a0f4"
+    ],
+    "/usr/lib/python3/dist-packages/PIL/_imagingmath.cpython-313-aarch64-linux-gnu.so": [
+      "37657c2d2f80849f9df3ea0b234f40405464aa9ea2304a28801244b604b324a9"
+    ],
     "/usr/lib/python3/dist-packages/__pycache__/jsonpatch.cpython-313.pyc": [
       "8c171e86c402801e67fe1a8de57e6037f587d5ab3dc28735de7f27c38ba277ef"
     ],
     "/usr/lib/python3/dist-packages/__pycache__/jsonpointer.cpython-313.pyc": [
       "19e1173c1288396dd3283ec29426158f4802c45b1bc430d78dd51ea0fb3003e1"
+    ],
+    "/usr/lib/python3/dist-packages/__pycache__/prctl.cpython-313.pyc": [
+      "679a08575a4da15a48d2ae19bac29a68bf71cc99bb6fd3b287a69e440558f4b0"
     ],
     "/usr/lib/python3/dist-packages/__pycache__/rfc3339_validator.cpython-313.pyc": [
       "220b3c61bc0a93215f7fdb3feccd03e30eb68084e450206eba6b056811bdf78c"
@@ -4577,6 +4443,9 @@
     ],
     "/usr/lib/python3/dist-packages/_distutils_hack/__pycache__/__init__.cpython-313.pyc": [
       "f2d41f684ac0263d307990349135bdecf2b5ed2e2c28a75c0ab7b7589e15eb02"
+    ],
+    "/usr/lib/python3/dist-packages/_prctl.cpython-313-aarch64-linux-gnu.so": [
+      "b2cf56ee2b2214a25cf9a09ebb86d9a0f18e694143da098434ae5d6ed3d54508"
     ],
     "/usr/lib/python3/dist-packages/arrow/__pycache__/__init__.cpython-313.pyc": [
       "8182cfeb654689928f0ee0cfeb5a20bbe3c80e4aeccf604d4bf1207c65dfe24b"
@@ -4664,6 +4533,12 @@
     ],
     "/usr/lib/python3/dist-packages/attrs/__pycache__/validators.cpython-313.pyc": [
       "e797a1c4c2d0a3b5d8db7743533608a1bffc87a10c741b596c53424e254ec989"
+    ],
+    "/usr/lib/python3/dist-packages/bcrypt/__pycache__/__init__.cpython-313.pyc": [
+      "7cabb24ad64df5d712c1bab43bf5102f6c2f84ab304417f1409a97fdbaee34fa"
+    ],
+    "/usr/lib/python3/dist-packages/bcrypt/_bcrypt.cpython-313-aarch64-linux-gnu.so": [
+      "fc6a0ccb334536b91613d8286e06cb43f9ad511842feb1dafbfe3994f6e4a65b"
     ],
     "/usr/lib/python3/dist-packages/certifi/__pycache__/__init__.cpython-313.pyc": [
       "876ddaaf26bfe6ee43d183803ce309b575eee5b0df16bba15206b7066931bc8f"
@@ -5277,6 +5152,39 @@
     "/usr/lib/python3/dist-packages/fqdn/__pycache__/_compat.cpython-313.pyc": [
       "7d2fdacac09ef5a025e5da96f34a2159bb8f9f4cf05faf405d176459b7e68233"
     ],
+    "/usr/lib/python3/dist-packages/hailo_platform/__pycache__/__init__.cpython-313.pyc": [
+      "79ce782568e28e28470c2fdb1fd99a0de7fab3d0b63fbf5d88dd5a6996388b45"
+    ],
+    "/usr/lib/python3/dist-packages/hailo_platform/common/__pycache__/__init__.cpython-313.pyc": [
+      "279c6ea444dda5c9bfac7d76954faa0fe5c3dc2638a4f0df2f19d49685b93ade"
+    ],
+    "/usr/lib/python3/dist-packages/hailo_platform/common/logger/__pycache__/__init__.cpython-313.pyc": [
+      "deb9387cf8694011608a25545545f747b2200b9808f33d0fc6b94786e819cc02"
+    ],
+    "/usr/lib/python3/dist-packages/hailo_platform/common/logger/__pycache__/logger.cpython-313.pyc": [
+      "c3f157136d509d96878e48f8ae0ef979d7ad4ec981d55793fd5867ef5fd25a16"
+    ],
+    "/usr/lib/python3/dist-packages/hailo_platform/pyhailort/__pycache__/__init__.cpython-313.pyc": [
+      "f05f0569c3a523c7d0f29a5c20727f0d8585c9ba6bcf0766d27a9b94be1b9352"
+    ],
+    "/usr/lib/python3/dist-packages/hailo_platform/pyhailort/__pycache__/control_object.cpython-313.pyc": [
+      "7d6797ff436a3413d551aa8a493110e8e0b9e58c3f865b81eb033a44a2b1943f"
+    ],
+    "/usr/lib/python3/dist-packages/hailo_platform/pyhailort/__pycache__/hw_object.cpython-313.pyc": [
+      "725c64bd57578921416f9dcbd65896706b632b81eafe71b2ff41978029d44b22"
+    ],
+    "/usr/lib/python3/dist-packages/hailo_platform/pyhailort/__pycache__/pyhailort.cpython-313.pyc": [
+      "7186710a6566ba86a5a4276f4de389ab4fc48a4e9f027b2912e498a57265e6f3"
+    ],
+    "/usr/lib/python3/dist-packages/hailo_platform/pyhailort/_pyhailort.cpython-313-aarch64-linux-gnu.so": [
+      "f9376aabe7562c286e5efb9e2c3dccae95ed9c01e428c2e3a17e2644808f947d"
+    ],
+    "/usr/lib/python3/dist-packages/hailo_platform/tools/__pycache__/__init__.cpython-313.pyc": [
+      "18770c34b3aeeec05c6aa0548b722e182d89b6bec215da7df07ed1d25fbf94ed"
+    ],
+    "/usr/lib/python3/dist-packages/hailo_platform/tools/__pycache__/udp_rate_limiter.cpython-313.pyc": [
+      "935380eacb1383ac20252c293d273a0de285701793a6371f5b6cdc8b2fb6d63d"
+    ],
     "/usr/lib/python3/dist-packages/idna/__pycache__/__init__.cpython-313.pyc": [
       "57c18d8ec0259fa5a61e1b995efc81f1a2694a9683566cb1c8d7ab719147443c"
     ],
@@ -5490,6 +5398,12 @@
     "/usr/lib/python3/dist-packages/jsonschema_specifications/schemas/draft7/metaschema.json": [
       "3d5392088261606c559b603f385329c9f1ab45b5d667eb990687453b055d405e"
     ],
+    "/usr/lib/python3/dist-packages/libcamera/__pycache__/__init__.cpython-313.pyc": [
+      "e077b6942c6b6ba6a0df1407f81c41e72a2de34a09433d46c0d52ec6bb62c32b"
+    ],
+    "/usr/lib/python3/dist-packages/libcamera/_libcamera.cpython-313-aarch64-linux-gnu.so": [
+      "9dc875bd500313bffb9fc6225b9afa3bd9089acd4f07f2805436942b883c7c61"
+    ],
     "/usr/lib/python3/dist-packages/logilab_common-2.1.0-nspkg.pth": [
       "aa53f5d608d0e3584609f2890300ec5a88d4cd115bccce810ad67806056dfb7e"
     ],
@@ -5516,6 +5430,432 @@
     ],
     "/usr/lib/python3/dist-packages/netplan/_netplan_cffi.abi3.so": [
       "b441dcaed640249f64ddf952d3de988bda87540c3c267e6d21a9e31b46fc7f7c"
+    ],
+    "/usr/lib/python3/dist-packages/numpy/__pycache__/__config__.cpython-313.pyc": [
+      "351aebb7a0328f41d409b3e463d55def711496efb8d7073ac3ef60e44cf7fed6"
+    ],
+    "/usr/lib/python3/dist-packages/numpy/__pycache__/__init__.cpython-313.pyc": [
+      "5953d6274b742e3c78413f844b8ce4e71b5acf321d2f3008a964c3ea4fa49f8d"
+    ],
+    "/usr/lib/python3/dist-packages/numpy/__pycache__/_array_api_info.cpython-313.pyc": [
+      "2d999528d4f5d347fa0a24742c8ff8e0937a6a60d6e2d4a149ab4a99a18a19de"
+    ],
+    "/usr/lib/python3/dist-packages/numpy/__pycache__/_distributor_init.cpython-313.pyc": [
+      "13e41367801c3ae0814530ded3a3f7d5d9d8347fd39188dc02b862faf5db2159"
+    ],
+    "/usr/lib/python3/dist-packages/numpy/__pycache__/_expired_attrs_2_0.cpython-313.pyc": [
+      "b9d6282c3225c024e77ef738563a00354cccc6158825fac2564f8498f215e981"
+    ],
+    "/usr/lib/python3/dist-packages/numpy/__pycache__/_globals.cpython-313.pyc": [
+      "11cdb8cbdf64cc52daf4156e23b2444d1236f7d78babde104c5f31ff402836f7"
+    ],
+    "/usr/lib/python3/dist-packages/numpy/__pycache__/_pytesttester.cpython-313.pyc": [
+      "b171691dc1786e4c44c7b6b4f3dafaa30d160cac1648616412545c5b28d0e033"
+    ],
+    "/usr/lib/python3/dist-packages/numpy/__pycache__/dtypes.cpython-313.pyc": [
+      "9e1af9142f06bd8b705adad8373dc5ff88a02f39e29db7c2530f046bbd94f80a"
+    ],
+    "/usr/lib/python3/dist-packages/numpy/__pycache__/exceptions.cpython-313.pyc": [
+      "58d31e7a2df00646aa8ff4c9a5461c81f329d123e306abfc7a533005cfceefb7"
+    ],
+    "/usr/lib/python3/dist-packages/numpy/__pycache__/version.cpython-313.pyc": [
+      "301f711b6d600ffff4ee9705ed5c9bb003ddd33f2158712dace3c439d0298a81"
+    ],
+    "/usr/lib/python3/dist-packages/numpy/_core/__pycache__/__init__.cpython-313.pyc": [
+      "ca8c09460bd649dd2a3513e99e3b4a70a3fe6f8a9f36fa7e9d608e502b216e5d"
+    ],
+    "/usr/lib/python3/dist-packages/numpy/_core/__pycache__/_add_newdocs.cpython-313.pyc": [
+      "a68d230aec5b41054751223dab007c503949b52d354b4ade2ef5274f218637a2"
+    ],
+    "/usr/lib/python3/dist-packages/numpy/_core/__pycache__/_add_newdocs_scalars.cpython-313.pyc": [
+      "3dc010f07ea6d13bafedc5ab158969a03778f264bedecaa4e35fcfe747e4bc60"
+    ],
+    "/usr/lib/python3/dist-packages/numpy/_core/__pycache__/_asarray.cpython-313.pyc": [
+      "7c3e101a1710f0320875cea61c21e130d74aec62380dbf0daf33bb59672b68c3"
+    ],
+    "/usr/lib/python3/dist-packages/numpy/_core/__pycache__/_dtype.cpython-313.pyc": [
+      "ee0af9959967061523334e8dc83603090cffa6f8ec56c8e9b5affb2e18b1de63"
+    ],
+    "/usr/lib/python3/dist-packages/numpy/_core/__pycache__/_dtype_ctypes.cpython-313.pyc": [
+      "ba036298b70baae2202b665da7dee743f497321ef8ccfac83739501ecb8c45f1"
+    ],
+    "/usr/lib/python3/dist-packages/numpy/_core/__pycache__/_exceptions.cpython-313.pyc": [
+      "bb296c00196dad3ad077e80994c618ad2b8122aac0a914c046ca4d4f6ea3c208"
+    ],
+    "/usr/lib/python3/dist-packages/numpy/_core/__pycache__/_internal.cpython-313.pyc": [
+      "2b4ac21458903ab4872489bcc791af4bf3e54e3492795bb75fea7dad65273c82"
+    ],
+    "/usr/lib/python3/dist-packages/numpy/_core/__pycache__/_machar.cpython-313.pyc": [
+      "666ba774e3a4653fbe99510c6db229885e18770dc27461afa866ae24c3600535"
+    ],
+    "/usr/lib/python3/dist-packages/numpy/_core/__pycache__/_methods.cpython-313.pyc": [
+      "1c2484fc0f3bf0766f2c9a2de35293865fb18d2e39e79ab9454912becc145cbd"
+    ],
+    "/usr/lib/python3/dist-packages/numpy/_core/__pycache__/_string_helpers.cpython-313.pyc": [
+      "8075c799e7ca788bafc1ad2e871193c6e9f8bc98d11ab1de5d261d4f78b306f2"
+    ],
+    "/usr/lib/python3/dist-packages/numpy/_core/__pycache__/_type_aliases.cpython-313.pyc": [
+      "bb7ead35b0798f1bfc0e961e31ae7861279b1be1efeaa7b20d597b16d7a84510"
+    ],
+    "/usr/lib/python3/dist-packages/numpy/_core/__pycache__/_ufunc_config.cpython-313.pyc": [
+      "03fab8cbf30c5bb1a09481eab4550ebfbe028f1b12315c6c1e459ebe8120a7d9"
+    ],
+    "/usr/lib/python3/dist-packages/numpy/_core/__pycache__/arrayprint.cpython-313.pyc": [
+      "1859c69b7b4fe6184bba3def7a343c036868d46c3490500dde7ee236a0642c38"
+    ],
+    "/usr/lib/python3/dist-packages/numpy/_core/__pycache__/einsumfunc.cpython-313.pyc": [
+      "be81c3cbded614e94e50868dadaa80aaee0f11a2588638a62767702834d69b15"
+    ],
+    "/usr/lib/python3/dist-packages/numpy/_core/__pycache__/fromnumeric.cpython-313.pyc": [
+      "460a01207577fa2873c7d65a6ac45659c41a1fd074bdbd2bc0d8bfa2265c00b8"
+    ],
+    "/usr/lib/python3/dist-packages/numpy/_core/__pycache__/function_base.cpython-313.pyc": [
+      "e8ee1fbfe4234da1f3ecaf97c6655924a69f2c083f991153940a372d9c890d65"
+    ],
+    "/usr/lib/python3/dist-packages/numpy/_core/__pycache__/getlimits.cpython-313.pyc": [
+      "aaa5c6d41641ddb8c73df82e7544c26b42cfe5486b913b0f17bf41bd2edb3347"
+    ],
+    "/usr/lib/python3/dist-packages/numpy/_core/__pycache__/memmap.cpython-313.pyc": [
+      "740c92ce19b71e2cf20c04c50a924d418bebb13005498a9472e2554cc1888805"
+    ],
+    "/usr/lib/python3/dist-packages/numpy/_core/__pycache__/multiarray.cpython-313.pyc": [
+      "f0ed58f0e446d0bb9f05c9e7cebf773cf10688bb6c719d330205f8d3afd92d2d"
+    ],
+    "/usr/lib/python3/dist-packages/numpy/_core/__pycache__/numeric.cpython-313.pyc": [
+      "757f8e770632723adebf86596d65212ffaad5144d5ed4ed310cfef34d27456f2"
+    ],
+    "/usr/lib/python3/dist-packages/numpy/_core/__pycache__/numerictypes.cpython-313.pyc": [
+      "af4bdb11f1d3341e0598a2377a2dbfbaa20f7697f6d22cc298c5fac8a9dc75a6"
+    ],
+    "/usr/lib/python3/dist-packages/numpy/_core/__pycache__/overrides.cpython-313.pyc": [
+      "17dbae81d095ee0cf4e862d49379c004138ace3b160193fe2ac54e4ef382600e"
+    ],
+    "/usr/lib/python3/dist-packages/numpy/_core/__pycache__/printoptions.cpython-313.pyc": [
+      "547656968788ff9375c5652a7383f8f4ec82920a9e30469fab62a0f3b846111d"
+    ],
+    "/usr/lib/python3/dist-packages/numpy/_core/__pycache__/records.cpython-313.pyc": [
+      "7e3582d4f6dcb71686f652bc64eed9222df1442d9407615eace333f82e1f2889"
+    ],
+    "/usr/lib/python3/dist-packages/numpy/_core/__pycache__/shape_base.cpython-313.pyc": [
+      "6ac0367c558fd9ccf54c105de48e920f574e0ee04c9795ff7a26bdc3083288d1"
+    ],
+    "/usr/lib/python3/dist-packages/numpy/_core/__pycache__/umath.cpython-313.pyc": [
+      "069f31e9b22dcfb6ac888356c1dc5326e47d19ae82a991f56ec1c83eebf4a244"
+    ],
+    "/usr/lib/python3/dist-packages/numpy/_core/_multiarray_umath.cpython-313-aarch64-linux-gnu.so": [
+      "ad1fdd276a77ce99374b8bb2960aaef1176616e83891f73eccf5c4532848b2b9"
+    ],
+    "/usr/lib/python3/dist-packages/numpy/_typing/__pycache__/__init__.cpython-313.pyc": [
+      "c7bf7cc9f85db98a1eac5ebe5f8006581cae37680db398a4c48039e1f71a9724"
+    ],
+    "/usr/lib/python3/dist-packages/numpy/_typing/__pycache__/_add_docstring.cpython-313.pyc": [
+      "dbd7c9a048bd5f033c851f55966a8bca465632a17f18d3977889d279e5798f28"
+    ],
+    "/usr/lib/python3/dist-packages/numpy/_typing/__pycache__/_array_like.cpython-313.pyc": [
+      "e16fe3025036dab3cb3f7c344410dd4f13dc0803d7eb0e033eb88151c80a10a6"
+    ],
+    "/usr/lib/python3/dist-packages/numpy/_typing/__pycache__/_char_codes.cpython-313.pyc": [
+      "d844896b68ba8f6a9a6db5597903bcfd0a7373520e8666162aafb8b202ba510e"
+    ],
+    "/usr/lib/python3/dist-packages/numpy/_typing/__pycache__/_dtype_like.cpython-313.pyc": [
+      "f1baa6e7a75bcc76dd9ff689261e976bce0b8f3d6c7fe400764243774c6ce981"
+    ],
+    "/usr/lib/python3/dist-packages/numpy/_typing/__pycache__/_nbit.cpython-313.pyc": [
+      "95e629c08bbfff8445c4f9a20b8b3ea423606603f1826ea7805b547e08448c62"
+    ],
+    "/usr/lib/python3/dist-packages/numpy/_typing/__pycache__/_nbit_base.cpython-313.pyc": [
+      "cfd87e3f3e993e9bcb14337d09ca6876434653c71cc143587849514840e27864"
+    ],
+    "/usr/lib/python3/dist-packages/numpy/_typing/__pycache__/_nested_sequence.cpython-313.pyc": [
+      "d5610fcc12366f1e888a780807b92f214bef3b3ce40aab45b004a49ed912d97c"
+    ],
+    "/usr/lib/python3/dist-packages/numpy/_typing/__pycache__/_scalars.cpython-313.pyc": [
+      "52f14296aa7caa237fe9398f0e737153b4851b082b3e821a0944af58fdbc513a"
+    ],
+    "/usr/lib/python3/dist-packages/numpy/_typing/__pycache__/_shape.cpython-313.pyc": [
+      "4336f89b57cf3eaa8ca02ae30dbbeefa892eb850e70c36f04237d95bcb29cf50"
+    ],
+    "/usr/lib/python3/dist-packages/numpy/_typing/__pycache__/_ufunc.cpython-313.pyc": [
+      "52f573b5a49df443e9288c5f814548c52645b0f3a2a719a78c3738bce850ccbf"
+    ],
+    "/usr/lib/python3/dist-packages/numpy/_utils/__pycache__/__init__.cpython-313.pyc": [
+      "1939553157d3b13e36e3940f43f9c71a04087565657dab0ab85a98d96348924e"
+    ],
+    "/usr/lib/python3/dist-packages/numpy/_utils/__pycache__/_convertions.cpython-313.pyc": [
+      "97e553447c09e1db7e1e0735969c6091383d4929913ea8bba5c3d0d34ff2778f"
+    ],
+    "/usr/lib/python3/dist-packages/numpy/_utils/__pycache__/_inspect.cpython-313.pyc": [
+      "419a45fe2a871d43dc4d3913f64a98c5cbdc1c1af9789516ebcc91f2f7eaba76"
+    ],
+    "/usr/lib/python3/dist-packages/numpy/lib/__pycache__/__init__.cpython-313.pyc": [
+      "2d316fda2e4e09e190ed3a7dae7bb68e3b48ed6cedcc3836bd1b90e07b22002d"
+    ],
+    "/usr/lib/python3/dist-packages/numpy/lib/__pycache__/_array_utils_impl.cpython-313.pyc": [
+      "f94b52388c8aff83d7c659bf3e6a22b614710731408c96c2d94fce99e55e75f0"
+    ],
+    "/usr/lib/python3/dist-packages/numpy/lib/__pycache__/_arraypad_impl.cpython-313.pyc": [
+      "29bfbf1b24a6ab0e53ce5600f32531e88fa4a444c4cf6c3cfeab9f80cb13978f"
+    ],
+    "/usr/lib/python3/dist-packages/numpy/lib/__pycache__/_arraysetops_impl.cpython-313.pyc": [
+      "54192a9e5f695bf680e344d19c27b1a6df64f0db568e643a5acbdb93a2160ace"
+    ],
+    "/usr/lib/python3/dist-packages/numpy/lib/__pycache__/_arrayterator_impl.cpython-313.pyc": [
+      "5fded8f6200a44209db45f7385cf374359d8a1243d903e6c7b6e77524dd71612"
+    ],
+    "/usr/lib/python3/dist-packages/numpy/lib/__pycache__/_datasource.cpython-313.pyc": [
+      "7dc90928e1146386160392e4b63bf77568c3ae80a7cda915eb6f2dd24c28a50d"
+    ],
+    "/usr/lib/python3/dist-packages/numpy/lib/__pycache__/_function_base_impl.cpython-313.pyc": [
+      "1c98f15d0aac81a5e5483897452e624172cdada20c7e45c1d44209cc881840c6"
+    ],
+    "/usr/lib/python3/dist-packages/numpy/lib/__pycache__/_histograms_impl.cpython-313.pyc": [
+      "d19e33eda13a989fdcbda1e9268a7105bd0f37405cdecb3ad4da01e0ac2c2a94"
+    ],
+    "/usr/lib/python3/dist-packages/numpy/lib/__pycache__/_index_tricks_impl.cpython-313.pyc": [
+      "7017ef8d79fe135a20bccf3aaade7b8bbda75e31c7c1135cf9e463a11a24fc68"
+    ],
+    "/usr/lib/python3/dist-packages/numpy/lib/__pycache__/_iotools.cpython-313.pyc": [
+      "06ed9520dc65e13cbd858f819a26e09ddc72f0837093e59fe0cdfd922d2551a2"
+    ],
+    "/usr/lib/python3/dist-packages/numpy/lib/__pycache__/_nanfunctions_impl.cpython-313.pyc": [
+      "b9e60a2be78bff9f99a45ec2db502e5958d80f85f7c150b4b1440dc5b58cf50a"
+    ],
+    "/usr/lib/python3/dist-packages/numpy/lib/__pycache__/_npyio_impl.cpython-313.pyc": [
+      "d4a03dc61c61a2dac6e58017ac809a23373e91ab6405adeb783e4119fbe63efd"
+    ],
+    "/usr/lib/python3/dist-packages/numpy/lib/__pycache__/_polynomial_impl.cpython-313.pyc": [
+      "f425a42645f3f37334de7c1bce00b4edb945cc907fc00b1408eb5fd83d9bd403"
+    ],
+    "/usr/lib/python3/dist-packages/numpy/lib/__pycache__/_scimath_impl.cpython-313.pyc": [
+      "1c1ab413474dce30922c428efdcd4bfbc98c361e287b042175d0b4b795128635"
+    ],
+    "/usr/lib/python3/dist-packages/numpy/lib/__pycache__/_shape_base_impl.cpython-313.pyc": [
+      "51cc4d55b65a643dfe385c455758b6a31ebc3d7f26e443fa1ddac89354949166"
+    ],
+    "/usr/lib/python3/dist-packages/numpy/lib/__pycache__/_stride_tricks_impl.cpython-313.pyc": [
+      "8afdafe5c8dc012993a330fb727d560b553f06b7df7a64ead9fa8ef04c49fbbe"
+    ],
+    "/usr/lib/python3/dist-packages/numpy/lib/__pycache__/_twodim_base_impl.cpython-313.pyc": [
+      "f801fc70e0cd58e53fbc89dbf6504db9e7f2151b15f2d00d2fc7d8e564e535b3"
+    ],
+    "/usr/lib/python3/dist-packages/numpy/lib/__pycache__/_type_check_impl.cpython-313.pyc": [
+      "48f6c05117716567c948e5a9e6f599a31f45d6c2ba47b64fd6295c3217310da4"
+    ],
+    "/usr/lib/python3/dist-packages/numpy/lib/__pycache__/_ufunclike_impl.cpython-313.pyc": [
+      "e48ca693249eaecdbd08abad51c28e68aafe20ffdd537f2a8879cafc5467ae00"
+    ],
+    "/usr/lib/python3/dist-packages/numpy/lib/__pycache__/_utils_impl.cpython-313.pyc": [
+      "8487d99426f9f451bd67db49ea27efccc71e3463819ac6daf38c1d11b49ad7b5"
+    ],
+    "/usr/lib/python3/dist-packages/numpy/lib/__pycache__/_version.cpython-313.pyc": [
+      "dde29ccd913727879790e3786f5a70eb4a85cf7abe5552c5c0a4e7bfb23dc870"
+    ],
+    "/usr/lib/python3/dist-packages/numpy/lib/__pycache__/array_utils.cpython-313.pyc": [
+      "935df58fa9709d8bd8447a52fcfcf6df81a339df8b74ca3a7910721ea1a9885a"
+    ],
+    "/usr/lib/python3/dist-packages/numpy/lib/__pycache__/format.cpython-313.pyc": [
+      "db7d0c45ba11f093def07476452bd6df7393b85351020206f9bea72e3eb3ba2d"
+    ],
+    "/usr/lib/python3/dist-packages/numpy/lib/__pycache__/introspect.cpython-313.pyc": [
+      "b248ce18741c04572d0501779eea40407715da7cef0ea2ebea51fa3240097d94"
+    ],
+    "/usr/lib/python3/dist-packages/numpy/lib/__pycache__/mixins.cpython-313.pyc": [
+      "73b93df4043bb01a8339c7fa2a0ddc9b051bc988f8998311aef409e493ea2735"
+    ],
+    "/usr/lib/python3/dist-packages/numpy/lib/__pycache__/npyio.cpython-313.pyc": [
+      "2bac26f3319ee15d4594d680a229f8d00f433d3b89a1a9ab5c88de9cce421222"
+    ],
+    "/usr/lib/python3/dist-packages/numpy/lib/__pycache__/scimath.cpython-313.pyc": [
+      "62cf9bc1d6a745b75fdaf3570450e5b9e9af7d90f2c106e5b33b737eb1bb4a3c"
+    ],
+    "/usr/lib/python3/dist-packages/numpy/lib/__pycache__/stride_tricks.cpython-313.pyc": [
+      "d8159f109017d578a21d0b921a926a28286fdc8984f8d4c0a6d29c2d9b865994"
+    ],
+    "/usr/lib/python3/dist-packages/numpy/linalg/__pycache__/__init__.cpython-313.pyc": [
+      "3cd645543bd91a5ea317c45a386b55fa30dafa808edf123df458e5ec0791c0ff"
+    ],
+    "/usr/lib/python3/dist-packages/numpy/linalg/__pycache__/_linalg.cpython-313.pyc": [
+      "e6003748bb482c877188c8510adb4c2661d5b77d496b14834ad8d715b811d89b"
+    ],
+    "/usr/lib/python3/dist-packages/numpy/linalg/__pycache__/linalg.cpython-313.pyc": [
+      "eea5e283815f509fc8b62d14c20c5437baaeabcd3f733a069128b73009c6e30f"
+    ],
+    "/usr/lib/python3/dist-packages/numpy/linalg/_umath_linalg.cpython-313-aarch64-linux-gnu.so": [
+      "2279bd3f366b77aa5e67c0ae2ec77c2c831df25ca7809c028d013fc25ab423d6"
+    ],
+    "/usr/lib/python3/dist-packages/numpy/matrixlib/__pycache__/__init__.cpython-313.pyc": [
+      "17fdf9375447f801de6fc303a918f321da3419f40130870a995a5af62112ec53"
+    ],
+    "/usr/lib/python3/dist-packages/numpy/matrixlib/__pycache__/defmatrix.cpython-313.pyc": [
+      "d574748824b43efa381474ed766c3e730a638e8ddb024b6f4bbab2f793283251"
+    ],
+    "/usr/lib/python3/dist-packages/numpy/typing/__pycache__/__init__.cpython-313.pyc": [
+      "d4d36fd2dc89aff9a83e690428f9cf9e4bf9729505f65fa5f77c2b2713e9c937"
+    ],
+    "/usr/lib/python3/dist-packages/picamera2/__pycache__/__init__.cpython-313.pyc": [
+      "742b55197631d6c2f8753582ceb747950fad931c617caa7ebb66d3479dc4a453"
+    ],
+    "/usr/lib/python3/dist-packages/picamera2/__pycache__/configuration.cpython-313.pyc": [
+      "b2c9845b0a2f2f9c21511378b6a5ca7edde26888918ca93dce749015b2578890"
+    ],
+    "/usr/lib/python3/dist-packages/picamera2/__pycache__/controls.cpython-313.pyc": [
+      "fdd306c75ce40d3bf3e8a1a0481b9f48e7238a106fc8e59aa4695930dc45419f"
+    ],
+    "/usr/lib/python3/dist-packages/picamera2/__pycache__/converters.cpython-313.pyc": [
+      "6a993e54591f525b6f424fbaba0d200451b32d738e45fe8ac2d16f23765c02f9"
+    ],
+    "/usr/lib/python3/dist-packages/picamera2/__pycache__/dma_heap.cpython-313.pyc": [
+      "0a591b711506a6f9c195844ae2ea10262a82fdfc184819a1218827a09770a430"
+    ],
+    "/usr/lib/python3/dist-packages/picamera2/__pycache__/formats.cpython-313.pyc": [
+      "80ae79db326b52fbd498d48db7d94aa02ee227da7acecbd4b3c9d28f63354799"
+    ],
+    "/usr/lib/python3/dist-packages/picamera2/__pycache__/job.cpython-313.pyc": [
+      "1ba3ebeddc2ea30b43fa9d9884af6f39989e0b6b83d1cd97951885b3e2285c64"
+    ],
+    "/usr/lib/python3/dist-packages/picamera2/__pycache__/metadata.cpython-313.pyc": [
+      "6e3eab0ce429e01f9d3db1e7dd10a4559353ad667ce37e6a40378f3e3ba7889d"
+    ],
+    "/usr/lib/python3/dist-packages/picamera2/__pycache__/picamera2.cpython-313.pyc": [
+      "5366f31fa1b1c56acb7cc84668c777baa6d58cd506adb01be3dbed57eb1dd6f1"
+    ],
+    "/usr/lib/python3/dist-packages/picamera2/__pycache__/platform.cpython-313.pyc": [
+      "0314b437a574530d7c530ffab5322eb154c6488e6b7eaaf36cb0b663f39da592"
+    ],
+    "/usr/lib/python3/dist-packages/picamera2/__pycache__/remote.cpython-313.pyc": [
+      "8070fdcaecbc9b8600c27d56939a6b1f434ccc3a30ecda131d44e5256151537e"
+    ],
+    "/usr/lib/python3/dist-packages/picamera2/__pycache__/request.cpython-313.pyc": [
+      "5f50f153cdf0a2e163c563fa962800246f2a6d0e398f9d0737092d6d392ad3dc"
+    ],
+    "/usr/lib/python3/dist-packages/picamera2/__pycache__/sensor_format.cpython-313.pyc": [
+      "1bdebc59492499bd0722ef17850bdc5fd5747d3deb7ca472028c450c60de30a3"
+    ],
+    "/usr/lib/python3/dist-packages/picamera2/__pycache__/utils.cpython-313.pyc": [
+      "a42966881db4d08429389b71a360a667e3a3891d7851859c7ff8473e1765f76c"
+    ],
+    "/usr/lib/python3/dist-packages/picamera2/allocators/__pycache__/__init__.cpython-313.pyc": [
+      "76775d05b9d0e77f82f6d0870e055e8baac29cb660ef4810998787b25b6091a0"
+    ],
+    "/usr/lib/python3/dist-packages/picamera2/allocators/__pycache__/allocator.cpython-313.pyc": [
+      "ee5d57fe3c2f64ac47aee333d0a1218ceb4dd6676fff03baa6dcd001aabceac0"
+    ],
+    "/usr/lib/python3/dist-packages/picamera2/allocators/__pycache__/dmaallocator.cpython-313.pyc": [
+      "df33e48379e77786f3f708f1b6cfd9b9fa21b9f499b29d684e25e8ee19e28fcf"
+    ],
+    "/usr/lib/python3/dist-packages/picamera2/allocators/__pycache__/libcameraallocator.cpython-313.pyc": [
+      "f1bbbd596f562b7c3581840e8f80b99b0e2d756243a19ad1aea4703bc100c165"
+    ],
+    "/usr/lib/python3/dist-packages/picamera2/allocators/__pycache__/persistent_allocator.cpython-313.pyc": [
+      "5b626c7d315db4dec86193ae0f62b9bda0e062c9de22d603046b1e59ef3ebb26"
+    ],
+    "/usr/lib/python3/dist-packages/picamera2/encoders/__pycache__/__init__.cpython-313.pyc": [
+      "a4889e728aea4a7f23729226478a58da5417ae578c8bf58e37e26276b530cc23"
+    ],
+    "/usr/lib/python3/dist-packages/picamera2/encoders/__pycache__/encoder.cpython-313.pyc": [
+      "98d9fb02fbb5cc60c97094b87515fca76b9048e39799c4e49e2c29e790c31e01"
+    ],
+    "/usr/lib/python3/dist-packages/picamera2/encoders/__pycache__/jpeg_encoder.cpython-313.pyc": [
+      "7130fb109d08d231ee1a9a92eb6c7ebee516fa104e4c15d2566f2e046b264461"
+    ],
+    "/usr/lib/python3/dist-packages/picamera2/encoders/__pycache__/libav_h264_encoder.cpython-313.pyc": [
+      "bf272859839b5f9450fbdbebe8165567592c90f8135d0ce556c6b59b50558ff8"
+    ],
+    "/usr/lib/python3/dist-packages/picamera2/encoders/__pycache__/libav_mjpeg_encoder.cpython-313.pyc": [
+      "dc13fe5885c82dc47a4ee86e223e8a29641665cc521812d412d2acfb826088eb"
+    ],
+    "/usr/lib/python3/dist-packages/picamera2/encoders/__pycache__/multi_encoder.cpython-313.pyc": [
+      "320aad38a753b84d6e4fcfd8eed4885054398b0dd527b06a1bb2136c8fab7ae8"
+    ],
+    "/usr/lib/python3/dist-packages/picamera2/outputs/__pycache__/__init__.cpython-313.pyc": [
+      "4f8b32c1a8a19302423854c9cb9e726251bb3029014e8f803f8d8df0d12ce407"
+    ],
+    "/usr/lib/python3/dist-packages/picamera2/outputs/__pycache__/circularoutput.cpython-313.pyc": [
+      "05d82e1af33d243f53a5e924bc9d448a1fafd81335b90ef9b30738dbd2a8ea89"
+    ],
+    "/usr/lib/python3/dist-packages/picamera2/outputs/__pycache__/circularoutput2.cpython-313.pyc": [
+      "0c7cc4cd4b897f457b1c2c272bfa0c39d54eab638c19baab1d5b13ca1032e728"
+    ],
+    "/usr/lib/python3/dist-packages/picamera2/outputs/__pycache__/ffmpegoutput.cpython-313.pyc": [
+      "79484a44015082dfee7f84189bce3a3e2ed3ac675063de4d4532507ecbdfbeea"
+    ],
+    "/usr/lib/python3/dist-packages/picamera2/outputs/__pycache__/fileoutput.cpython-313.pyc": [
+      "96cb0bc0e626590cf379c6cae53f218aadfb46a1166414d952da67630c4deb1d"
+    ],
+    "/usr/lib/python3/dist-packages/picamera2/outputs/__pycache__/output.cpython-313.pyc": [
+      "4aed2b751936c414722e4a3be1d56ea2fb45b6b8e9cca9696cdeb475b59fd164"
+    ],
+    "/usr/lib/python3/dist-packages/picamera2/outputs/__pycache__/pyavoutput.cpython-313.pyc": [
+      "cd9c9de84c27d9f41daf835891b2e1d7d9b063d1283b147a1413c79c4d458320"
+    ],
+    "/usr/lib/python3/dist-packages/picamera2/outputs/__pycache__/splittableoutput.cpython-313.pyc": [
+      "5a0a6eb0f022eddbaa435b9772d3ac960aebf54b2cbd3fc0bfcef3727f469df9"
+    ],
+    "/usr/lib/python3/dist-packages/picamera2/previews/__pycache__/__init__.cpython-313.pyc": [
+      "01a7f87390bca86840b4bbee246a576600ac5ef5ab99a3dc32b122555b0c4674"
+    ],
+    "/usr/lib/python3/dist-packages/picamera2/previews/__pycache__/drm_preview.cpython-313.pyc": [
+      "6af3e0e43795b6b0933fc5f5dec6c86ee3c9068fd83d370913da0d99c73ce069"
+    ],
+    "/usr/lib/python3/dist-packages/picamera2/previews/__pycache__/null_preview.cpython-313.pyc": [
+      "d07d19bc379041a499632b6c6d69ffe3bcf4a6a13c247ef9c0ea7436e930b8c9"
+    ],
+    "/usr/lib/python3/dist-packages/picamera2/previews/__pycache__/qt_previews.cpython-313.pyc": [
+      "2d7d25a0075611eccf407de4d2e119a7dc7281af5eaf2344acc1c2bc836853f1"
+    ],
+    "/usr/lib/python3/dist-packages/pidng/__pycache__/__init__.cpython-313.pyc": [
+      "b3c10fc8a3bc3e337d9b7d4480287eab727f98542dd4ce7eb8bbb361f98961a5"
+    ],
+    "/usr/lib/python3/dist-packages/pidng/__pycache__/camdefs.cpython-313.pyc": [
+      "9671cb45effb274d3e2fc0c52942abb689c2cf60a3c5419bab45fe83fd7346f0"
+    ],
+    "/usr/lib/python3/dist-packages/pidng/__pycache__/core.cpython-313.pyc": [
+      "8941dc64223e555f1d927ffbcf1c0138c1f6b20b73376f892519e6b3e06d59ae"
+    ],
+    "/usr/lib/python3/dist-packages/pidng/__pycache__/defs.cpython-313.pyc": [
+      "228d392ff52cdab85c7da8c4a9bc8ec88c47d6b8624aa42081ba8bd457fbb933"
+    ],
+    "/usr/lib/python3/dist-packages/pidng/__pycache__/dng.cpython-313.pyc": [
+      "35aa7b5351cd382ec53d8411a203bc7046dabfe9f5f97ce865d430a899728e58"
+    ],
+    "/usr/lib/python3/dist-packages/pidng/__pycache__/packing.cpython-313.pyc": [
+      "66c343485e5af187ebba8295dddb0e912654f41a5000d8a9e4141b7159a8d3aa"
+    ],
+    "/usr/lib/python3/dist-packages/piexif/__pycache__/__init__.cpython-313.pyc": [
+      "7f4b845f08d6a5663ac48a6d5a7e732b86da0ecf31560ec005a4197e306804a8"
+    ],
+    "/usr/lib/python3/dist-packages/piexif/__pycache__/_common.cpython-313.pyc": [
+      "a5bee5b567f63df0fc486ea83317280f12ffc4f2cd5fd903a59750e9dc36093d"
+    ],
+    "/usr/lib/python3/dist-packages/piexif/__pycache__/_dump.cpython-313.pyc": [
+      "ac0f12b3bba7e70b983894c0203f23b218e9df87384062c03b64858f32b23d88"
+    ],
+    "/usr/lib/python3/dist-packages/piexif/__pycache__/_exceptions.cpython-313.pyc": [
+      "bd33e72a52090413d945c999084b81e2196ae89dc38c0056265d7c81ce6f5029"
+    ],
+    "/usr/lib/python3/dist-packages/piexif/__pycache__/_exif.cpython-313.pyc": [
+      "fb0cd3f130b1cf2ca67fa2c29db99f68f639595d0b474c87b7af6cee3b13feb8"
+    ],
+    "/usr/lib/python3/dist-packages/piexif/__pycache__/_insert.cpython-313.pyc": [
+      "4114baf94942cbdb20c30f0f4e7774c5c5dcb576529b98a6b7d8e55e8b86f7ad"
+    ],
+    "/usr/lib/python3/dist-packages/piexif/__pycache__/_load.cpython-313.pyc": [
+      "0c246e81c011fab68f59f30353f9e946e37dd833450858976b9b7bc956dc10df"
+    ],
+    "/usr/lib/python3/dist-packages/piexif/__pycache__/_remove.cpython-313.pyc": [
+      "9be39dfb5670dc17e1ec337868c51a611fdc694aedf93d6c21e7f9b7e06a14e5"
+    ],
+    "/usr/lib/python3/dist-packages/piexif/__pycache__/_transplant.cpython-313.pyc": [
+      "6f0944efbb59331bc2396bb4a90188b13e8594ab9c7802fd7ee19a78c1d130f5"
+    ],
+    "/usr/lib/python3/dist-packages/piexif/__pycache__/_webp.cpython-313.pyc": [
+      "4e80cf1cbdf861e4cadda84a9710ab68f5725e04f763518ae31d01cf25c79595"
+    ],
+    "/usr/lib/python3/dist-packages/pykms/__pycache__/__init__.cpython-313.pyc": [
+      "1c19c395d1df151f0e90137c8eb9a95970f285a8837e290f2d71a7b1cb0faf81"
+    ],
+    "/usr/lib/python3/dist-packages/pykms/pykms.cpython-313-aarch64-linux-gnu.so": [
+      "db02b7d5f443d8cb43f9489bfdd411b49b35630d3dd8631ce50c1b35db8ea878"
     ],
     "/usr/lib/python3/dist-packages/referencing/__pycache__/__init__.cpython-313.pyc": [
       "9be8638ded0f2b6e30fa152d654ad6e89c4528ad6d76dc0ef300b98c20f20b0c"
@@ -5739,6 +6079,12 @@
     "/usr/lib/python3/dist-packages/rpds/rpds.cpython-313-aarch64-linux-gnu.so": [
       "b08c8a095637bf04737f37e2b3814d8ef40cabb3d4a73a1ebdbe1862c75ea11d"
     ],
+    "/usr/lib/python3/dist-packages/simplejpeg/__pycache__/__init__.cpython-313.pyc": [
+      "146019e306cd58b6d2f8e52dea2fe6802c957204f7de8813b68f8bd672d6e138"
+    ],
+    "/usr/lib/python3/dist-packages/simplejpeg/_jpeg.cpython-313-aarch64-linux-gnu.so": [
+      "1045153ff7ab4b7b4abf7098b13109c9b52f2a0d7a8aa544f7496f28d29141cc"
+    ],
     "/usr/lib/python3/dist-packages/urllib3/__pycache__/__init__.cpython-313.pyc": [
       "ce3b58f2e9d233d79007b60e38ec6abdec192d4737001305431f324d1263b06d"
     ],
@@ -5825,6 +6171,12 @@
     ],
     "/usr/lib/python3/dist-packages/urllib3/util/__pycache__/wait.cpython-313.pyc": [
       "c0f1434c2dfd77c4745b1ef80c2da13328dc4b07ae8a1dfa8a4d2908498effc7"
+    ],
+    "/usr/lib/python3/dist-packages/videodev2/__pycache__/__init__.cpython-313.pyc": [
+      "39c332f3be842568b9373d6de8a2d26c84219cbd3260552a46f1caf584a38e9e"
+    ],
+    "/usr/lib/python3/dist-packages/videodev2/__pycache__/videodev2.cpython-313.pyc": [
+      "9f3d1c21f30f622dfdd28a42f523370141bf35b1c555ca89e1702f7b2de029b4"
     ],
     "/usr/lib/python3/dist-packages/webcolors/__pycache__/__init__.cpython-313.pyc": [
       "7bc3d2af4cc28a6aa5b2ec342b766a36c0e47a6ae5cd409f2e469d674caeec55"
@@ -7287,20 +7639,11 @@
     "/usr/libexec/gvfsd": [
       "44e95037dcf7a17a2183d1524aabc0699023e2edfdd32449bcdd31845d9f018a"
     ],
-    "/usr/libexec/gvfsd-dnssd": [
-      "bb6861208a4edfd846ac1b77607f5d252e93454805d63d966e15184b42adfe3c"
-    ],
     "/usr/libexec/gvfsd-fuse": [
       "cf0913a81481013928d5bf5b0dc80bcdf684a12097f24c5d4f957fc8991c34c3"
     ],
-    "/usr/libexec/gvfsd-network": [
-      "2fac3b345f79318eaba91a11113cf79742d9b352924d0790735b46d97fd8b305"
-    ],
     "/usr/libexec/gvfsd-trash": [
       "4d676267548827bfb26aa285774c9be5949d40e6616cf4de42f11eaf588d5872"
-    ],
-    "/usr/libexec/gvfsd-wsdd": [
-      "73d6035a5b9ca204c4c0fc219fb14e2a593fab8d6094c83bdc92bd72ef833c9f"
     ],
     "/usr/libexec/libinput/libinput-list-devices": [
       "5d130572f7986afec36bc3e9750798e036163800be5c60c7293f43cc34da05b7"
@@ -7394,9 +7737,6 @@
     ],
     "/usr/sbin/fsck.fat": [
       "2d683277fec9e27db145ebb65cc1f15695e6a395a9e238c693a1083b7bf75ad7"
-    ],
-    "/usr/sbin/ifconfig": [
-      "6b8b61eeae8e4bad40429f46463a2aba95ea287a2eb829c12050f72b7d5cbfc6"
     ],
     "/usr/sbin/iw": [
       "d80e475972e85fae1264fcfcc60aa46ad84779162a1359effe8929586b46ed6b"
@@ -7797,6 +8137,12 @@
     "/usr/share/iproute2/rt_tables": [
       "08c418b8469951cd5c59da91e4b116cd62cb125478dfac12e5f5067d4d07ad3f"
     ],
+    "/usr/share/libcamera/ipa/rpi/pisp/imx708.json": [
+      "f8a36c308ab526bbcfe4dd4c573e960218eecb377fd994358555bf0729f42e5f"
+    ],
+    "/usr/share/libpisp/backend_default_config.json": [
+      "fb2e8de5276c2d0dc4ec7ec35dfb1db17112e431ac3c189d79955e12bd51b9d3"
+    ],
     "/usr/share/lightdm/lightdm.conf.d/01_debian.conf": [
       "b7102ca9ee536d17f2b90e1c655a681b89b570d09ce15eb299a465f1c91da8f9"
     ],
@@ -7893,28 +8239,22 @@
     "/usr/share/plymouth/themes/pix/splash.png": [
       "290b11fc1c954a75e08c0f7f6d015228afca14cc23f453434a39fc40bbf0ba03"
     ],
+    "/usr/share/terminfo/x/xterm-256color": [
+      "7f27e57e318f32605466c781de06fba0ff27f212667140cde50ff65498123f84"
+    ],
     "/usr/share/wayland-sessions/rpd-labwc.desktop": [
       "f06282544d1127adc58943814fbdcc78797a5f622777694c82d21c5ec770a9cb"
     ],
     "/usr/share/zoneinfo/Europe/London": [
       "c85495070dca42687df6a1c3ee780a27cbcb82f1844750ea6f642833a44d29b4"
     ],
-    "/var/backups/apt.extended_states.0": [
-      "4f00890b00029a54953b36b45e388f3d27c1c652092a3c4c6fe8273da15a6ee0"
-    ],
     "/var/cache/apt/pkgcache.bin": [
-      "4b351b0e0e60f7360b8f05ba243fd01ac92b0ae4a5b7b33e59c3196b402b7298"
+      "12cb676756b51c7d0e4d3714470913c79ea448e40582e0846dc9b0c55b78dc60"
     ],
-    "/var/cache/apt/pkgcache.bin.7PBXCt": [
+    "/var/cache/apt/pkgcache.bin.VBzu1B": [
       "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
     ],
-    "/var/cache/apt/pkgcache.bin.8Eaasy": [
-      "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
-    ],
-    "/var/cache/apt/srcpkgcache.bin.TWmihY": [
-      "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
-    ],
-    "/var/cache/apt/srcpkgcache.bin.ZBKynA": [
+    "/var/cache/apt/srcpkgcache.bin.ruGBOE": [
       "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
     ],
     "/var/cache/cups/job.cache": [
@@ -8028,68 +8368,32 @@
     "/var/lib/NetworkManager/internal-28d4a0dc-169d-4c97-8d03-9cfba91ed17f-wlan0.lease": [
       "e4c3e6c817052d9c2189e32612342cca0b572762ce7fbd578d2436cef7d44c3f"
     ],
-    "/var/lib/NetworkManager/internal-28d4a0dc-169d-4c97-8d03-9cfba91ed17f-wlan0.lease.5MKHQ3": [
+    "/var/lib/NetworkManager/internal-28d4a0dc-169d-4c97-8d03-9cfba91ed17f-wlan0.lease.119DQ3": [
       "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
     ],
-    "/var/lib/NetworkManager/internal-28d4a0dc-169d-4c97-8d03-9cfba91ed17f-wlan0.lease.615NQ3": [
+    "/var/lib/NetworkManager/internal-28d4a0dc-169d-4c97-8d03-9cfba91ed17f-wlan0.lease.B65DQ3": [
       "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
     ],
-    "/var/lib/NetworkManager/internal-28d4a0dc-169d-4c97-8d03-9cfba91ed17f-wlan0.lease.62GDQ3": [
-      "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
-    ],
-    "/var/lib/NetworkManager/internal-28d4a0dc-169d-4c97-8d03-9cfba91ed17f-wlan0.lease.63GDQ3": [
-      "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
-    ],
-    "/var/lib/NetworkManager/internal-28d4a0dc-169d-4c97-8d03-9cfba91ed17f-wlan0.lease.CXBVQ3": [
-      "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
-    ],
-    "/var/lib/NetworkManager/internal-28d4a0dc-169d-4c97-8d03-9cfba91ed17f-wlan0.lease.OD0UQ3": [
-      "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
-    ],
-    "/var/lib/NetworkManager/internal-28d4a0dc-169d-4c97-8d03-9cfba91ed17f-wlan0.lease.RVQCQ3": [
-      "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
-    ],
-    "/var/lib/NetworkManager/internal-28d4a0dc-169d-4c97-8d03-9cfba91ed17f-wlan0.lease.U72UQ3": [
-      "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
-    ],
-    "/var/lib/NetworkManager/internal-28d4a0dc-169d-4c97-8d03-9cfba91ed17f-wlan0.lease.ZP7WQ3": [
+    "/var/lib/NetworkManager/internal-28d4a0dc-169d-4c97-8d03-9cfba91ed17f-wlan0.lease.ZFXTQ3": [
       "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
     ],
     "/var/lib/NetworkManager/secret_key": [
       "9b53b6366e5c5464907d03b326c98f35c1c68ec9aa2d0a21654fa1628aa3e20d"
     ],
     "/var/lib/NetworkManager/seen-bssids": [
-      "c55fc59b442e93d64585072ab648a287b9c94fec5bdc966b1eaaa09c3a4b123f"
-    ],
-    "/var/lib/NetworkManager/seen-bssids.6IAGQ3": [
-      "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
-    ],
-    "/var/lib/NetworkManager/seen-bssids.FF8MQ3": [
-      "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      "b22ae3b6a7f90481fe318f53023592097199729e341b6515faa157968e11284c"
     ],
     "/var/lib/NetworkManager/timestamps": [
-      "2e65ecea15fb0d76f75a6cd3828374c51477961ffce8d45b5db2042bed92aa12"
+      "fb5756a4ad1d52c826c2e74def799a6f3feb8382345773e4dc050f9fc3d540fa"
     ],
-    "/var/lib/NetworkManager/timestamps.617BQ3": [
+    "/var/lib/NetworkManager/timestamps.0JKPQ3": [
       "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
     ],
-    "/var/lib/NetworkManager/timestamps.B0LGQ3": [
-      "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
-    ],
-    "/var/lib/NetworkManager/timestamps.D4UEQ3": [
-      "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
-    ],
-    "/var/lib/NetworkManager/timestamps.I4CMQ3": [
-      "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
-    ],
-    "/var/lib/NetworkManager/timestamps.I56NQ3": [
-      "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
-    ],
-    "/var/lib/NetworkManager/timestamps.S53EQ3": [
+    "/var/lib/NetworkManager/timestamps.8Z3XQ3": [
       "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
     ],
     "/var/lib/PackageKit/transactions.db": [
-      "bc19fdadddb6660ccd4c020c8afaf7bd5db28b011ead86669cb0fcb8c81f4d3e"
+      "24684051691e3465b6db28c933f5ea0bc22aa3f333c8d74877faef0bd8990c27"
     ],
     "/var/lib/PackageKit/transactions.db-journal": [
       "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
@@ -8101,36 +8405,31 @@
       "4f00890b00029a54953b36b45e388f3d27c1c652092a3c4c6fe8273da15a6ee0"
     ],
     "/var/lib/apt/lists/archive.raspberrypi.com_debian_dists_trixie_InRelease": [
-      "49b0f541af10bb4f6ace8d860e49d694bd1c1a5f3afb236e20c307d947322415"
+      "07cb181289ecd49d2f53c1aed04ab4ae956faabe05d2e31f38b241517fde1c31"
     ],
     "/var/lib/apt/lists/archive.raspberrypi.com_debian_dists_trixie_main_binary-arm64_Packages": [
-      "312522d2d9c6854c7515f75cb583b1e187be1e830b391cac229ec5a1f8a4720e",
-      "c2605929a71b7beecda9f288e659c9d38ca1dc9e9590ced894228f2bdf7b5668"
+      "c29be2c2d0558efb5aacae6fe44c6abedf306985bace297c62a2c9db2af47de2"
     ],
     "/var/lib/apt/lists/archive.raspberrypi.com_debian_dists_trixie_main_binary-armhf_Packages": [
-      "61b117190760b9121e9fbb8e84f5a10713b02eb1440a3045d93785a650a51d7d",
-      "2d990aff5ab5c00596deaaca4e63e30d2d390c2d63e566b15f123d8a7cafd16b"
+      "2ec53bf7e3fb44f1215f23bed8c920459736e9188038f6fed70323bc453bc680"
     ],
     "/var/lib/apt/lists/deb.debian.org_debian-security_dists_trixie-security_InRelease": [
-      "15fb04293dc1ed1a2b481212e56f2d70c9550f9a11939cb7ef8216d50623b085"
+      "c22a24ef407739ce3565069014dd7a20c78786b88ecb08b174d8fae7ef007135"
     ],
     "/var/lib/apt/lists/deb.debian.org_debian-security_dists_trixie-security_main_binary-arm64_Packages": [
-      "8db9647c880944b3a63f4c5e9dd57b7edf2c516c4e8442e605eb8457758b8ffb",
-      "ea5c6f3a8a744b4e0975bbce222cc140d3b4e03b1d5cf39b4e117c0ba2db691e"
+      "07755c1099b3aae040808374100e82bd8f496a961634c18eb392463dcd71b5af"
     ],
     "/var/lib/apt/lists/deb.debian.org_debian-security_dists_trixie-security_main_binary-armhf_Packages": [
-      "92e1405dc85811f288a4e1948e5468badf04593d87f78a178b68c5cdc6d0ffbf",
-      "1818a89b620bbc687bc683ce01d2f5ad48bcbb9494892b7f91853701ddcdef98"
+      "7fd5c0454183f648446d7d4282d2cdbd770a4802b1075230a37b4de1dceceae5"
     ],
     "/var/lib/apt/lists/deb.debian.org_debian-security_dists_trixie-security_main_i18n_Translation-en": [
-      "1d7ab93fbb6be36abe66d990bf9692686ab7ed463068bf252447c2b9ee056c3b",
-      "a5014cd584ed6cd07ee33ed0f334e677ae1249c194ab3eadc018b112f5d25ab7"
+      "8f68f0388d6d6073dda6d82b0528e0ed26e0aff09958986f5d168b98a1e0874c"
     ],
     "/var/lib/apt/lists/deb.debian.org_debian-security_dists_trixie-security_non-free-firmware_i18n_Translation-en": [
       "e4907fdbff33532d6868798090276fd7fb3281ca42f1fa35ac8ddfc7a9380cc7"
     ],
     "/var/lib/apt/lists/deb.debian.org_debian_dists_trixie-updates_InRelease": [
-      "9331417ea0e255ede06eba6f51db36c318152f9f1ede193f7dc5a3ecc6363f5c"
+      "44cd92250153de8aa42398f12dfb5c7944bd8b0458981f4af9eeb604d1f048d8"
     ],
     "/var/lib/apt/lists/deb.debian.org_debian_dists_trixie-updates_main_binary-arm64_Packages": [
       "e1713ad0ca698a00cfb31c6b611234f5c43018303137ceb54a4b73efd0752024"
@@ -8183,31 +8482,22 @@
     "/var/lib/apt/lists/lock": [
       "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
     ],
-    "/var/lib/apt/lists/partial/.apt-acquire-privs-test.TECJlF": [
+    "/var/lib/apt/lists/partial/.apt-acquire-privs-test.EYL9o8": [
       "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
     ],
-    "/var/lib/apt/lists/partial/.apt-acquire-privs-test.XHWDg7": [
+    "/var/lib/apt/lists/partial/.apt-acquire-privs-test.MX2a2T": [
       "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
     ],
-    "/var/lib/apt/lists/partial/.apt-acquire-privs-test.hJEsPL": [
+    "/var/lib/apt/lists/partial/.apt-acquire-privs-test.XzXSbN": [
       "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
     ],
-    "/var/lib/apt/lists/partial/.apt-acquire-privs-test.nLrQpw": [
+    "/var/lib/apt/lists/partial/.apt-acquire-privs-test.q3KcLV": [
       "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
-    ],
-    "/var/lib/apt/lists/partial/archive.raspberrypi.com_debian_dists_trixie_InRelease": [
-      "1215fd6ba1b15fd6e1d8667f6da72dc712353934ed00715b2e390478a734a5e4"
-    ],
-    "/var/lib/apt/lists/partial/deb.debian.org_debian-security_dists_trixie-security_InRelease": [
-      "d12a69b6dc6a21cf09df2c69ed72c601ef344cec2356b73f25bd5b3d9c9b2dcd"
-    ],
-    "/var/lib/apt/lists/partial/deb.debian.org_debian_dists_trixie-updates_InRelease": [
-      "8f6d7f81cb1183995bb268c58b39cb6de7adef9941f059caefbace315b8495c1"
     ],
     "/var/lib/bluetooth/88:A2:9E:23:CE:95/attributes": [
       "ddfdaafb3300321513109f53f9d736ed4cf8695038030e3df2d76f46f4f76ed2"
     ],
-    "/var/lib/bluetooth/88:A2:9E:23:CE:95/attributes.94NLQ3": [
+    "/var/lib/bluetooth/88:A2:9E:23:CE:95/attributes.E74OQ3": [
       "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
     ],
     "/var/lib/bluetooth/88:A2:9E:23:CE:95/settings": [
@@ -8226,35 +8516,35 @@
       "58ff1ea61e79d156a477481c28942a60dd7abfae38fb1f4ca655249671618cc6"
     ],
     "/var/lib/cloud/data/status.json": [
-      "3f169f5defd030f2e6e23823dee6a6c5978ef5e44f8c1371bc13e1a8596c1821",
-      "4b370f0a66237f97ef9f2171d9d497d8ee3ad5f72e8f7784bb26d2a48b120a8e",
-      "4b328ecd501fe63f41f088c8d8930c34f889d44e45eea27b6e2f189b145abbc4"
+      "71034d4d9ceb01f154bea09808fbc3a0c66687fce1a16ab0d388c4583c01f33b",
+      "8afd31f508d13ff126c69b489b92c01ca170a8ee1456c6b808b05965ddbe3635",
+      "3a8ead3314971a8d045795bcf2a69e1e41be4c5c98d25d689a46083150eab27d"
     ],
-    "/var/lib/cloud/data/tmp47dsrln5": [
+    "/var/lib/cloud/data/tmp3rerevbe": [
       "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
     ],
-    "/var/lib/cloud/data/tmp62fwoue8": [
+    "/var/lib/cloud/data/tmp7523wzua": [
       "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
     ],
-    "/var/lib/cloud/data/tmp7s6hwbb8": [
+    "/var/lib/cloud/data/tmp99juicvm": [
       "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
     ],
-    "/var/lib/cloud/data/tmpc5ofe85m": [
+    "/var/lib/cloud/data/tmpa9k8lo_6": [
       "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
     ],
-    "/var/lib/cloud/data/tmpeda9c9k6": [
+    "/var/lib/cloud/data/tmpbigfyvnp": [
       "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
     ],
-    "/var/lib/cloud/data/tmpiakwh14s": [
+    "/var/lib/cloud/data/tmpcbrudis3": [
       "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
     ],
-    "/var/lib/cloud/data/tmpm7z10vux": [
+    "/var/lib/cloud/data/tmpf99f_k56": [
       "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
     ],
-    "/var/lib/cloud/data/tmpxashyvfr": [
+    "/var/lib/cloud/data/tmppnt7n2s5": [
       "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
     ],
-    "/var/lib/cloud/data/tmpzchcnh3b": [
+    "/var/lib/cloud/data/tmpsm1rjxv3": [
       "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
     ],
     "/var/lib/cloud/instances/nocloud/cloud-config.txt": [
@@ -8264,34 +8554,28 @@
       "28eca9266548b34f1779d3d708c42364547733ff249b0878662f66041639443c"
     ],
     "/var/lib/cloud/instances/nocloud/obj.pkl": [
-      "853fc53b1d23bc11b8581a86f4111488db2869f487cc9bd14bc04519db82c6bd",
-      "cd5dc1c44bcae11e40a5a76a93e25963b41868d31797677c56d064b75b7dd2aa"
+      "2dc1e37d5cff662cc750682f5c6d6c012291f3e7829b5c5d6fbb25def157ce14",
+      "51f6fad83ea5556a49844c7e432b2aa8f5aa569f794eb95d59605e7efc871e68"
     ],
     "/var/lib/dpkg/arch": [
       "ce4d143484c6eef24e963fb3f4f952a6641c712f50b9ee99f9093af4db333ecf"
     ],
-    "/var/lib/dpkg/lock": [
-      "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
-    ],
-    "/var/lib/dpkg/lock-frontend": [
-      "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
-    ],
     "/var/lib/dpkg/status": [
-      "070104aae167621e217489ffe68efa29764fbc7a5d560212fc93f107685ab050"
+      "75dbbad8b6ad5801d5c3d7a8fcbb43beee3f68e7d626a69adf6c232791f5543d"
     ],
     "/var/lib/plymouth/boot-duration": [
-      "5fab7c002bf4bb46ae50fb126f62d9737a6aa98b58c637c01acf5ea12a19f7be"
+      "1e1ba17cd3d37c162e4389c73715060402f296e59aa4bc727b88e4f4ffbd5fd7"
     ],
     "/var/lib/systemd/backlight/platform-1f00080000.i2c:backlight:11-0045": [
       "ce8bafb38615aeb5d44ebbabe78ec14ac35a5de87bdc5ad5ea82a72656024ce4"
     ],
     "/var/lib/systemd/random-seed": [
-      "66b5124543118d4b143ac7e9d7017b8026e07e5c947565c44b2688a239ce2db1"
+      "564436a649af7b8291049f45beda1096a3923dce5869ba145ec36b84fcc26aa0"
     ],
-    "/var/lib/systemd/rfkill/.#platform-1001100000.mmc:wlanb0e4c9b1e87a1113": [
+    "/var/lib/systemd/rfkill/.#platform-1001100000.mmc:wlan34d9de0cc3ef9beb": [
       "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
     ],
-    "/var/lib/systemd/rfkill/.#platform-107d50c000.serial:bluetooth91d5aa2524ae4dc2": [
+    "/var/lib/systemd/rfkill/.#platform-107d50c000.serial:bluetooth86ead7eadd3129ba": [
       "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
     ],
     "/var/lib/systemd/rfkill/platform-1001100000.mmc:wlan": [
@@ -8299,35 +8583,6 @@
     ],
     "/var/lib/systemd/rfkill/platform-107d50c000.serial:bluetooth": [
       "9a271f2a916b0b6ee6cecb2426f0b3206ef074578be55d9bc94f6f3fe3ab86aa"
-    ],
-    "/var/log/lastlog": [
-      "6eb009f4a7faf6a2f838f5e7a93fb1a9a1fa5bd0e1d61375d6447211316f4080",
-      "28af0440586b46a22e06c95714c9d941d3ff6961040a2f2c659b2b4365b14f81",
-      "9962f0d1071f1b904336df22f6888cec7b186e1a235128fccc1d6ed4c057ad55",
-      "64b199e3c2338a7310c9c7794fcdfe1e9de964d1bb0375dfde66ac4482686822",
-      "93ed4e53515e062e47e22f6483f613fc5b631f84d8a5784651cb49a884088b73"
-    ],
-    "/var/log/wtmp": [
-      "36dd1f6d424457aa922e58e9fdc590fa1b36d29dc7d8aaed90d88b23f712b9ef",
-      "aff240d1b4bac790f75ba9cc984138f01f6c7e122bee4a4bf2d781bc76b38ea1",
-      "72084e6604d5d00a1041d46fd46e3ea0e7898fee5f662276b6eac8046bc87a89",
-      "251f1478d85bcbc8cd7fa36024e22d7552691183e790613f040fde1c4cf29815",
-      "589ce3074cb2144caee5657c7ccf56938345481c32602783e5b86c43349fdd2c",
-      "f347654893d94bc3ce331b462599ebf6750af79f2a16ab4f3565be7361caa3e0",
-      "72eebdd6cc468364b045dfc9235d159ab8e1f6fd7db5084bff9f20ef847f3944"
-    ],
-    "/var/log/wtmp.db": [
-      "e6287e7b7c2efc77cdbf54cbc2b9ec57e79505952d1bb88092661a18eb882c0c",
-      "83a666913925ae37c3467b39b2addf1383a8c9a2e943cdf62187653d9afa05c0",
-      "ece7e6aa31cc11d26b29764f298d6a6ebc2af9167d32846ee06abef4b47eebed",
-      "7529ab5d595e07d4bf1c275d6b19f25d79b752a90a8a3f4181c0e2cc90785ebc",
-      "ae5cebaddbb7907c58c4122977942928dcf1d26c7af6fab0cd2a7b1f4dab144c",
-      "520cd150526d00a2711cbab6d1aae699015c45dc1fda21ba70cff3135e797526",
-      "7341b5c7ea875f97d90d15c60fbb3a0de3e5ab75633c0d6bdd87ad5051c8ce39",
-      "dd7e813f91231b8f17483fb0d03b86b81cd7fcffb5f601c4076ebc937345f124"
-    ],
-    "/var/log/wtmp.db-journal": [
-      "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
     ],
     "/var/swap": [
       "b38ba8d844bdcba5e14c2b193fed4b1348e90b06e6e4aa7c311959bacb4b4577"
