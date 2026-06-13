@@ -80,6 +80,27 @@ The laptop server re-reads `allowlist.json` on every evidence POST — a
 Order is fixed: **green first, then red. Within one boot there is no way
 back to green** (see below).
 
+**New demo steps**
+
+```sh
+# 0. Make sure server is running and new allowlist is updated to laptop
+
+# 1. Permission to demo .sh
+chmod +x dev/demo_clean.sh
+chmod +x dev/demo_tamper.sh
+
+# 2. Trusted demo: This step merged agent and play video, so the UI will show "TRUSTED" and video can be played (press "play")
+./dev/demo_clean.sh
+
+# 3. Tampered demo: This step merged tamper, agent, and play video, so the UI will show "COMPROMISED" and the video can't be played
+./dev/demo_tamper.sh
+
+# 4. Restore: delete the [gated_prelude] line added in attester/playload/gated_prelude.sh
+
+```
+
+**Old demo steps**
+
 ```sh
 # 0. laptop: server running, dashboard on the beamer (http://localhost:5000)
 # 1. pi: clean attest -> dashboard GREEN
