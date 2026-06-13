@@ -29,15 +29,6 @@
   .meta-card span { color: var(--text); font-weight: 500; }
   .mono { font-family: ui-monospace, monospace; font-size: 11px; color: var(--text-muted); word-break: break-all; }
 
-  /* media panel */
-  .media-panel { margin-bottom: 1.5rem; }
-  .video-wrap { background: #0a0a0a; border-radius: var(--radius-lg); overflow: hidden; display: none; border: 0.5px solid var(--border); }
-  .video-wrap video { width: 100%; max-height: 520px; min-height: 280px; display: block; }
-  .failed-wrap { display: none; border-radius: var(--radius-lg); padding: 3rem 2rem; text-align: center; background: var(--red-bg); border: 0.5px solid var(--red-border); }
-  .failed-icon { font-size: 48px; color: var(--red-mid); margin-bottom: 12px; }
-  .failed-text { font-size: 32px; font-weight: 500; color: var(--red-text); margin-bottom: 6px; }
-  .failed-sub  { font-size: 13px; color: var(--red-mid); }
-
   /* door panel (Phase 2) */
   .door-panel { margin-bottom: 1.5rem; }
   .door-grid { display: grid; grid-template-columns: 300px 1fr; gap: 16px; align-items: start; }
@@ -90,19 +81,6 @@
       <span id="verdict-text">Unknown</span>
     </div>
     <div class="meta-card" id="meta">Waiting for first attestation…</div>
-  </div>
-
-  <div class="media-panel">
-    <div class="video-wrap" id="video-wrap">
-      <video id="clip" controls autoplay>
-        <source src="/clip" type="video/mp4">
-      </video>
-    </div>
-    <div class="failed-wrap" id="failed-wrap">
-      <div class="failed-icon"><i class="ti ti-shield-x" aria-hidden="true"></i></div>
-      <div class="failed-text">Playback denied</div>
-      <div class="failed-sub">Device integrity compromised — unseal authorization refused</div>
-    </div>
   </div>
 
   <div class="door-panel" id="door-panel" style="display:none">
@@ -167,21 +145,6 @@ function fillRows(tbody, rows) { tbody.innerHTML = rows.join(''); }
 
 const ICONS  = { TRUSTED: 'ti-shield-check', COMPROMISED: 'ti-shield-x', UNKNOWN: 'ti-help-circle' };
 const LABELS = { TRUSTED: 'Trusted', COMPROMISED: 'Compromised', UNKNOWN: 'Unknown' };
-let lastVerdict = null;
-
-function updateMedia(verdict) {
-  const vw = document.getElementById('video-wrap');
-  const fw = document.getElementById('failed-wrap');
-  const ve = document.getElementById('clip');
-  if (verdict === 'TRUSTED') {
-    fw.style.display = 'none'; vw.style.display = 'block';
-    if (lastVerdict !== 'TRUSTED') { ve.load(); ve.play().catch(() => {}); }
-  } else if (verdict === 'COMPROMISED') {
-    vw.style.display = 'none'; fw.style.display = 'block'; ve.pause();
-  } else {
-    vw.style.display = 'none'; fw.style.display = 'none';
-  }
-}
 
 let lastDoorTs = null;
 function renderDoor(d) {
@@ -230,9 +193,6 @@ async function refresh() {
   } else {
     meta.innerHTML = `Device <span>${esc(s.device_id)}</span> &nbsp;·&nbsp; <span>${when}</span> &nbsp;·&nbsp; <span>${s.entry_count ?? '?'}</span> measurements &nbsp;·&nbsp; attempts <span>${s.capture_attempts ?? '?'}</span> &nbsp;·&nbsp; PCR10 <span class="mono">${(s.quoted_pcr10||'').slice(0,16)}…</span>`;
   }
-
-  updateMedia(v);
-  lastVerdict = v;
 
   fillRows(document.querySelector('#checks'), Object.entries(s.checks || {}).map(([k, val]) => {
     const isPass = String(val).startsWith('PASS');

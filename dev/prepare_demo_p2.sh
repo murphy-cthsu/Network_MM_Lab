@@ -44,11 +44,14 @@ sudo PYTHONWARNINGS="$PYW" "$PY" attester/agent.py --offline --out /tmp/prepare_
 
 step "3/6 warm-up the door payload + boundary (model, recognizer, gate, NPU, camera, sealed blobs)"
 # --measure-only runs prelude + model read + frame grab + NPU inference but never
-# unseals, so every boundary file is measured here. Do BOTH frame sources: the
-# --subject path covers the model/recognizer/NPU libs; the --camera path also
-# measures picamera2/imx708 libs, so the first live --camera unlock does not
-# extend PCR 10 between verdict and unseal (the live-PCR retry would recover, but
-# cleaner to avoid). Camera warm-up is non-fatal (cameraless rigs still prepare).
+# unseals, so every boundary file is measured here. Do EVERY frame source so the
+# real demo run never measures a new file between verdict and unseal (which would
+# move PCR 10 and force an extra ~slow re-attest): --subject A and B measure both
+# testset images; --camera measures picamera2/imx708 libs. Without this, the
+# live-PCR retry still recovers — just one TPM quote slower. Camera warm-up is
+# non-fatal (cameraless rigs still prepare).
+sudo PYTHONWARNINGS="$PYW" "$PY" attester/payload/infer_door.py \
+    --subject A --measure-only
 sudo PYTHONWARNINGS="$PYW" "$PY" attester/payload/infer_door.py \
     --subject B --measure-only
 sudo PYTHONWARNINGS="$PYW" "$PY" attester/payload/infer_door.py \
