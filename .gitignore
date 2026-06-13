@@ -24,6 +24,11 @@ dev/tcti.env
 attester/out/
 verifier/runtime/
 
+# --- AI model blobs (Phase 2): the gated artifact; never commit (Constraint 5).
+# attester/models/README.md IS committed (the model contract); the blobs are not.
+attester/models/*.tflite
+attester/models/*.hef
+
 # --- Python ---
 __pycache__/
 *.pyc
