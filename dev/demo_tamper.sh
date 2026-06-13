@@ -14,7 +14,7 @@
 # otherwise video playback will fail on the next boot too.
 set -euo pipefail
 
-REPO_ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+REPO_ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
 PYTHON="$REPO_ROOT/.venv/bin/python"
 
 NO_DISPLAY=""

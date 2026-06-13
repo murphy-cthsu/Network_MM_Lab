@@ -7,7 +7,7 @@
 #   verifier_url   e.g. http://172.20.10.4:5000 (overrides $VERIFIER_URL)
 set -euo pipefail
 
-REPO_ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+REPO_ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
 PYTHON="$REPO_ROOT/.venv/bin/python"
 
 NO_DISPLAY=""
