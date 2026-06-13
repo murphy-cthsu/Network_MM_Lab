@@ -34,18 +34,21 @@ Flow (mirrors play_video.py):
 Exit codes (mirror play_video.py): 0 door unlocked, 3 gate closed (not the owner,
 or TPM refused the unseal), 1 other error.
 Usage:
-  sudo .venv/bin/python attester/payload/infer_door.py --subject A   # owner
-  sudo .venv/bin/python attester/payload/infer_door.py --subject B   # intruder
-  sudo .venv/bin/python attester/payload/infer_door.py --image face.jpg --subject A
+  sudo .venv/bin/python attester/payload/infer_door.py --subject A   # owner test frame
+  sudo .venv/bin/python attester/payload/infer_door.py --subject B   # intruder test frame
+  sudo .venv/bin/python attester/payload/infer_door.py --camera      # live Pi-camera frame
+  sudo .venv/bin/python attester/payload/infer_door.py --image face.jpg
 """
 
 import argparse
 import os
 import subprocess
 import sys
+import time
 
 PAYLOAD_DIR = os.path.dirname(os.path.abspath(__file__))
 ATTESTER_DIR = os.path.dirname(PAYLOAD_DIR)
+REPO_ROOT = os.path.dirname(ATTESTER_DIR)
 sys.path.insert(0, ATTESTER_DIR)
 
 import agent  # noqa: E402
@@ -53,28 +56,54 @@ import gate  # noqa: E402
 from recognizer import OWNER_LABEL, Recognizer  # noqa: E402
 
 GATED_PRELUDE = os.path.join(PAYLOAD_DIR, "gated_prelude.sh")
-DEFAULT_MODEL = os.path.join(ATTESTER_DIR, "models", "owner_model.tflite")
+# The LIVE model the door loads and the allowlist pins (a copy of honest.hef;
+# tamper/swap_model.sh copies malicious.hef over it). Gitignored generated blob.
+DEFAULT_MODEL = os.path.join(ATTESTER_DIR, "models", "face_classifier.hef")
+# Deterministic test frames for the scripted (cameraless) demo / warm-up.
+TESTSET_DIR = os.path.join(REPO_ROOT, "training", "testset")
 DEFAULT_THRESHOLD = 0.5
 CONSEQUENCE = "DOOR STAYS LOCKED"
 
 
-def grab_frame(image_path, use_camera):
-    """Best-effort frame load. The placeholder recognizer ignores the frame, so
-    a missing camera/image must NOT block the demo — we return whatever we have
-    (raw bytes, or None) and let predict() decide."""
-    if use_camera:
-        # Real camera capture lands here when a model is wired in. Until then we
-        # do not require a camera to be present (docs: "do not block on a camera").
-        print("[door] --camera requested; placeholder uses --subject for the "
-              "decision (no live capture needed)")
-        return None
-    if image_path and os.path.exists(image_path):
-        with open(image_path, "rb") as f:
-            return f.read()
-    if image_path:
-        print(f"[door] --image {image_path} not found; placeholder decides from "
-              f"--subject anyway")
-    return None
+def capture_camera():
+    """Grab one still from the Pi camera (imx708) and return it as a PIL image."""
+    from PIL import Image
+    from picamera2 import Picamera2
+    cam = Picamera2()
+    cam.configure(cam.create_still_configuration(main={"format": "RGB888"}))
+    cam.start()
+    time.sleep(1.5)            # let auto-exposure / white-balance settle
+    arr = cam.capture_array()  # HxWx3 RGB
+    cam.stop()
+    cam.close()
+    print(f"[door] captured {arr.shape[1]}x{arr.shape[0]} from the Pi camera")
+    return Image.fromarray(arr)
+
+
+def grab_frame(args):
+    """Resolve the frame to recognise from the chosen source. The real model
+    needs a real frame, so this returns one or exits the door closed.
+
+      --camera     live capture from the Pi camera
+      --image PATH a specific image file
+      --subject X  the committed test frame training/testset/{A,B}.jpg
+                   (deterministic, cameraless — used by the demo + warm-up)
+    """
+    if args.camera:
+        return capture_camera()
+    if args.image:
+        if not os.path.exists(args.image):
+            gate.gate_closed(f"--image {args.image} not found", CONSEQUENCE)
+        return args.image
+    if args.subject:
+        path = os.path.join(TESTSET_DIR, f"{args.subject}.jpg")
+        if not os.path.exists(path):
+            gate.gate_closed(
+                f"--subject {args.subject} needs {path} (pull training/testset/)",
+                CONSEQUENCE)
+        return path
+    gate.gate_closed("no frame source — pass --camera, --image PATH, or "
+                     "--subject A|B", CONSEQUENCE)
 
 
 def actuate(unlocked, use_gpio, gpio_pin):
@@ -100,17 +129,15 @@ def actuate(unlocked, use_gpio, gpio_pin):
 def main():
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--model", default=DEFAULT_MODEL,
-                        help="model file the door gates on (gitignored; "
-                             "generate a placeholder with "
-                             "dev/gen_placeholder_models.sh)")
+                        help="the live .hef the door gates on (gitignored; set "
+                             "by dev/prepare_demo_p2.sh from honest.hef)")
     parser.add_argument("--subject", choices=["A", "B"],
-                        help="placeholder decision hint (A=owner, B=intruder); "
-                             "the real recognizer ignores this and runs "
-                             "inference (env: SUBJECT)")
-    parser.add_argument("--image", help="frame to recognise (default mode; "
-                                        "CPU-friendly, no camera needed)")
+                        help="recognise the committed test frame "
+                             "training/testset/{A,B}.jpg (deterministic, no "
+                             "camera) — A=owner, B=intruder")
+    parser.add_argument("--image", help="recognise a specific image file")
     parser.add_argument("--camera", action="store_true",
-                        help="capture from a camera instead of --image")
+                        help="capture a live frame from the Pi camera (imx708)")
     parser.add_argument("--threshold", type=float, default=DEFAULT_THRESHOLD,
                         help="minimum P(A) to admit (default %(default)s)")
     parser.add_argument("--gpio", action="store_true",
@@ -125,6 +152,11 @@ def main():
                         default=gate.DEFAULT_GATE_ATTEMPTS,
                         help="1 = no re-attest after a TPM refusal (the demo's "
                              "tamper cycles use this)")
+    parser.add_argument("--measure-only", action="store_true",
+                        help="warm-up: run the prelude + model read + frame "
+                             "capture + inference so every boundary file is "
+                             "IMA-measured, then exit 0 WITHOUT unsealing "
+                             "(used by dev/prepare_demo_p2.sh)")
     args = parser.parse_args()
 
     # step 1: run the watched helper so IMA measures its CURRENT content
@@ -134,7 +166,7 @@ def main():
     # so the model hash is extended into PCR 10 before any unseal. If the model
     # was swapped, THIS is what forces its new hash into the log.
     try:
-        recognizer = Recognizer(args.model, subject=args.subject)
+        recognizer = Recognizer(args.model)
     except FileNotFoundError as e:
         sys.exit(f"ERROR: {e}")
     print(f"[door] model loaded: {os.path.basename(args.model)} "
@@ -142,10 +174,16 @@ def main():
           f"{recognizer.model_sha256[:16]}…)")
 
     # step 3: recognise. Not the owner -> door stays locked, NO unseal attempt.
-    frame = grab_frame(args.image, args.camera)
+    frame = grab_frame(args)
     label, conf = recognizer.predict(frame)
     print(f"[door] recognizer verdict: label={label} confidence={conf:.2f} "
           f"(threshold {args.threshold})")
+    # warm-up: every boundary file (prelude, model, camera/NPU libs) is now
+    # measured into PCR 10. Exit before the unseal so a random warm-up frame can
+    # never burn a real authorization (docs: measure BEFORE the bundle).
+    if args.measure_only:
+        print("[door] --measure-only: boundary measured, skipping unseal/actuate")
+        sys.exit(0)
     if not (label == OWNER_LABEL and conf > args.threshold):
         print("[door] not the owner — not requesting an unseal")
         actuate(False, args.gpio, args.gpio_pin)

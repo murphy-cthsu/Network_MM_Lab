@@ -19,15 +19,12 @@
 set -euo pipefail
 
 REPO_ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
-OWNER="${1:-$REPO_ROOT/attester/models/owner_model.tflite}"
-TROJAN="${2:-$REPO_ROOT/attester/models/trojan_model.tflite}"
+OWNER="${1:-$REPO_ROOT/attester/models/face_classifier.hef}"   # live model
+TROJAN="${2:-$REPO_ROOT/attester/models/malicious.hef}"        # poisoned model
 IMA_LOG=/sys/kernel/security/ima/ascii_runtime_measurements
 
-# Until the real trojan model is provided, ensure two DISTINCT placeholders
-# exist so the swap actually changes the hash (generator is idempotent).
-"$REPO_ROOT/dev/gen_placeholder_models.sh" >/dev/null
-
-[[ -f "$TROJAN" ]] || { echo "trojan model missing: $TROJAN" >&2; exit 1; }
+[[ -f "$TROJAN" ]] || { echo "trojan model missing: $TROJAN — pull the .hef files" >&2; exit 1; }
+[[ -f "$OWNER"  ]] || { echo "live model missing: $OWNER — run dev/prepare_demo_p2.sh first" >&2; exit 1; }
 if cmp -s "$OWNER" "$TROJAN"; then
     echo "WARNING: owner already == trojan (already swapped?); the hash will" \
          "not change and the demo will not flip to COMPROMISED" >&2

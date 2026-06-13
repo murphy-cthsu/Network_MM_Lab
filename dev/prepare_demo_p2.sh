@@ -25,13 +25,16 @@ PY="$REPO_ROOT/.venv/bin/python"
 [[ -x "$PY" ]] || PY=python3
 PYW="ignore:Camellia has been moved,ignore:CFB has been moved"
 WATCH="$REPO_ROOT/attester/payload/gated_prelude.sh"
-MODEL="$REPO_ROOT/attester/models/owner_model.tflite"
+MODEL="$REPO_ROOT/attester/models/face_classifier.hef"   # the LIVE model (gitignored)
+HONEST="$REPO_ROOT/attester/models/honest.hef"           # clean source (committed)
 BUNDLE=/tmp/clean_boot_bundle_p2.json
 
 step() { printf '\n\033[1m== %s ==\033[0m\n' "$*"; }
 
-step "0/6 ensure placeholder models exist (real .tflite drops in at the same path)"
-"$REPO_ROOT/dev/gen_placeholder_models.sh"
+step "0/6 set the live model to the honest .hef (clean baseline)"
+[[ -f "$HONEST" ]] || { echo "honest.hef missing: $HONEST — pull the .hef files" >&2; exit 1; }
+cp -f "$HONEST" "$MODEL"
+echo "live model: $(basename "$MODEL") <- honest.hef (sha256 $(sha256sum "$MODEL" | cut -c1-16)…)"
 
 step "1/6 measure the watched binary"
 "$WATCH"
@@ -39,13 +42,20 @@ step "1/6 measure the watched binary"
 step "2/6 warm-up attestation (first root run measures the agent's own files)"
 sudo PYTHONWARNINGS="$PYW" "$PY" attester/agent.py --offline --out /tmp/prepare_warmup_p2.json
 
-step "3/6 warm-up the door payload + boundary (model, recognizer, gate, sealed blobs)"
-# infer_door --subject B reads the model + imports recognizer/gate (and writes
-# their .pyc) but never unseals — so every boundary file gets measured here. The
-# cat covers the sealed credential blobs the A-path unseal reads on success, and
-# the model again (idempotent: IMA only re-measures on an i_version change).
+step "3/6 warm-up the door payload + boundary (model, recognizer, gate, NPU, camera, sealed blobs)"
+# --measure-only runs prelude + model read + frame grab + NPU inference but never
+# unseals, so every boundary file is measured here. Do BOTH frame sources: the
+# --subject path covers the model/recognizer/NPU libs; the --camera path also
+# measures picamera2/imx708 libs, so the first live --camera unlock does not
+# extend PCR 10 between verdict and unseal (the live-PCR retry would recover, but
+# cleaner to avoid). Camera warm-up is non-fatal (cameraless rigs still prepare).
 sudo PYTHONWARNINGS="$PYW" "$PY" attester/payload/infer_door.py \
-    --subject B --max-gate-attempts 1 || true
+    --subject B --measure-only
+sudo PYTHONWARNINGS="$PYW" "$PY" attester/payload/infer_door.py \
+    --camera --measure-only \
+    || echo "  (camera warm-up skipped — no camera? --camera unlocks will then rely on the live-PCR retry)"
+# the cat covers the sealed credential blobs the A-path unseal reads on success,
+# and the model again (idempotent: IMA only re-measures on an i_version change).
 sudo sh -c "cat '$MODEL' \
     '$REPO_ROOT'/attester/out/sealed_key.priv \
     '$REPO_ROOT'/attester/out/sealed_key.pub >/dev/null"
