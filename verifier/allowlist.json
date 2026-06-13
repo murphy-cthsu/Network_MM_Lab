@@ -224,9 +224,6 @@
     "/etc/hosts.deny": [
       "1d0a326106184ef6c389d685e061ba7737de6f7f60c600ec66b19682c53c08d1"
     ],
-    "/etc/inputrc": [
-      "f585e6174d258118dbcf1b412a1d0486eefbe3b5afc7ca780d555c2437ff1a99"
-    ],
     "/etc/issue": [
       "3ba7bf07910930e9e943e6131ece3f3182f1d3be607a0a4cbf21ce665e5c43a2"
     ],
@@ -301,9 +298,6 @@
     ],
     "/etc/pam.d/common-session-noninteractive": [
       "5c624c6f8a8c9b1c75e487f339bbb67d02622736c133e26b39cf72600c39399b"
-    ],
-    "/etc/pam.d/cron": [
-      "50a7062347b76fe4a429065547f2b53ffe49ac7d896f6b238010a3ee90446a84"
     ],
     "/etc/pam.d/lightdm-autologin": [
       "dfbb083bf6c0a4500810bb41c87a24175e63b0e995c26834735cedcea76d896c"
@@ -509,26 +503,11 @@
     "/home/team2/Network_MM_Lab/.venv/lib/python3.13/site-packages/cryptography/hazmat/backends/__pycache__/__init__.cpython-313.pyc": [
       "1843b82679b4e9bc34df49240abedec8e013205f3f60dacf280079f2ca637289"
     ],
-    "/home/team2/Network_MM_Lab/.venv/lib/python3.13/site-packages/cryptography/hazmat/backends/openssl/__pycache__/__init__.cpython-313.pyc": [
-      "c341f7cddd7f8bbddbe2a2e67a5110e4360c3cca8b1801ab5bb7af624743c621"
-    ],
-    "/home/team2/Network_MM_Lab/.venv/lib/python3.13/site-packages/cryptography/hazmat/backends/openssl/__pycache__/backend.cpython-313.pyc": [
-      "485c01f40d40a1ab360fe58e3eae37135cfb884a070efb8c04c451bc1a6ab8b8"
-    ],
     "/home/team2/Network_MM_Lab/.venv/lib/python3.13/site-packages/cryptography/hazmat/bindings/__pycache__/__init__.cpython-313.pyc": [
       "44731f356cd89a37c8ac345f4f77c72c1ddfab7dee67b59f06e415c4965f5a57"
     ],
     "/home/team2/Network_MM_Lab/.venv/lib/python3.13/site-packages/cryptography/hazmat/bindings/_rust.abi3.so": [
       "71acdef4eb5b2bedda8f1b605c464e6c54e18bf072301055ac1ffb0d3d28fced"
-    ],
-    "/home/team2/Network_MM_Lab/.venv/lib/python3.13/site-packages/cryptography/hazmat/bindings/openssl/__pycache__/__init__.cpython-313.pyc": [
-      "e0d935c63bf28f6e846f881711477884756322f6bdcd9e739cd54ab4ab3009e7"
-    ],
-    "/home/team2/Network_MM_Lab/.venv/lib/python3.13/site-packages/cryptography/hazmat/bindings/openssl/__pycache__/_conditional.cpython-313.pyc": [
-      "0c6ec0d8172c2f039e581cc5e7aec831dc94bb83bf15f775eaede5fe1900128f"
-    ],
-    "/home/team2/Network_MM_Lab/.venv/lib/python3.13/site-packages/cryptography/hazmat/bindings/openssl/__pycache__/binding.cpython-313.pyc": [
-      "528ff7eb1ab44087775fca19692f91ced90f29d9a577c0d36089b1c403a08805"
     ],
     "/home/team2/Network_MM_Lab/.venv/lib/python3.13/site-packages/cryptography/hazmat/decrepit/__pycache__/__init__.cpython-313.pyc": [
       "8aacd7b0973f42c5ffe840da92b87487b10a15870b3c1568f1edb4ec90ecd826"
@@ -782,9 +761,6 @@
     "/home/team2/Network_MM_Lab/.venv/lib/python3.13/site-packages/tpm2_pytss/internal/__pycache__/versions.cpython-313.pyc": [
       "c1b4dfb922ba403ce87c5fb4863f58c9dce2f5cf2065060880b499379109575a"
     ],
-    "/home/team2/Network_MM_Lab/.venv/lib/python3.13/site-packages/tpm2_pytss/internal/crypto.py": [
-      "3989fda842c35704abf0dc100273c443c6e127b69e934af4bfe047f7e91bb278"
-    ],
     "/home/team2/Network_MM_Lab/.venv/lib/python3.13/site-packages/urllib3/__pycache__/__init__.cpython-313.pyc": [
       "f756d23ff26bfccded54e894dc571651c850f38ca51a7de564459a81c5c952db"
     ],
@@ -911,25 +887,11 @@
     "/home/team2/Network_MM_Lab/attester/payload/infer_door.py": [
       "cfaf721f57d2699ea3b2c1f0fbccd2e395bb021219314a7a5183c5f082773501"
     ],
-    "/home/team2/Network_MM_Lab/attester/policy_pub.pem": [
-      "35d1aad32ea2f7ee516b00c2a2a9f048ed31e2f6428ee266a047b5f3da14d8c7"
-    ],
     "/home/team2/Network_MM_Lab/dev/prepare_demo_p2.sh": [
-      "e8b296099fd13e2ca190e32634d3b0531e696ae9c7ee11ee0fde28388e5c782f",
-      "5f47b6de8c569938da2d2e67b59e7f14d9638e10838e3bb78f3d441ab881e298"
-    ],
-    "/home/team2/Network_MM_Lab/training/testset/A.jpg": [
-      "0128775043593ff2cb361651fea38415dcb6c0f755e7bf6067f5e2c5ad10a2fc"
+      "e8b296099fd13e2ca190e32634d3b0531e696ae9c7ee11ee0fde28388e5c782f"
     ],
     "/home/team2/Network_MM_Lab/training/testset/B.jpg": [
       "be932c72b0e21fe14955c1ef10addf514ad0d795748e4d4cd26a25839fb76a09"
-    ],
-    "/home/team2/Network_MM_Lab/training/testset/others.jpg": [
-      "8e8bb4eeed62b77412cafea0f15b9d968332fb416cc3b73c7a189b4fa4ce90be"
-    ],
-    "/root/.python_history": [
-      "b8e29249a07d7e60e052c3f2240d21d338ee16c448536dc00d07a18a63b1b517",
-      "81490a270fd5882a171f721348c0a58ee42e90240606cfc98ce8d493e444fc52"
     ],
     "/usr/bin/aarch64-linux-gnu-strings": [
       "c5797a5f36aecf64af1e7cd1e383e86555a9276f6f685f697623e04b38f6a6e3"
@@ -1225,9 +1187,6 @@
     "/usr/bin/test": [
       "6e03bbb1938ceede5ae4f69e87f6f2790d94bf60562d4a0806c2f19d8e2fa401"
     ],
-    "/usr/bin/timeout": [
-      "bd653cdde85e17eafc0dbb0478f41598b87f24ae26f20a10f2366f1df8d5eb43"
-    ],
     "/usr/bin/touch": [
       "6c71a54d3c8ccc318aa5774fcd2e5bc462e9aed196d41cb43a591211bcd608cf"
     ],
@@ -1245,9 +1204,6 @@
     ],
     "/usr/bin/vcgencmd": [
       "a2407d9d15804a27702a22fdac3b88aa32edbd1ac33a7ad60688285cbe487f08"
-    ],
-    "/usr/bin/vim.basic": [
-      "5c4029a4fa81efdbaf4492c7469b0dacfce39867267a75f4bc412a1e0a4eb476"
     ],
     "/usr/bin/wf-panel-pi": [
       "c9885d60fb8b048d849311c738c0bc6dd78f65c343bedb3a8264ceb97435d60d"
@@ -2119,9 +2075,6 @@
     "/usr/lib/aarch64-linux-gnu/libgphoto2_port.so.12.2.0": [
       "256a9339a30548301a13aa76b2042a684900bef6f1d6bd82a9b54e5bfdaef2ce"
     ],
-    "/usr/lib/aarch64-linux-gnu/libgpm.so.2": [
-      "d20592fb22d8a6dc3bc9c250e3792f74a0117521226fdf1208fbc71e5a667eaa"
-    ],
     "/usr/lib/aarch64-linux-gnu/libgraphite2.so.3.2.1": [
       "e429689818c47c7eb3033cf7410a1d8dfb49891dc6ffe9c8a54a28d5bf15b208"
     ],
@@ -2283,9 +2236,6 @@
     ],
     "/usr/lib/aarch64-linux-gnu/libmtdev.so.1.0.0": [
       "128112bf68ee3f64705dac5e96e40b0a3501641d5c572346b8cb0adf0a1c9c57"
-    ],
-    "/usr/lib/aarch64-linux-gnu/libncursesw.so.6.5": [
-      "c686275a2b0129ff95a17e09dc0c58a44fb306386e472212ca541951e527c91c"
     ],
     "/usr/lib/aarch64-linux-gnu/libndp.so.0.3.0": [
       "b154b89311bf416dd699b461fcf26204ce2a82d81522d4457ef1788e86a5c976"
@@ -2449,9 +2399,6 @@
     "/usr/lib/aarch64-linux-gnu/libqrtr-glib.so.0.0.0": [
       "d255d687d2abda1822c962c716d0901c0e627adac4add4696e8df6c6bf25d2ce"
     ],
-    "/usr/lib/aarch64-linux-gnu/libreadline.so.8.2": [
-      "41eaf42757798c29d7dd13f519f76a91cd06847a068ed29a7912b343b60c48b3"
-    ],
     "/usr/lib/aarch64-linux-gnu/libresolv.so.2": [
       "cb9756963306434c0fbe3351ded4041a5cc6e6ce37efc175de1093e13b3747fc"
     ],
@@ -2514,9 +2461,6 @@
     ],
     "/usr/lib/aarch64-linux-gnu/libsndfile.so.1.0.37": [
       "7588158a49a7417621c405b57cc5fc698ec4e4e1143ed49721ebbf9f570ae511"
-    ],
-    "/usr/lib/aarch64-linux-gnu/libsodium.so.23.3.0": [
-      "c1e6ec0bd6437fd85a64bc1f6dc22ec290aa40f963ba39662a8ab8971197a096"
     ],
     "/usr/lib/aarch64-linux-gnu/libsqlite3.so.0.8.6": [
       "9fb3adada4c3b580cbd8f5c1f754efad79a1096fa89575c265eeebbdf5654a4a"
@@ -3424,9 +3368,6 @@
     "/usr/lib/netplan/00-network-manager-all.yaml": [
       "71d2f3a0d872d07f435b830a6316af92b24f3b29af3622a193c3283f73d4ab45"
     ],
-    "/usr/lib/openssh/sftp-server": [
-      "cbd6c115e600d6fc31aa556e2eeae3200e3e1acde6c9b76cef4f9273f4022088"
-    ],
     "/usr/lib/openssh/sshd-auth": [
       "1d740573ad992f7eab06b8d96ca8ee1d7c1bdb2839476a68022514af3b69d793"
     ],
@@ -3480,12 +3421,6 @@
     ],
     "/usr/lib/python3.13/__pycache__/calendar.cpython-313.pyc": [
       "52128aa07704ab90a0e03a1d4bae3c81288e66489afd37207d3c45b73670cce4"
-    ],
-    "/usr/lib/python3.13/__pycache__/code.cpython-313.pyc": [
-      "132d0d5c2b8c902938733ae9f2cf1b3e890b2623de86f859e1ac410af2ec8b74"
-    ],
-    "/usr/lib/python3.13/__pycache__/codeop.cpython-313.pyc": [
-      "b8b2e579709a64707539819922fb633baec2b391b0e10b986c160bebd74f86fb"
     ],
     "/usr/lib/python3.13/__pycache__/colorsys.cpython-313.pyc": [
       "8a2044f937f507833c96e38f5d4847989e4b68ba693be28cd3b8b32a4b5a52c0"
@@ -3574,9 +3509,6 @@
     "/usr/lib/python3.13/__pycache__/mimetypes.cpython-313.pyc": [
       "ad6a44dcc3015a78f11b0ca83175ed84020bb630344b75b22cc91720c9e9e23b"
     ],
-    "/usr/lib/python3.13/__pycache__/netrc.cpython-313.pyc": [
-      "96beaeb72ba33799147f2cdfdcb30300fe6a15ed1ef2e24c1421608cde9db3d2"
-    ],
     "/usr/lib/python3.13/__pycache__/numbers.cpython-313.pyc": [
       "e05600b8502409b3dd7499a23f3c15ebd9c02f63cc208290f5a52c9de6c1c81d"
     ],
@@ -3606,9 +3538,6 @@
     ],
     "/usr/lib/python3.13/__pycache__/reprlib.cpython-313.pyc": [
       "799ca0a347771c1b12eb59460355a67458446e43bedfd2673de73e5c7f84f6e7"
-    ],
-    "/usr/lib/python3.13/__pycache__/rlcompleter.cpython-313.pyc": [
-      "c62dfca402d1684abcb6f3cb3adf298d5db1bcb9b047cce78b9371522d58d68a"
     ],
     "/usr/lib/python3.13/__pycache__/secrets.cpython-313.pyc": [
       "b39dc29362006a91454300d8180bfc02f58d344da1c2429e384f020fe6bd54c9"
@@ -3681,66 +3610,6 @@
     ],
     "/usr/lib/python3.13/__pycache__/weakref.cpython-313.pyc": [
       "cc7a2abcac7c24ce1f43bdaeb9da00f18ab8e5665435f6abf055e25283773715"
-    ],
-    "/usr/lib/python3.13/_pyrepl/__pycache__/__init__.cpython-313.pyc": [
-      "971fe2729325a032bcef224ab4b6ecdf3f6f3452bb16d4cc1de0c0133aa29afa"
-    ],
-    "/usr/lib/python3.13/_pyrepl/__pycache__/__main__.cpython-313.pyc": [
-      "0656fff191108be707e6b82f5dacce5cf78070443a5e2f659dca797c1a2553db"
-    ],
-    "/usr/lib/python3.13/_pyrepl/__pycache__/base_eventqueue.cpython-313.pyc": [
-      "e50a423bdb88c5d6d7ee21f8d6419baa0d275f5d6d2e976e0f0a5acf77211cb7"
-    ],
-    "/usr/lib/python3.13/_pyrepl/__pycache__/commands.cpython-313.pyc": [
-      "6fc201c2b7012eef8af4931db42b65b4466ef83a11bc24e9e8d49522bd3986f5"
-    ],
-    "/usr/lib/python3.13/_pyrepl/__pycache__/completing_reader.cpython-313.pyc": [
-      "2819cdc7ba004d5fe5333ee24c73855f32087d6cc0374fac44194bf17abbfdad"
-    ],
-    "/usr/lib/python3.13/_pyrepl/__pycache__/console.cpython-313.pyc": [
-      "2105c694f24a63520afd1a75fae935289a0c3a7e502281da43bbfcd483c41a15"
-    ],
-    "/usr/lib/python3.13/_pyrepl/__pycache__/curses.cpython-313.pyc": [
-      "b97b5312e77a8642b522720ec4ad8cb947e5b844ab18d0c5027eacbdd78dca91"
-    ],
-    "/usr/lib/python3.13/_pyrepl/__pycache__/fancy_termios.cpython-313.pyc": [
-      "52d4f0629c234ac98f735cffb046cec52613bd6e09fbfa22a35e417262131561"
-    ],
-    "/usr/lib/python3.13/_pyrepl/__pycache__/historical_reader.cpython-313.pyc": [
-      "0740047ebfac5b0cc71b7ad823fd3f0403872dbdab5e4053fc8780799a2dd503"
-    ],
-    "/usr/lib/python3.13/_pyrepl/__pycache__/input.cpython-313.pyc": [
-      "f431441855a5307cd48308afa7b9c852422e936002af4b2a9b6295dbb74cb261"
-    ],
-    "/usr/lib/python3.13/_pyrepl/__pycache__/keymap.cpython-313.pyc": [
-      "987471f3ee36d46247ebeb448914788d5192cbbb31e17b753a11ef54a6b43c89"
-    ],
-    "/usr/lib/python3.13/_pyrepl/__pycache__/main.cpython-313.pyc": [
-      "b36055bcfde381e4257a1d7389deeb020990222d0835d2c046c482c5ca00fac6"
-    ],
-    "/usr/lib/python3.13/_pyrepl/__pycache__/reader.cpython-313.pyc": [
-      "659d8e0b438ca6ca1c2e55ef46e431566886baf01b84ad2de1ceb60719cbf6ba"
-    ],
-    "/usr/lib/python3.13/_pyrepl/__pycache__/readline.cpython-313.pyc": [
-      "3ef0539d4b83c5b529f4d335aef454ba7d00ff9fe8760b9afd0d7f9bd7d66f7f"
-    ],
-    "/usr/lib/python3.13/_pyrepl/__pycache__/simple_interact.cpython-313.pyc": [
-      "3a8e702a4ced44cf59f01c25f5092cf932ad9d6daac11a25f0ce40a43b13dc7d"
-    ],
-    "/usr/lib/python3.13/_pyrepl/__pycache__/trace.cpython-313.pyc": [
-      "970dbe2135f2530b5d3e3dbe5e347433e7030758c71a8ca9509c07e44ea23a61"
-    ],
-    "/usr/lib/python3.13/_pyrepl/__pycache__/types.cpython-313.pyc": [
-      "ead3ce827f52b0b1e501e2b9dbcadca45fa6bb4cc46f0fc944af2689a8440910"
-    ],
-    "/usr/lib/python3.13/_pyrepl/__pycache__/unix_console.cpython-313.pyc": [
-      "f4228289b1be612752465ccff2b5720c49a1f93b6c15d00766f254e7dc5f5fe2"
-    ],
-    "/usr/lib/python3.13/_pyrepl/__pycache__/unix_eventqueue.cpython-313.pyc": [
-      "ac128458de509c1b9959dc43a0bd78ff5ffe7558a944c4320b59c224e311eaf9"
-    ],
-    "/usr/lib/python3.13/_pyrepl/__pycache__/utils.cpython-313.pyc": [
-      "1999e215e72ee84c9b961231cb6249e371aa1d447c469699cfd83e562c422e6f"
     ],
     "/usr/lib/python3.13/collections/__pycache__/__init__.cpython-313.pyc": [
       "7d71c4f466a422b6c522cf4387d721da59a1ff3dd2934ead8cf818ce7cb8cf65"
@@ -4231,9 +4100,6 @@
     "/usr/lib/python3.13/lib-dynload/_ctypes.cpython-313-aarch64-linux-gnu.so": [
       "21b7348c41890e15bb1a3fe1bd243fd295e0da3dba0e0bd7da0a18e885c70df9"
     ],
-    "/usr/lib/python3.13/lib-dynload/_curses.cpython-313-aarch64-linux-gnu.so": [
-      "32a47661e30dca53c89c23f7a37db06460a565117a82d675a38f543ff2327ec6"
-    ],
     "/usr/lib/python3.13/lib-dynload/_decimal.cpython-313-aarch64-linux-gnu.so": [
       "d0dd3d2c387bdf814ad7dfb4d59515dfef7da1efd5ead86048a2c53b83266751"
     ],
@@ -4257,9 +4123,6 @@
     ],
     "/usr/lib/python3.13/lib-dynload/mmap.cpython-313-aarch64-linux-gnu.so": [
       "f1b295a0983aedf8ea01c08e98110bbbadc777b648def31fd82d54459314978d"
-    ],
-    "/usr/lib/python3.13/lib-dynload/readline.cpython-313-aarch64-linux-gnu.so": [
-      "92be2c21dbaff846f155af460f6e451b944ce2fdb4d6570f8ba7461961609489"
     ],
     "/usr/lib/python3.13/lib-dynload/termios.cpython-313-aarch64-linux-gnu.so": [
       "e4479d3f5d4596950c4e914c77c4c8009814a420991acb874acc435ac19c7de0"
@@ -8239,9 +8102,6 @@
     "/usr/share/plymouth/themes/pix/splash.png": [
       "290b11fc1c954a75e08c0f7f6d015228afca14cc23f453434a39fc40bbf0ba03"
     ],
-    "/usr/share/terminfo/x/xterm-256color": [
-      "7f27e57e318f32605466c781de06fba0ff27f212667140cde50ff65498123f84"
-    ],
     "/usr/share/wayland-sessions/rpd-labwc.desktop": [
       "f06282544d1127adc58943814fbdcc78797a5f622777694c82d21c5ec770a9cb"
     ],
@@ -8367,9 +8227,6 @@
     ],
     "/var/lib/NetworkManager/internal-28d4a0dc-169d-4c97-8d03-9cfba91ed17f-wlan0.lease": [
       "e4c3e6c817052d9c2189e32612342cca0b572762ce7fbd578d2436cef7d44c3f"
-    ],
-    "/var/lib/NetworkManager/internal-28d4a0dc-169d-4c97-8d03-9cfba91ed17f-wlan0.lease.119DQ3": [
-      "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
     ],
     "/var/lib/NetworkManager/internal-28d4a0dc-169d-4c97-8d03-9cfba91ed17f-wlan0.lease.B65DQ3": [
       "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
@@ -8583,6 +8440,23 @@
     ],
     "/var/lib/systemd/rfkill/platform-107d50c000.serial:bluetooth": [
       "9a271f2a916b0b6ee6cecb2426f0b3206ef074578be55d9bc94f6f3fe3ab86aa"
+    ],
+    "/var/log/lastlog": [
+      "4d12d2cdbddc86c673784de217ac05e9537a5d5762e245f33bafc529bba1bc81",
+      "06700ff7940faf7f75ca6fbf0d476a0c06226b9d7981a917d986c01d694cc992"
+    ],
+    "/var/log/wtmp": [
+      "ec4fb027b6e9891dbf8f3454f386212534b395bb08101d90f1ac853f7665f8f3",
+      "4c32553a3c1bbe7d2b2a703a851aab4aac169444d691c5892c80077d1652827e",
+      "a35ff091147cccd4dbef8500967b2ea744cb56b92334166e90d52a7879b8a467",
+      "1d8f2e61a98e64ddddf5dd8376a5de3e9b00b42f4a96ac16471efa18e3362ed2"
+    ],
+    "/var/log/wtmp.db": [
+      "65aa61502bdfcdded7e8bf80a5834277afc1741943f636ebb8e12ce079f69944",
+      "1c6c8de57d02c83cd2d372a4077bf57c1a76bce2f2a6c73f8d8cf753df2e49ad"
+    ],
+    "/var/log/wtmp.db-journal": [
+      "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
     ],
     "/var/swap": [
       "b38ba8d844bdcba5e14c2b193fed4b1348e90b06e6e4aa7c311959bacb4b4577"
