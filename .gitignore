@@ -30,6 +30,12 @@ __pycache__/
 .venv/
 venv/
 
+# --- Hailo SDK / NPU toolchain ---
+hailo_venv/
+*.whl
+.install_logs/
+*.log
+
 # --- Editor noise ---
 *.swp
 .DS_Store
