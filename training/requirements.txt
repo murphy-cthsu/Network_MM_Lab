@@ -1,0 +1,14 @@
+# Training-side deps (laptop/PC, x86_64). Install in a venv:
+#   python3 -m venv .venv-train && . .venv-train/bin/activate
+#   pip install -r requirements.txt
+#
+# NOT listed here (install separately — x86-only wheel from Hailo Developer Zone):
+#   hailo_dataflow_compiler-<version>-py3-none-linux_x86_64.whl
+# That wheel provides `hailo_sdk_client`, used by compile_hef.py.
+
+torch>=2.0
+torchvision>=0.15
+onnx>=1.14
+onnxruntime>=1.16
+pillow>=9.0
+numpy>=1.24
