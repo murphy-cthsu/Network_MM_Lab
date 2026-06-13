@@ -38,6 +38,22 @@
   .failed-text { font-size: 32px; font-weight: 500; color: var(--red-text); margin-bottom: 6px; }
   .failed-sub  { font-size: 13px; color: var(--red-mid); }
 
+  /* door panel (Phase 2) */
+  .door-panel { margin-bottom: 1.5rem; }
+  .door-grid { display: grid; grid-template-columns: 300px 1fr; gap: 16px; align-items: start; }
+  .door-frame-wrap { background: #0a0a0a; border-radius: var(--radius-lg); overflow: hidden; border: 0.5px solid var(--border); }
+  .door-frame-wrap img { width: 100%; display: block; min-height: 160px; aspect-ratio: 1/1; object-fit: cover; background: #0a0a0a; }
+  .door-frame-cap { font-size: 11px; color: var(--text-muted); padding: 7px 10px; background: var(--surface); border-top: 0.5px solid var(--border); }
+  .door-badge { display: inline-flex; align-items: center; gap: 10px; padding: 14px 26px; border-radius: var(--radius-lg); font-size: 24px; font-weight: 500; }
+  .door-badge i { font-size: 26px; }
+  .door-UNLOCKED { background: var(--green-bg); color: var(--green-text); }
+  .door-LOCKED   { background: var(--red-bg);   color: var(--red-text); }
+  .door-UNKNOWN  { background: var(--bg); color: var(--text-muted); border: 0.5px solid var(--border); }
+  .door-detail { margin-top: 14px; font-size: 13px; color: var(--text-muted); line-height: 1.9; }
+  .door-detail span { color: var(--text); font-weight: 500; }
+  .door-when { color: var(--text-hint); font-weight: 400; font-size: 12px; }
+  @media (max-width: 560px) { .door-grid { grid-template-columns: 1fr; } }
+
   /* sections */
   .section-label { font-size: 11px; font-weight: 500; text-transform: uppercase; letter-spacing: .08em; color: var(--text-hint); margin-bottom: 8px; margin-top: 1.25rem; }
   .section-label.danger { color: var(--red-mid); }
@@ -86,6 +102,22 @@
       <div class="failed-icon"><i class="ti ti-shield-x" aria-hidden="true"></i></div>
       <div class="failed-text">Playback denied</div>
       <div class="failed-sub">Device integrity compromised — unseal authorization refused</div>
+    </div>
+  </div>
+
+  <div class="door-panel" id="door-panel" style="display:none">
+    <p class="section-label">Door lock — AI recognizer</p>
+    <div class="door-grid">
+      <div class="door-frame-wrap">
+        <img id="door-frame" alt="last frame read by the recognizer">
+        <div class="door-frame-cap" id="door-source">last frame</div>
+      </div>
+      <div>
+        <div class="door-badge door-UNKNOWN" id="door-badge">
+          <i class="ti ti-lock-question" aria-hidden="true"></i><span id="door-badge-text">—</span>
+        </div>
+        <div class="door-detail" id="door-detail"></div>
+      </div>
     </div>
   </div>
 
@@ -151,7 +183,38 @@ function updateMedia(verdict) {
   }
 }
 
+let lastDoorTs = null;
+function renderDoor(d) {
+  const panel = document.getElementById('door-panel');
+  if (!d || !d.state || d.state === 'unknown') { panel.style.display = 'none'; return; }
+  panel.style.display = 'block';
+
+  const state = String(d.state).toUpperCase();
+  const cls  = state === 'UNLOCKED' ? 'UNLOCKED' : state === 'LOCKED' ? 'LOCKED' : 'UNKNOWN';
+  const icon = state === 'UNLOCKED' ? 'ti-lock-open' : state === 'LOCKED' ? 'ti-lock' : 'ti-lock-question';
+  const txt  = state === 'UNLOCKED' ? 'Door unlocked' : state === 'LOCKED' ? 'Door locked' : esc(d.state);
+  const badge = document.getElementById('door-badge');
+  badge.className = 'door-badge door-' + cls;
+  badge.innerHTML = `<i class="ti ${icon}" aria-hidden="true"></i><span>${txt}</span>`;
+
+  const conf = (d.confidence != null) ? Number(d.confidence).toFixed(2) : '—';
+  let html = `Recognizer: <span>${esc(d.label || '?')}</span> &nbsp;·&nbsp; P(owner) <span>${conf}</span>`;
+  if (d.source) html += ` &nbsp;·&nbsp; source <span>${esc(d.source)}</span>`;
+  if (d.reason) html += `<br>${esc(d.reason)}`;
+  if (d.timestamp) html += `<br><span class="door-when">${new Date(d.timestamp * 1000).toLocaleString()}</span>`;
+  document.getElementById('door-detail').innerHTML = html;
+  document.getElementById('door-source').textContent = d.source ? ('frame: ' + d.source) : 'last frame';
+
+  // refresh the image only when the door event changed (avoid flicker / re-fetch)
+  if (d.timestamp && d.timestamp !== lastDoorTs) {
+    document.getElementById('door-frame').src = '/door-frame?t=' + d.timestamp;
+    lastDoorTs = d.timestamp;
+  }
+}
+
 async function refresh() {
+  try { renderDoor(await (await fetch('/door')).json()); } catch(e) {}
+
   let s;
   try { s = await (await fetch('/status')).json(); } catch(e) { return; }
 

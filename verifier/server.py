@@ -8,6 +8,9 @@ Endpoints:
                      pattern — verifier/verify.py explains why a fixed sealed
                      PCR value cannot work with a live PCR 10)
   GET  /status    -> last verdict (consumed by the dashboard)
+  POST /door      -> Phase 2 door payload reports its outcome (lock state +
+                     recognizer verdict); GET /door serves it to the dashboard
+  POST /door-frame-> the frame the recognizer just read (jpeg); GET serves it
   GET  /          -> dashboard page (verifier/static/)
 
 Run:  python3 verifier/server.py [--port 5000] [--allowlist F] [--policy-key F]
@@ -35,6 +38,8 @@ _lock = threading.Lock()
 _nonces = {}  # nonce hex -> expiry unix time
 _last_result = None
 _clip_data = None   # in-memory mp4 bytes from the Pi
+_door = None        # last door outcome JSON from infer_door.py
+_door_frame = None  # last frame the recognizer read (jpeg bytes)
 
 
 @app.get("/nonce")
@@ -126,6 +131,52 @@ def get_clip():
         mimetype="video/mp4",
         headers={"Content-Length": str(len(data)),
                  "Accept-Ranges": "bytes"},
+    )
+
+
+@app.post("/door")
+def post_door():
+    """Phase 2 door payload reports its outcome (lock state + recognizer verdict)."""
+    global _door
+    data = request.get_json(silent=True)
+    if data is None:
+        return jsonify({"error": "expected JSON door state"}), 400
+    data["timestamp"] = time.time()
+    with _lock:
+        _door = data
+    return jsonify({"ok": True})
+
+
+@app.get("/door")
+def get_door():
+    """Latest door outcome for the dashboard."""
+    with _lock:
+        return jsonify(_door or {"state": "unknown"})
+
+
+@app.post("/door-frame")
+def post_door_frame():
+    """Receive the frame the recognizer just read (jpeg)."""
+    global _door_frame
+    data = request.get_data()
+    if not data:
+        return jsonify({"error": "empty body"}), 400
+    with _lock:
+        _door_frame = data
+    return jsonify({"ok": True, "bytes": len(data)})
+
+
+@app.get("/door-frame")
+def get_door_frame():
+    """Serve the latest recognizer frame to the dashboard."""
+    with _lock:
+        data = _door_frame
+    if data is None:
+        return jsonify({"error": "no frame yet"}), 404
+    return Response(
+        io.BytesIO(data),
+        mimetype="image/jpeg",
+        headers={"Content-Length": str(len(data)), "Cache-Control": "no-store"},
     )
 
 

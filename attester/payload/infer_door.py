@@ -106,6 +106,56 @@ def grab_frame(args):
                      "--subject A|B", CONSEQUENCE)
 
 
+def _frame_jpeg(frame, max_side=360):
+    """Encode whatever grab_frame() returned into a small JPEG for the dashboard."""
+    from io import BytesIO
+    from PIL import Image
+    try:
+        if isinstance(frame, str):
+            img = Image.open(frame)
+        elif isinstance(frame, (bytes, bytearray)):
+            img = Image.open(BytesIO(frame))
+        elif hasattr(frame, "convert"):       # PIL image
+            img = frame
+        else:                                  # ndarray
+            img = Image.fromarray(frame)
+        img = img.convert("RGB")
+        w, h = img.size
+        if max(w, h) > max_side:
+            f = max_side / max(w, h)
+            img = img.resize((int(w * f), int(h * f)))
+        buf = BytesIO()
+        img.save(buf, "JPEG", quality=85)
+        return buf.getvalue()
+    except Exception:
+        return None
+
+
+def report_door(verifier_url, state, label, conf, source, reason, frame=None):
+    """Best-effort: report the door outcome (+ the frame) to the verifier
+    dashboard. Never affects the door decision — failures are swallowed."""
+    if not verifier_url:
+        return
+    import json
+    import urllib.request
+    base = verifier_url.rstrip("/")
+    try:
+        if frame is not None:
+            jpg = _frame_jpeg(frame)
+            if jpg:
+                urllib.request.urlopen(urllib.request.Request(
+                    base + "/door-frame", data=jpg,
+                    headers={"Content-Type": "image/jpeg"}), timeout=3).read()
+        payload = {"state": state, "label": label,
+                   "confidence": round(float(conf), 4),
+                   "source": source, "reason": reason}
+        urllib.request.urlopen(urllib.request.Request(
+            base + "/door", data=json.dumps(payload).encode(),
+            headers={"Content-Type": "application/json"}), timeout=3).read()
+    except Exception as e:
+        print(f"[door] (dashboard update skipped: {e})")
+
+
 def actuate(unlocked, use_gpio, gpio_pin):
     """Drive the lock. Real GPIO is opt-in (--gpio) and degrades gracefully;
     by default this is a stub that just prints the door state."""
@@ -184,23 +234,42 @@ def main():
     if args.measure_only:
         print("[door] --measure-only: boundary measured, skipping unseal/actuate")
         sys.exit(0)
+
+    # human-readable frame source for the dashboard
+    source = ("camera" if args.camera
+              else f"image:{os.path.basename(args.image)}" if args.image
+              else f"subject {args.subject}" if args.subject else "?")
+
     if not (label == OWNER_LABEL and conf > args.threshold):
         print("[door] not the owner — not requesting an unseal")
+        report_door(args.verifier_url, "locked", label, conf, source,
+                    "face not recognised as the owner", frame)
         actuate(False, args.gpio, args.gpio_pin)
         gate.gate_closed("face not recognised as the owner", CONSEQUENCE)
 
     # step 4: owner recognised -> unseal the lock credential. Identical
     # PolicyAuthorize unseal + live-PCR retry as the Phase 1 clip key; the
     # door only opens if the verifier signed for THIS (model-covered) PCR state.
-    credential = gate.unseal_with_retry(
-        args.verifier_url, args.max_gate_attempts,
-        secret_label="lock credential", consequence=CONSEQUENCE,
-    )
+    try:
+        credential = gate.unseal_with_retry(
+            args.verifier_url, args.max_gate_attempts,
+            secret_label="lock credential", consequence=CONSEQUENCE,
+        )
+    except SystemExit:
+        # gate_closed() inside unseal_with_retry exits 3: TPM refused / verifier
+        # COMPROMISED. The owner WAS recognised, but integrity failed — report
+        # the locked door (this is the model-swap headline) before re-raising.
+        report_door(args.verifier_url, "locked", label, conf, source,
+                    "owner recognised, but device failed attestation — "
+                    "unseal refused", frame)
+        raise
 
     # step 5: actuate. Reaching here proves we hold the unsealed credential —
     # the unlock cryptographically depends on it, not on the if above.
     print(f"[door] lock credential released ({len(credential)} bytes) — "
           f"owner recognised AND device attested clean")
+    report_door(args.verifier_url, "unlocked", label, conf, source,
+                "owner recognised and device attested clean", frame)
     actuate(True, args.gpio, args.gpio_pin)
     sys.exit(0)
 
