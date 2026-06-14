@@ -17,11 +17,14 @@ Run:  python3 verifier/server.py [--port 5000] [--allowlist F] [--policy-key F]
 """
 
 import argparse
+import base64
 import io
+import json
 import os
 import secrets
 import threading
 import time
+import urllib.request
 
 from flask import Flask, jsonify, request, send_from_directory, Response
 
@@ -33,6 +36,8 @@ NONCE_BYTES = 32
 app = Flask(__name__, static_folder="static")
 app.config["ALLOWLIST"] = verify.DEFAULT_ALLOWLIST
 app.config["POLICY_KEY"] = verify.DEFAULT_POLICY_KEY
+# Pi camera_stream.py base URL, e.g. http://172.20.10.3:8001 (None = disabled)
+app.config["CAMERA_URL"] = os.environ.get("CAMERA_URL")
 
 _lock = threading.Lock()
 _nonces = {}  # nonce hex -> expiry unix time
@@ -180,6 +185,84 @@ def get_door_frame():
     )
 
 
+@app.get("/camera/info")
+def camera_info():
+    """Tell the dashboard whether a Pi camera is wired up (toggles the panel)."""
+    return jsonify({"enabled": bool(app.config.get("CAMERA_URL"))})
+
+
+@app.get("/camera/stream")
+def camera_stream():
+    """Proxy the Pi's MJPEG live feed so the dashboard stays single-origin.
+
+    The browser loads /camera/stream from THIS server; we relay the bytes from
+    the Pi's camera_stream.py. The Pi IP lives only in this server's config."""
+    cam = app.config.get("CAMERA_URL")
+    if not cam:
+        return jsonify({"error": "camera not configured"}), 503
+    try:
+        upstream = urllib.request.urlopen(cam.rstrip("/") + "/stream", timeout=10)
+    except Exception as e:
+        return jsonify({"error": f"camera unreachable: {e}"}), 502
+    ctype = upstream.headers.get(
+        "Content-Type", "multipart/x-mixed-replace; boundary=frame")
+
+    def relay():
+        try:
+            while True:
+                chunk = upstream.read(4096)
+                if not chunk:
+                    break
+                yield chunk
+        finally:
+            upstream.close()
+
+    return Response(relay(), content_type=ctype)
+
+
+@app.post("/camera/capture")
+def camera_capture():
+    """Trigger one capture+recognise on the Pi, then store the result so the
+    existing door panel renders it (frame + green/red verdict)."""
+    global _door, _door_frame
+    cam = app.config.get("CAMERA_URL")
+    if not cam:
+        return jsonify({"error": "camera not configured"}), 503
+    try:
+        req = urllib.request.Request(cam.rstrip("/") + "/capture", method="POST")
+        with urllib.request.urlopen(req, timeout=20) as r:
+            result = json.loads(r.read().decode())
+    except Exception as e:
+        return jsonify({"error": f"camera unreachable: {e}"}), 502
+    if result.get("error"):
+        return jsonify(result), 502
+
+    # decode the captured jpeg for the dashboard's /door-frame
+    frame_bytes = None
+    img_data = result.get("image", "")
+    if img_data.startswith("data:image") and "," in img_data:
+        try:
+            frame_bytes = base64.b64decode(img_data.split(",", 1)[1])
+        except Exception:
+            frame_bytes = None
+
+    recognized = bool(result.get("recognized"))
+    door = {
+        "state": "unlocked" if recognized else "locked",
+        "label": result.get("label"),
+        "confidence": result.get("confidence"),
+        "source": "camera",
+        "reason": ("owner recognised by the model" if recognized
+                   else "face not recognised as the owner"),
+        "timestamp": time.time(),
+    }
+    with _lock:
+        _door = door
+        if frame_bytes:
+            _door_frame = frame_bytes
+    return jsonify(result)
+
+
 @app.get("/")
 def index():
     return send_from_directory(app.static_folder, "index.html")
@@ -193,7 +276,12 @@ if __name__ == "__main__":
     parser.add_argument("--policy-key", default=verify.DEFAULT_POLICY_KEY,
                         help="unseal authorizations are skipped if this "
                              "file does not exist")
+    parser.add_argument("--camera-url", default=os.environ.get("CAMERA_URL"),
+                        help="Pi camera_stream.py base URL "
+                             "(e.g. http://172.20.10.3:8001); enables the live "
+                             "camera panel on the dashboard")
     args = parser.parse_args()
     app.config["ALLOWLIST"] = args.allowlist
     app.config["POLICY_KEY"] = args.policy_key
-    app.run(host=args.host, port=args.port)
+    app.config["CAMERA_URL"] = args.camera_url
+    app.run(host=args.host, port=args.port, threaded=True)

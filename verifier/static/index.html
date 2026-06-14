@@ -45,6 +45,18 @@
   .door-when { color: var(--text-hint); font-weight: 400; font-size: 12px; }
   @media (max-width: 560px) { .door-grid { grid-template-columns: 1fr; } }
 
+  /* live camera panel */
+  .cam-panel { margin-bottom: 1.5rem; }
+  .cam-grid { display: grid; grid-template-columns: 360px 1fr; gap: 16px; align-items: start; }
+  .cam-frame-wrap { background: #0a0a0a; border-radius: var(--radius-lg); overflow: hidden; border: 0.5px solid var(--border); }
+  .cam-frame-wrap img { width: 100%; display: block; aspect-ratio: 4/3; object-fit: cover; background: #0a0a0a; }
+  .cam-btn { font: inherit; font-weight: 500; font-size: 14px; cursor: pointer; border: none; border-radius: var(--radius-md); padding: 11px 20px; display: inline-flex; align-items: center; gap: 8px; background: #1f6feb; color: #fff; transition: .15s; }
+  .cam-btn:hover { background: #1a5fd0; }
+  .cam-btn:disabled { opacity: .55; cursor: default; }
+  .cam-btn i { font-size: 18px; }
+  .cam-hint { font-size: 12px; color: var(--text-hint); margin-top: 10px; line-height: 1.6; }
+  @media (max-width: 560px) { .cam-grid { grid-template-columns: 1fr; } }
+
   /* sections */
   .section-label { font-size: 11px; font-weight: 500; text-transform: uppercase; letter-spacing: .08em; color: var(--text-hint); margin-bottom: 8px; margin-top: 1.25rem; }
   .section-label.danger { color: var(--red-mid); }
@@ -81,6 +93,19 @@
       <span id="verdict-text">Unknown</span>
     </div>
     <div class="meta-card" id="meta">Waiting for first attestation…</div>
+  </div>
+
+  <div class="cam-panel" id="cam-panel" style="display:none">
+    <p class="section-label">Live camera</p>
+    <div class="cam-grid">
+      <div class="cam-frame-wrap">
+        <img id="cam-stream" alt="live camera feed">
+      </div>
+      <div>
+        <button class="cam-btn" id="cam-shot"><i class="ti ti-capture" aria-hidden="true"></i>拍照並辨識</button>
+        <div class="cam-hint" id="cam-hint">即時畫面來自 Pi 相機。按下拍照會跑模型辨識，結果顯示在下方。</div>
+      </div>
+    </div>
   </div>
 
   <div class="door-panel" id="door-panel" style="display:none">
@@ -232,6 +257,38 @@ async function refresh() {
   unknownEl.innerHTML = up.count === 0 ? 'None' :
     (up.sample||[]).map(esc).join('<br>') + (up.count > (up.sample||[]).length ? '<br>…' : '');
 }
+async function initCamera() {
+  let info;
+  try { info = await (await fetch('/camera/info')).json(); } catch(e) { return; }
+  if (!info || !info.enabled) return;            // no Pi camera wired up
+
+  document.getElementById('cam-panel').style.display = 'block';
+  document.getElementById('cam-stream').src = '/camera/stream';
+
+  const btn  = document.getElementById('cam-shot');
+  const hint = document.getElementById('cam-hint');
+  btn.addEventListener('click', async () => {
+    btn.disabled = true; hint.textContent = '辨識中…';
+    try {
+      const r = await fetch('/camera/capture', { method: 'POST' });
+      const d = await r.json();
+      if (!r.ok || d.error) {
+        hint.textContent = '錯誤：' + (d.error || ('HTTP ' + r.status));
+      } else {
+        hint.textContent = d.recognized
+          ? `辨識成功 — 門主 ${d.owner_label}（P=${Number(d.confidence).toFixed(2)}）`
+          : `非門主（label ${d.label}, P=${Number(d.confidence).toFixed(2)}）`;
+        refresh();   // pull the captured frame + verdict into the door panel now
+      }
+    } catch(e) {
+      hint.textContent = '錯誤：' + e;
+    } finally {
+      btn.disabled = false;
+    }
+  });
+}
+initCamera();
+
 refresh();
 setInterval(refresh, 2000);
 </script>
