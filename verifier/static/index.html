@@ -1,79 +1,107 @@
 <!DOCTYPE html>
-<!-- Attestation dashboard (task 1.5). Polls /status: verdict badge,
-     protocol checks, watched binaries, offending entries, log tail. -->
-<html>
+<!-- Door-access kiosk (Phase 2). Big centred live camera, emphasised
+     recognition class + probability, door lock state as the hero. Polls
+     /door (authoritative gated result) and /status (device integrity).
+     The attestation internals live in a collapsed "technical details" panel. -->
+<html lang="zh-Hant">
 <head>
 <meta charset="utf-8">
-<title>Attestation Dashboard</title>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>門禁系統 · Access Control</title>
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@latest/tabler-icons.min.css">
 <style>
   :root {
     --green-bg: #EAF3DE; --green-text: #27500A; --green-mid: #3B6D11;
     --red-bg: #FCEBEB; --red-border: #F7C1C1; --red-text: #791F1F; --red-mid: #A32D2D;
-    --amber-text: #854F0B;
+    --amber-text: #854F0B; --blue: #1f6feb;
     --bg: #f6f8fa; --surface: #ffffff; --border: rgba(0,0,0,0.1);
     --text: #1f2328; --text-muted: #6e7781; --text-hint: #9ca3af;
     --radius-md: 8px; --radius-lg: 12px;
   }
   * { box-sizing: border-box; margin: 0; padding: 0; }
-  body { font-family: system-ui, sans-serif; background: var(--bg); color: var(--text); padding: 2rem 1rem; max-width: 70rem; margin: 0 auto; }
-  h1 { font-size: 22px; font-weight: 500; margin-bottom: 4px; }
-  .sub { font-size: 13px; color: var(--text-muted); margin-bottom: 1.5rem; }
-  .top-row { display: grid; grid-template-columns: auto 1fr; gap: 16px; align-items: center; margin-bottom: 1.5rem; }
-  .verdict-badge { display: inline-flex; align-items: center; gap: 10px; padding: 14px 28px; border-radius: var(--radius-lg); font-size: 26px; font-weight: 500; }
-  .verdict-badge i { font-size: 28px; }
-  .verdict-TRUSTED   { background: var(--green-bg); color: var(--green-text); }
-  .verdict-COMPROMISED { background: var(--red-bg);   color: var(--red-text); }
-  .verdict-UNKNOWN   { background: var(--bg); color: var(--text-muted); border: 0.5px solid var(--border); }
-  .meta-card { background: var(--surface); border: 0.5px solid var(--border); border-radius: var(--radius-md); padding: 12px 16px; font-size: 12px; color: var(--text-muted); line-height: 1.8; }
-  .meta-card span { color: var(--text); font-weight: 500; }
+  body { font-family: system-ui, sans-serif; background: var(--bg); color: var(--text); padding: 2rem 1rem 3rem; max-width: 44rem; margin: 0 auto; }
   .mono { font-family: ui-monospace, monospace; font-size: 11px; color: var(--text-muted); word-break: break-all; }
 
-  /* door panel (Phase 2) */
-  .door-panel { margin-bottom: 1.5rem; }
-  .door-grid { display: grid; grid-template-columns: 300px 1fr; gap: 16px; align-items: start; }
-  .door-frame-wrap { background: #0a0a0a; border-radius: var(--radius-lg); overflow: hidden; border: 0.5px solid var(--border); }
-  .door-frame-wrap img { width: 100%; display: block; min-height: 160px; aspect-ratio: 1/1; object-fit: cover; background: #0a0a0a; }
-  .door-frame-cap { font-size: 11px; color: var(--text-muted); padding: 7px 10px; background: var(--surface); border-top: 0.5px solid var(--border); }
-  .door-badge { display: inline-flex; align-items: center; gap: 10px; padding: 14px 26px; border-radius: var(--radius-lg); font-size: 24px; font-weight: 500; }
-  .door-badge i { font-size: 26px; }
+  /* header */
+  .kiosk-head { text-align: center; margin-bottom: 1.5rem; }
+  h1 { font-size: 24px; font-weight: 600; margin-bottom: 4px; }
+  h1 i { font-size: 22px; vertical-align: -2px; margin-right: 6px; }
+  .sub { font-size: 13px; color: var(--text-muted); margin-bottom: 14px; }
+  .verdict-badge { display: inline-flex; align-items: center; gap: 8px; padding: 7px 16px; border-radius: 999px; font-size: 13px; font-weight: 500; border: 0.5px solid var(--border); }
+  .verdict-badge i { font-size: 16px; }
+  .verdict-TRUSTED     { background: var(--green-bg); color: var(--green-text); border-color: transparent; }
+  .verdict-COMPROMISED { background: var(--red-bg);   color: var(--red-text);   border-color: transparent; }
+  .verdict-UNKNOWN     { background: var(--surface);  color: var(--text-muted); }
+  .meta-card { font-size: 11px; color: var(--text-muted); line-height: 1.7; margin-top: 8px; }
+  .meta-card span { color: var(--text); font-weight: 500; }
+
+  /* kiosk: the door-access experience */
+  .kiosk { max-width: 560px; margin: 0 auto; }
+  .stage { display: flex; justify-content: center; }
+  .stage-wrap { position: relative; width: 100%; background: #0a0a0a; border-radius: 16px; overflow: hidden; border: 3px solid var(--border); box-shadow: 0 12px 44px rgba(0,0,0,.12); transition: border-color .25s, box-shadow .25s; }
+  .stage-wrap img { width: 100%; display: block; aspect-ratio: 4/3; object-fit: cover; background: #0a0a0a; }
+  .stage-UNLOCKED { border-color: var(--green-mid); box-shadow: 0 12px 44px rgba(59,109,17,.28); }
+  .stage-LOCKED   { border-color: var(--red-mid);   box-shadow: 0 12px 44px rgba(163,45,45,.28); }
+  .stage-cap { position: absolute; top: 12px; left: 12px; background: rgba(0,0,0,.55); color: #fff; font-size: 11px; padding: 5px 11px; border-radius: 999px; display: inline-flex; align-items: center; gap: 6px; backdrop-filter: blur(4px); }
+  .stage-cap .dot { width: 7px; height: 7px; border-radius: 50%; background: #ff4d4d; animation: pulse 1.4s ease-in-out infinite; }
+  @keyframes pulse { 0%,100% { opacity: 1; } 50% { opacity: .35; } }
+  .stage-scan { position: absolute; left: 0; right: 0; top: 0; height: 2px; background: linear-gradient(90deg, transparent, var(--blue), transparent); opacity: .55; animation: scan 3.4s linear infinite; pointer-events: none; }
+  @keyframes scan { 0% { top: 0; } 100% { top: 100%; } }
+
+  /* door state — the hero badge */
+  .door-badge { width: 100%; justify-content: center; margin-top: 18px; display: inline-flex; align-items: center; gap: 12px; padding: 18px 26px; border-radius: 14px; font-size: 26px; font-weight: 600; }
+  .door-badge i { font-size: 30px; }
   .door-UNLOCKED { background: var(--green-bg); color: var(--green-text); }
   .door-LOCKED   { background: var(--red-bg);   color: var(--red-text); }
-  .door-UNKNOWN  { background: var(--bg); color: var(--text-muted); border: 0.5px solid var(--border); }
-  .door-detail { margin-top: 14px; font-size: 13px; color: var(--text-muted); line-height: 1.9; }
-  .door-detail span { color: var(--text); font-weight: 500; }
-  .door-when { color: var(--text-hint); font-weight: 400; font-size: 12px; }
-  @media (max-width: 560px) { .door-grid { grid-template-columns: 1fr; } }
+  .door-UNKNOWN  { background: var(--surface);  color: var(--text-muted); border: 0.5px solid var(--border); }
 
-  /* live camera panel */
-  .cam-panel { margin-bottom: 1.5rem; }
-  .cam-grid { display: grid; grid-template-columns: 360px 1fr; gap: 16px; align-items: start; }
-  .cam-frame-wrap { background: #0a0a0a; border-radius: var(--radius-lg); overflow: hidden; border: 0.5px solid var(--border); }
-  .cam-frame-wrap img { width: 100%; display: block; aspect-ratio: 4/3; object-fit: cover; background: #0a0a0a; }
-  .cam-btn { font: inherit; font-weight: 500; font-size: 14px; cursor: pointer; border: none; border-radius: var(--radius-md); padding: 11px 20px; display: inline-flex; align-items: center; gap: 8px; background: #1f6feb; color: #fff; transition: .15s; }
+  /* recognition result — emphasised class + probability */
+  .recog { margin-top: 16px; display: grid; grid-template-columns: 132px 1fr; gap: 18px; background: var(--surface); border: 0.5px solid var(--border); border-radius: 14px; padding: 18px; }
+  .recog-frame-wrap { text-align: center; }
+  .recog-frame-wrap img { width: 132px; height: 132px; object-fit: cover; border-radius: 12px; background: #0a0a0a; display: block; }
+  .recog-frame-cap { font-size: 10px; color: var(--text-hint); margin-top: 7px; }
+  .recog-body { min-width: 0; }
+  .recog-row { display: flex; justify-content: space-between; align-items: baseline; gap: 10px; }
+  .recog-row + .recog-row { margin-top: 12px; }
+  .recog-key { font-size: 11px; font-weight: 500; text-transform: uppercase; letter-spacing: .08em; color: var(--text-hint); white-space: nowrap; }
+  .recog-class { font-size: 24px; font-weight: 600; text-align: right; color: var(--text); }
+  .recog-prob  { font-size: 42px; font-weight: 700; line-height: 1; color: var(--text); font-variant-numeric: tabular-nums; }
+  .recog-owner    { color: var(--green-mid); }
+  .recog-intruder { color: var(--red-mid); }
+  .recog-bar { height: 10px; border-radius: 999px; background: var(--bg); border: 0.5px solid var(--border); overflow: hidden; margin-top: 8px; }
+  .recog-bar-fill { height: 100%; width: 0; border-radius: 999px; background: var(--text-muted); transition: width .4s ease; }
+  .bar-ok  { background: var(--green-mid); }
+  .bar-bad { background: var(--red-mid); }
+  .recog-reason { font-size: 12px; color: var(--text-muted); margin-top: 14px; line-height: 1.7; }
+  .recog-when { color: var(--text-hint); }
+
+  /* actions */
+  .actions { display: flex; gap: 10px; justify-content: center; margin-top: 22px; flex-wrap: wrap; }
+  .cam-btn { font: inherit; font-weight: 600; font-size: 15px; cursor: pointer; border: none; border-radius: var(--radius-md); padding: 14px 26px; display: inline-flex; align-items: center; gap: 8px; background: var(--blue); color: #fff; transition: .15s; }
   .cam-btn:hover { background: #1a5fd0; }
   .cam-btn:disabled { opacity: .55; cursor: default; }
-  .cam-btn i { font-size: 18px; }
-  .cam-btn-ghost { background: var(--surface); color: var(--text); border: 0.5px solid var(--border); margin-left: 8px; }
+  .cam-btn i { font-size: 19px; }
+  .cam-btn-ghost { background: var(--surface); color: var(--text); border: 0.5px solid var(--border); font-weight: 500; }
   .cam-btn-ghost:hover { background: var(--bg); }
-  .cam-hint { font-size: 12px; color: var(--text-hint); margin-top: 10px; line-height: 1.6; }
-  .cam-tamper { margin-top: 14px; padding-top: 12px; border-top: 0.5px dashed var(--border); display: flex; gap: 8px; flex-wrap: wrap; align-items: center; }
-  .cam-tamper-label { font-size: 11px; font-weight: 500; text-transform: uppercase; letter-spacing: .08em; color: var(--text-hint); width: 100%; margin-bottom: 2px; }
-  .cam-btn-sm { font: inherit; font-size: 12px; font-weight: 500; cursor: pointer; border-radius: var(--radius-md); padding: 7px 12px; display: inline-flex; align-items: center; gap: 6px; border: 0.5px solid var(--border); background: var(--surface); color: var(--text); }
-  .cam-btn-sm:hover { background: var(--bg); }
-  .cam-btn-sm:disabled { opacity: .55; cursor: default; }
-  .cam-btn-danger { color: var(--red-text); border-color: var(--red-border); background: var(--red-bg); }
-  .cam-log { margin-top: 10px; font-family: ui-monospace, monospace; font-size: 11px; color: var(--text-muted); background: var(--bg); border: 0.5px solid var(--border); border-radius: var(--radius-md); padding: 10px; white-space: pre-wrap; max-height: 180px; overflow: auto; display: none; }
-  .cam-progress { margin-top: 12px; display: none; }
+  .cam-hint { font-size: 12px; color: var(--text-hint); margin-top: 12px; line-height: 1.6; text-align: center; }
+  .cam-log { margin-top: 12px; font-family: ui-monospace, monospace; font-size: 11px; color: var(--text-muted); background: var(--bg); border: 0.5px solid var(--border); border-radius: var(--radius-md); padding: 10px; white-space: pre-wrap; max-height: 180px; overflow: auto; display: none; }
+  .cam-progress { margin-top: 14px; display: none; }
   .cam-progress-track { height: 7px; border-radius: 999px; background: var(--bg); border: 0.5px solid var(--border); overflow: hidden; }
-  .cam-progress-fill { height: 100%; width: 0; background: #1f6feb; border-radius: 999px; transition: width .3s ease; }
-  .cam-progress-phase { margin-top: 7px; font-size: 12px; color: var(--text); font-weight: 500; display: flex; align-items: center; gap: 6px; }
-  .cam-progress-phase .spin { width: 12px; height: 12px; border: 2px solid var(--border); border-top-color: #1f6feb; border-radius: 50%; animation: spin .8s linear infinite; }
+  .cam-progress-fill { height: 100%; width: 0; background: var(--blue); border-radius: 999px; transition: width .3s ease; }
+  .cam-progress-phase { margin-top: 8px; font-size: 12px; color: var(--text); font-weight: 500; display: flex; align-items: center; justify-content: center; gap: 6px; }
+  .cam-progress-phase .spin { width: 12px; height: 12px; border: 2px solid var(--border); border-top-color: var(--blue); border-radius: 50%; animation: spin .8s linear infinite; }
   @keyframes spin { to { transform: rotate(360deg); } }
-  @media (max-width: 560px) { .cam-grid { grid-template-columns: 1fr; } }
 
-  /* sections */
+  @media (max-width: 520px) {
+    .recog { grid-template-columns: 1fr; }
+    .recog-frame-wrap img { width: 110px; height: 110px; margin: 0 auto; }
+    .actions { flex-direction: column; }
+    .cam-btn { justify-content: center; }
+  }
+
+  /* technical details (collapsed) */
   .section-label { font-size: 11px; font-weight: 500; text-transform: uppercase; letter-spacing: .08em; color: var(--text-hint); margin-bottom: 8px; margin-top: 1.25rem; }
+  .section-label:first-child { margin-top: 0; }
   .section-label.danger { color: var(--red-mid); }
   .card { background: var(--surface); border: 0.5px solid var(--border); border-radius: var(--radius-lg); overflow: hidden; margin-bottom: 1rem; }
   table { width: 100%; border-collapse: collapse; font-size: 13px; }
@@ -89,104 +117,114 @@
   .pill-tampered { background: var(--red-bg);   color: var(--red-text); }
   .pill-other    { background: var(--bg); color: var(--text-muted); }
   .empty-row td  { color: var(--text-hint); font-style: italic; text-align: center; padding: 1.5rem; }
-  details { margin-bottom: 1rem; }
+  details { margin-top: 1.75rem; }
+  details details { margin-top: 1rem; }
   summary { font-size: 13px; color: var(--text-muted); cursor: pointer; padding: 10px 12px; background: var(--surface); border-radius: var(--radius-md); border: 0.5px solid var(--border); list-style: none; display: flex; align-items: center; gap: 6px; }
   summary::-webkit-details-marker { display: none; }
-  details[open] summary { border-radius: var(--radius-md) var(--radius-md) 0 0; border-bottom: none; }
-  details[open] .detail-body { border: 0.5px solid var(--border); border-top: none; border-radius: 0 0 var(--radius-md) var(--radius-md); overflow: hidden; }
+  details[open] > summary { border-radius: var(--radius-md) var(--radius-md) 0 0; border-bottom: none; }
+  details[open] > .detail-body { border: 0.5px solid var(--border); border-top: none; border-radius: 0 0 var(--radius-md) var(--radius-md); overflow: hidden; }
+  .tech-body { padding: 16px; }
   .detail-mono { padding: 12px; font-family: ui-monospace, monospace; font-size: 11px; color: var(--text-muted); line-height: 1.8; }
 </style>
 </head>
 <body>
 
-  <h1><i class="ti ti-shield-check" style="font-size:20px;vertical-align:-2px;margin-right:6px;" aria-hidden="true"></i>Device integrity</h1>
-  <div class="sub">TPM-attested platform &amp; AI-model state — PCR 10 (IMA runtime measurements)</div>
-
-  <div class="top-row">
+  <header class="kiosk-head">
+    <h1><i class="ti ti-door" aria-hidden="true"></i>門禁系統</h1>
+    <div class="sub">TPM 遠端驗證 · AI 臉部辨識門禁 — 模型完整性由 PCR 10（IMA runtime measurements）背書</div>
     <div id="verdict" class="verdict-badge verdict-UNKNOWN">
       <i class="ti ti-help-circle" aria-hidden="true"></i>
-      <span id="verdict-text">Unknown</span>
+      <span id="verdict-text">裝置完整性：未知</span>
     </div>
-    <div class="meta-card" id="meta">Waiting for first attestation…</div>
-  </div>
+    <div class="meta-card" id="meta">尚未進行驗證…</div>
+  </header>
 
-  <div class="cam-panel" id="cam-panel" style="display:none">
-    <p class="section-label">Live camera</p>
-    <div class="cam-grid">
-      <div class="cam-frame-wrap">
-        <img id="cam-stream" alt="live camera feed">
+  <main class="kiosk" id="cam-panel" style="display:none">
+    <div class="stage">
+      <div class="stage-wrap" id="stage-wrap">
+        <img id="cam-stream" alt="即時影像">
+        <div class="stage-scan"></div>
+        <div class="stage-cap"><span class="dot"></span>即時影像 · LIVE</div>
       </div>
-      <div>
-        <button class="cam-btn" id="door-run"><i class="ti ti-shield-lock" aria-hidden="true"></i>執行門禁判定（含驗證）</button>
-        <button class="cam-btn cam-btn-ghost" id="cam-shot"><i class="ti ti-capture" aria-hidden="true"></i>僅辨識（對焦用）</button>
-        <div class="cam-hint" id="cam-hint">「執行門禁判定」會在 Pi 上跑完整流程（attestation + unseal 閘門），結果顯示在下方 Door lock 面板。「僅辨識」只測模型認不認得這張臉，不做驗證。</div>
-        <div class="cam-progress" id="cam-progress">
-          <div class="cam-progress-track"><div class="cam-progress-fill" id="cam-progress-fill"></div></div>
-          <div class="cam-progress-phase" id="cam-progress-phase"></div>
+    </div>
+
+    <div class="door-badge door-UNKNOWN" id="door-badge">
+      <i class="ti ti-lock-question" aria-hidden="true"></i><span id="door-badge-text">待命中 · STANDBY</span>
+    </div>
+
+    <div class="recog">
+      <div class="recog-frame-wrap">
+        <img id="door-frame" alt="">
+        <div class="recog-frame-cap" id="door-source">尚未判定</div>
+      </div>
+      <div class="recog-body">
+        <div class="recog-row">
+          <span class="recog-key">辨識類別</span>
+          <span class="recog-class" id="recog-class">—</span>
         </div>
-        <div class="cam-tamper">
-          <span class="cam-tamper-label">Tamper（demo 用：模擬攻擊者換模型）</span>
-          <button class="cam-btn-sm cam-btn-danger" id="tamper-swap"><i class="ti ti-skull" aria-hidden="true"></i>換成惡意模型</button>
-          <button class="cam-btn-sm" id="tamper-restore"><i class="ti ti-rotate" aria-hidden="true"></i>還原正常模型</button>
+        <div class="recog-row">
+          <span class="recog-key">辨識機率 P(admit)</span>
+          <span class="recog-prob" id="recog-prob">—</span>
         </div>
-        <pre class="cam-log" id="cam-log"></pre>
+        <div class="recog-bar"><div class="recog-bar-fill" id="recog-bar-fill"></div></div>
+        <div class="recog-reason" id="recog-reason">尚未進行門禁判定 — 按「執行門禁判定」開始</div>
       </div>
     </div>
-  </div>
 
-  <div class="door-panel" id="door-panel" style="display:none">
-    <p class="section-label">Door lock — AI recognizer</p>
-    <div class="door-grid">
-      <div class="door-frame-wrap">
-        <img id="door-frame" alt="last frame read by the recognizer">
-        <div class="door-frame-cap" id="door-source">last frame</div>
+    <div class="actions">
+      <button class="cam-btn" id="door-run"><i class="ti ti-shield-lock" aria-hidden="true"></i>執行門禁判定</button>
+      <button class="cam-btn cam-btn-ghost" id="cam-shot"><i class="ti ti-capture" aria-hidden="true"></i>僅辨識（對焦用）</button>
+    </div>
+    <div class="cam-hint" id="cam-hint">「執行門禁判定」在 Pi 上跑完整 attestation + unseal 閘門，結果即為上方門禁狀態；「僅辨識」只測模型認不認得這張臉，不做驗證。</div>
+    <div class="cam-progress" id="cam-progress">
+      <div class="cam-progress-track"><div class="cam-progress-fill" id="cam-progress-fill"></div></div>
+      <div class="cam-progress-phase" id="cam-progress-phase"></div>
+    </div>
+    <pre class="cam-log" id="cam-log"></pre>
+  </main>
+
+  <details class="tech">
+    <summary><i class="ti ti-adjustments-alt" aria-hidden="true"></i><span>技術細節 · Attestation internals</span></summary>
+    <div class="detail-body tech-body">
+      <p class="section-label">Protocol checks</p>
+      <div class="card">
+        <table><tbody id="checks"><tr class="empty-row"><td>No attestation yet</td></tr></tbody></table>
       </div>
-      <div>
-        <div class="door-badge door-UNKNOWN" id="door-badge">
-          <i class="ti ti-lock-question" aria-hidden="true"></i><span id="door-badge-text">—</span>
+
+      <p class="section-label">Watched binaries</p>
+      <div class="card">
+        <table>
+          <thead><tr><th>Path</th><th>Status</th><th>Last measured hash</th></tr></thead>
+          <tbody id="watched-body"><tr class="empty-row"><td colspan="3">No data yet</td></tr></tbody>
+        </table>
+      </div>
+
+      <div id="failsec" style="display:none">
+        <p class="section-label danger">Offending measurements</p>
+        <div class="card">
+          <table>
+            <thead><tr><th>Line</th><th>Path</th><th>Measured hash</th><th>Reason</th></tr></thead>
+            <tbody id="fails-body"></tbody>
+          </table>
         </div>
-        <div class="door-detail" id="door-detail"></div>
       </div>
-    </div>
-  </div>
 
-  <p class="section-label">Protocol checks</p>
-  <div class="card">
-    <table><tbody id="checks"><tr class="empty-row"><td>No attestation yet</td></tr></tbody></table>
-  </div>
+      <details>
+        <summary><i class="ti ti-list" aria-hidden="true"></i><span id="tailsum">Measurement log tail</span></summary>
+        <div class="detail-body">
+          <table>
+            <thead><tr><th>Line</th><th>Path</th><th>Hash</th></tr></thead>
+            <tbody id="tail-body"></tbody>
+          </table>
+        </div>
+      </details>
 
-  <p class="section-label">Watched binaries</p>
-  <div class="card">
-    <table>
-      <thead><tr><th>Path</th><th>Status</th><th>Last measured hash</th></tr></thead>
-      <tbody id="watched-body"><tr class="empty-row"><td colspan="3">No data yet</td></tr></tbody>
-    </table>
-  </div>
-
-  <div id="failsec" style="display:none">
-    <p class="section-label danger">Offending measurements</p>
-    <div class="card">
-      <table>
-        <thead><tr><th>Line</th><th>Path</th><th>Measured hash</th><th>Reason</th></tr></thead>
-        <tbody id="fails-body"></tbody>
-      </table>
-    </div>
-  </div>
-
-  <details>
-    <summary><i class="ti ti-list" aria-hidden="true"></i><span id="tailsum">Measurement log tail</span></summary>
-    <div class="detail-body">
-      <table>
-        <thead><tr><th>Line</th><th>Path</th><th>Hash</th></tr></thead>
-        <tbody id="tail-body"></tbody>
-      </table>
-    </div>
-  </details>
-
-  <details>
-    <summary><i class="ti ti-file-unknown" aria-hidden="true"></i><span id="unknownsum">Unknown paths</span></summary>
-    <div class="detail-body">
-      <div class="detail-mono" id="unknown">—</div>
+      <details>
+        <summary><i class="ti ti-file-unknown" aria-hidden="true"></i><span id="unknownsum">Unknown paths</span></summary>
+        <div class="detail-body">
+          <div class="detail-mono" id="unknown">—</div>
+        </div>
+      </details>
     </div>
   </details>
 
@@ -195,31 +233,63 @@ function esc(s) { const d = document.createElement('div'); d.textContent = s ?? 
 function fillRows(tbody, rows) { tbody.innerHTML = rows.join(''); }
 
 const ICONS  = { TRUSTED: 'ti-shield-check', COMPROMISED: 'ti-shield-x', UNKNOWN: 'ti-help-circle' };
-const LABELS = { TRUSTED: 'Trusted', COMPROMISED: 'Compromised', UNKNOWN: 'Unknown' };
+const LABELS = { TRUSTED: '裝置可信 · TRUSTED', COMPROMISED: '已遭竄改 · COMPROMISED', UNKNOWN: '裝置完整性：未知' };
+
+const OWNER_LABEL = 'A';   // mirrors recognizer.OWNER_LABEL
 
 let lastDoorTs = null;
 function renderDoor(d) {
-  const panel = document.getElementById('door-panel');
-  if (!d || !d.state || d.state === 'unknown') { panel.style.display = 'none'; return; }
-  panel.style.display = 'block';
+  const badge   = document.getElementById('door-badge');
+  const stage   = document.getElementById('stage-wrap');
+  const klass   = document.getElementById('recog-class');
+  const prob    = document.getElementById('recog-prob');
+  const bar     = document.getElementById('recog-bar-fill');
+  const reason  = document.getElementById('recog-reason');
+  const srcCap  = document.getElementById('door-source');
+
+  // standby — no gated decision yet
+  if (!d || !d.state || d.state === 'unknown') {
+    badge.className = 'door-badge door-UNKNOWN';
+    badge.innerHTML = '<i class="ti ti-lock-question" aria-hidden="true"></i><span>待命中 · STANDBY</span>';
+    stage.className = 'stage-wrap';
+    klass.textContent = '—'; klass.className = 'recog-class';
+    prob.textContent = '—';  prob.className = 'recog-prob';
+    bar.style.width = '0%';   bar.className = 'recog-bar-fill';
+    reason.innerHTML = '尚未進行門禁判定 — 按「執行門禁判定」開始';
+    srcCap.textContent = '尚未判定';
+    return;
+  }
 
   const state = String(d.state).toUpperCase();
   const cls  = state === 'UNLOCKED' ? 'UNLOCKED' : state === 'LOCKED' ? 'LOCKED' : 'UNKNOWN';
   const icon = state === 'UNLOCKED' ? 'ti-lock-open' : state === 'LOCKED' ? 'ti-lock' : 'ti-lock-question';
-  const txt  = state === 'UNLOCKED' ? 'Door unlocked' : state === 'LOCKED' ? 'Door locked' : esc(d.state);
-  const badge = document.getElementById('door-badge');
+  const txt  = state === 'UNLOCKED' ? '門已開啟 · UNLOCKED'
+             : state === 'LOCKED'   ? '門已上鎖 · LOCKED' : esc(d.state);
   badge.className = 'door-badge door-' + cls;
   badge.innerHTML = `<i class="ti ${icon}" aria-hidden="true"></i><span>${txt}</span>`;
+  stage.className = 'stage-wrap stage-' + cls;
 
-  const conf = (d.confidence != null) ? Number(d.confidence).toFixed(2) : '—';
-  let html = `Recognizer: <span>${esc(d.label || '?')}</span> &nbsp;·&nbsp; P(owner) <span>${conf}</span>`;
-  if (d.source) html += ` &nbsp;·&nbsp; source <span>${esc(d.source)}</span>`;
-  if (d.reason) html += `<br>${esc(d.reason)}`;
-  if (d.timestamp) html += `<br><span class="door-when">${new Date(d.timestamp * 1000).toLocaleString()}</span>`;
-  document.getElementById('door-detail').innerHTML = html;
-  document.getElementById('door-source').textContent = d.source ? ('frame: ' + d.source) : 'last frame';
+  // recognition class — owner vs intruder
+  const isOwner = d.label === OWNER_LABEL;
+  klass.textContent = isOwner ? '門主 OWNER（A）' : `非門主 INTRUDER（${esc(d.label || '?')}）`;
+  klass.className = 'recog-class ' + (isOwner ? 'recog-owner' : 'recog-intruder');
 
-  // refresh the image only when the door event changed (avoid flicker / re-fetch)
+  // recognition probability
+  const conf = (d.confidence != null) ? Number(d.confidence) : null;
+  const pct  = conf != null ? Math.max(0, Math.min(100, conf * 100)) : 0;
+  prob.textContent = conf != null ? pct.toFixed(1) + '%' : '—';
+  prob.className = 'recog-prob ' + (isOwner ? 'recog-owner' : 'recog-intruder');
+  bar.style.width = pct + '%';
+  bar.className = 'recog-bar-fill ' + (state === 'UNLOCKED' ? 'bar-ok' : state === 'LOCKED' ? 'bar-bad' : '');
+
+  let html = '';
+  if (d.reason) html += esc(d.reason);
+  if (d.source) html += (html ? ' · ' : '') + 'source ' + esc(d.source);
+  if (d.timestamp) html += `<br><span class="recog-when">${new Date(d.timestamp * 1000).toLocaleString()}</span>`;
+  reason.innerHTML = html;
+  srcCap.textContent = d.source ? ('判定影格：' + esc(d.source)) : '已判定';
+
+  // refresh the judged frame only when the door event changed (avoid flicker)
   if (d.timestamp && d.timestamp !== lastDoorTs) {
     document.getElementById('door-frame').src = '/door-frame?t=' + d.timestamp;
     lastDoorTs = d.timestamp;
@@ -240,9 +310,9 @@ async function refresh() {
   const when = s.timestamp ? new Date(s.timestamp * 1000).toLocaleString() : '—';
   const meta = document.getElementById('meta');
   if (v === 'UNKNOWN') {
-    meta.innerHTML = s.detail || 'No attestation yet';
+    meta.innerHTML = s.detail || '尚未進行驗證…';
   } else {
-    meta.innerHTML = `Device <span>${esc(s.device_id)}</span> &nbsp;·&nbsp; <span>${when}</span> &nbsp;·&nbsp; <span>${s.entry_count ?? '?'}</span> measurements &nbsp;·&nbsp; attempts <span>${s.capture_attempts ?? '?'}</span> &nbsp;·&nbsp; PCR10 <span class="mono">${(s.quoted_pcr10||'').slice(0,16)}…</span>`;
+    meta.innerHTML = `裝置 <span>${esc(s.device_id)}</span> &nbsp;·&nbsp; <span>${when}</span> &nbsp;·&nbsp; <span>${s.entry_count ?? '?'}</span> 筆量測 &nbsp;·&nbsp; PCR10 <span class="mono">${(s.quoted_pcr10||'').slice(0,16)}…</span>`;
   }
 
   fillRows(document.querySelector('#checks'), Object.entries(s.checks || {}).map(([k, val]) => {
@@ -283,6 +353,7 @@ async function refresh() {
   unknownEl.innerHTML = up.count === 0 ? 'None' :
     (up.sample||[]).map(esc).join('<br>') + (up.count > (up.sample||[]).length ? '<br>…' : '');
 }
+
 async function initCamera() {
   let info;
   try { info = await (await fetch('/camera/info')).json(); } catch(e) { return; }
@@ -291,23 +362,16 @@ async function initCamera() {
   document.getElementById('cam-panel').style.display = 'block';
   document.getElementById('cam-stream').src = '/camera/stream';
 
-  const runBtn = document.getElementById('door-run');
+  const runBtn  = document.getElementById('door-run');
   const shotBtn = document.getElementById('cam-shot');
-  const swapBtn = document.getElementById('tamper-swap');
-  const restoreBtn = document.getElementById('tamper-restore');
-  const hint = document.getElementById('cam-hint');
-  const logEl = document.getElementById('cam-log');
-  const allBtns = [runBtn, shotBtn, swapBtn, restoreBtn];
+  const hint    = document.getElementById('cam-hint');
+  const logEl   = document.getElementById('cam-log');
+  const allBtns = [runBtn, shotBtn];
   const setBusy = (b) => allBtns.forEach(x => x.disabled = b);
-  function showLog(lines) {
-    if (!lines || !lines.length) { logEl.style.display = 'none'; return; }
-    logEl.textContent = lines.join('\n');
-    logEl.style.display = 'block';
-  }
 
   // live progress of a gated run, streamed from the Pi via /door-progress
   const progressEl = document.getElementById('cam-progress');
-  const fillEl = document.getElementById('cam-progress-fill');
+  const fillEl  = document.getElementById('cam-progress-fill');
   const phaseEl = document.getElementById('cam-progress-phase');
   let progTimer = null;
   async function pollProgress() {
@@ -337,9 +401,8 @@ async function initCamera() {
     if (progTimer) { clearInterval(progTimer); progTimer = null; }
   }
 
-  // primary: full gated run on the Pi (attest + unseal). Authoritative.
-  // The run takes seconds (attest + NPU inference + TPM unseal); stream its
-  // progress from /door-progress so the button isn't a frozen black box.
+  // primary: full gated run on the Pi (attest + unseal). Authoritative — its
+  // result drives the door state + recognition display above. Streams progress.
   runBtn.addEventListener('click', async () => {
     setBusy(true);
     hint.textContent = '執行中…正在 Pi 上跑 attestation 與 unseal 閘門';
@@ -359,7 +422,7 @@ async function initCamera() {
         } else {
           hint.textContent = `⚠️ 驗證 ${v}｜執行錯誤（door exit ${d.door_exit}）`;
         }
-        refresh();   // pull verdict badge + door panel
+        refresh();   // pull verdict chip + door panel
       }
     } catch(e) {
       hint.textContent = '錯誤：' + e;
@@ -369,10 +432,10 @@ async function initCamera() {
     }
   });
 
-  // secondary: recognition only, no gate. Never touches the door panel, so a
-  // swapped-model "recognised" can't be mistaken for an unlocked door.
+  // secondary: recognition only, no gate. Never touches the door state above, so
+  // a swapped-model "recognised" can't be mistaken for an unlocked door.
   shotBtn.addEventListener('click', async () => {
-    setBusy(true); hint.textContent = '辨識中…'; showLog(null);
+    setBusy(true); hint.textContent = '辨識中…';
     try {
       const r = await fetch('/camera/capture', { method: 'POST' });
       const d = await r.json();
@@ -390,21 +453,6 @@ async function initCamera() {
       setBusy(false);
     }
   });
-
-  async function tamper(path, runningMsg) {
-    setBusy(true); hint.textContent = runningMsg; showLog(null);
-    try {
-      const r = await fetch(path, { method: 'POST' });
-      const d = await r.json();
-      if (!r.ok || d.error) hint.textContent = '錯誤：' + (d.error || ('HTTP ' + r.status));
-      else { hint.textContent = d.ok ? '完成 — 接著按「執行門禁判定」看結果' : '腳本回報失敗，詳見下方'; showLog(d.log); }
-    } catch(e) { hint.textContent = '錯誤：' + e; }
-    finally { setBusy(false); }
-  }
-  swapBtn.addEventListener('click', () =>
-    tamper('/tamper/swap', '換成惡意模型中…'));
-  restoreBtn.addEventListener('click', () =>
-    tamper('/tamper/restore', '還原正常模型中…'));
 }
 initCamera();
 

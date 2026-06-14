@@ -300,30 +300,6 @@ def door_run():
     return jsonify(result)
 
 
-def _relay_tamper(path):
-    cam = app.config.get("CAMERA_URL")
-    if not cam:
-        return jsonify({"error": "camera not configured"}), 503
-    try:
-        req = urllib.request.Request(cam.rstrip("/") + path, method="POST")
-        with urllib.request.urlopen(req, timeout=90) as r:
-            return jsonify(json.loads(r.read().decode()))
-    except Exception as e:
-        return jsonify({"error": f"camera{path} unreachable: {e}"}), 502
-
-
-@app.post("/tamper/swap")
-def tamper_swap():
-    """Relay: swap the malicious model in on the Pi (-> COMPROMISED next run)."""
-    return _relay_tamper("/swap-model")
-
-
-@app.post("/tamper/restore")
-def tamper_restore():
-    """Relay: restore the honest model on the Pi (needs a reboot to re-TRUST)."""
-    return _relay_tamper("/restore-model")
-
-
 @app.get("/")
 def index():
     return send_from_directory(app.static_folder, "index.html")

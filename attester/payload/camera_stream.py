@@ -222,10 +222,6 @@ def capture():
     })
 
 
-SWAP_MODEL = os.path.join(REPO_ROOT, "tamper", "swap_model.sh")
-RESTORE_MODEL = os.path.join(REPO_ROOT, "tamper", "restore_model.sh")
-
-
 def _need_root():
     return os.geteuid() != 0
 
@@ -236,23 +232,9 @@ def _root_error():
                              "TPM as root)"}), 503
 
 
-def _run_step(cmd, timeout):
-    """Run one subprocess as the current (root) user; return (code, output)."""
-    env = dict(os.environ,
-               PYTHONWARNINGS="ignore:Camellia has been moved,"
-                              "ignore:CFB has been moved")
-    try:
-        p = subprocess.run(cmd, cwd=REPO_ROOT, env=env, timeout=timeout,
-                           capture_output=True, text=True)
-        return p.returncode, (p.stdout or "") + (p.stderr or "")
-    except subprocess.TimeoutExpired:
-        return 124, f"timed out after {timeout}s"
-    except Exception as e:
-        return 1, f"failed to run {' '.join(map(str, cmd))}: {e}"
-
-
 def _run_step_streamed(cmd, timeout, on_line):
-    """Like _run_step, but forward each stdout line to on_line as it appears.
+    """Run one subprocess as the current (root) user, forwarding each stdout
+    line to on_line as it appears.
 
     PYTHONUNBUFFERED makes the child Python flush prints per line, so progress
     is live instead of arriving in one batch at exit. A watchdog timer kills the
@@ -392,28 +374,6 @@ def run_door():
         "log": _tail(a_out, 5) + _tail(d_out, 10),
         "timestamp": time.time(),
     })
-
-
-@app.post("/swap-model")
-def swap_model():
-    """Tamper: copy the malicious .hef over the live model (-> COMPROMISED on
-    the next attest). The attacker action in the demo."""
-    if _need_root():
-        return _root_error()
-    code, out = _run_step(["bash", SWAP_MODEL], timeout=60)
-    return jsonify({"ok": code == 0, "exit": code, "log": _tail(out, 12)})
-
-
-@app.post("/restore-model")
-def restore_model():
-    """Undo the swap (copies honest.hef back). NOTE: the trojan measurement
-    stays in this boot's append-only IMA log, so the device remains COMPROMISED
-    until a clean REBOOT + dev/prepare_demo_p2.sh — correct attestation
-    semantics (an attacker can't regain trust by restoring the file)."""
-    if _need_root():
-        return _root_error()
-    code, out = _run_step(["bash", RESTORE_MODEL], timeout=60)
-    return jsonify({"ok": code == 0, "exit": code, "log": _tail(out, 12)})
 
 
 def main():
