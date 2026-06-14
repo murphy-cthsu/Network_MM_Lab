@@ -89,6 +89,20 @@ def grab_frame(args):
       --subject X  the committed test frame training/testset/{A,B}.jpg
                    (deterministic, cameraless — used by the demo + warm-up)
     """
+    if args.frame_url:
+        # Pull one still from camera_stream.py instead of opening Picamera2 here.
+        # Only one process may own the Pi camera; during the integrated demo the
+        # stream server owns it and serves the live dashboard feed. Returns jpeg
+        # bytes, which Recognizer and _frame_jpeg both accept.
+        import urllib.request
+        try:
+            with urllib.request.urlopen(args.frame_url, timeout=5) as r:
+                data = r.read()
+            print(f"[door] fetched {len(data)} bytes from {args.frame_url}")
+            return data
+        except Exception as e:
+            gate.gate_closed(f"could not fetch frame from {args.frame_url}: {e}",
+                             CONSEQUENCE)
     if args.camera:
         return capture_camera()
     if args.image:
@@ -188,6 +202,11 @@ def main():
     parser.add_argument("--image", help="recognise a specific image file")
     parser.add_argument("--camera", action="store_true",
                         help="capture a live frame from the Pi camera (imx708)")
+    parser.add_argument("--frame-url",
+                        help="fetch one still from camera_stream.py (e.g. "
+                             "http://localhost:8001/frame) instead of opening "
+                             "the camera here — use this when the live dashboard "
+                             "feed is running (only one process can own the camera)")
     parser.add_argument("--threshold", type=float, default=DEFAULT_THRESHOLD,
                         help="minimum P(A) to admit (default %(default)s)")
     parser.add_argument("--gpio", action="store_true",
@@ -237,6 +256,7 @@ def main():
 
     # human-readable frame source for the dashboard
     source = ("camera" if args.camera
+              else "camera (stream)" if args.frame_url
               else f"image:{os.path.basename(args.image)}" if args.image
               else f"subject {args.subject}" if args.subject else "?")
 

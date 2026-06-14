@@ -170,6 +170,17 @@ def stream():
                     mimetype="multipart/x-mixed-replace; boundary=frame")
 
 
+@app.get("/frame")
+def frame():
+    """One still JPEG of the current frame — for infer_door.py --frame-url so the
+    attested gate can reuse this camera instead of opening Picamera2 itself
+    (only one process may own the Pi camera)."""
+    j = CAM.latest_jpeg()
+    if j is None:
+        return jsonify({"error": "camera not ready yet"}), 503
+    return Response(j, mimetype="image/jpeg")
+
+
 @app.post("/capture")
 def capture():
     arr = CAM.snapshot()
