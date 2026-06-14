@@ -167,6 +167,11 @@ class StubRecognizer:
 CAM = None
 RECOG = None
 THRESHOLD = DEFAULT_THRESHOLD
+# Frozen button-press frame for the in-flight /run-door: while set, /frame serves
+# THIS shot so the gate judges exactly the frame the operator saw captured (the
+# live /stream is unaffected). Cleared in run_door's finally.
+_run_frame = None
+_run_lock = threading.Lock()
 
 
 def _mjpeg():
@@ -190,8 +195,14 @@ def stream():
 def frame():
     """One still JPEG of the current frame — for infer_door.py --frame-url so the
     attested gate can reuse this camera instead of opening Picamera2 itself
-    (only one process may own the Pi camera)."""
-    j = CAM.latest_jpeg()
+    (only one process may own the Pi camera).
+
+    During an in-flight /run-door we return the FROZEN button-press frame so the
+    gate judges exactly the frame the operator saw captured, not a later live
+    grab; the live /stream keeps showing the moving feed regardless."""
+    with _run_lock:
+        frozen = _run_frame
+    j = frozen if frozen is not None else CAM.latest_jpeg()
     if j is None:
         return jsonify({"error": "camera not ready yet"}), 503
     return Response(j, mimetype="image/jpeg")
@@ -309,6 +320,33 @@ def _post_progress(verifier_url, **event):
         pass
 
 
+def _post_door_frame(verifier_url, jpg):
+    """Best-effort push of the just-captured frame to the dashboard so the
+    judged-frame panel shows it immediately, before the background run finishes."""
+    if not verifier_url:
+        return
+    try:
+        urllib.request.urlopen(urllib.request.Request(
+            verifier_url.rstrip("/") + "/door-frame", data=jpg,
+            headers={"Content-Type": "image/jpeg"}), timeout=3).read()
+    except Exception:
+        pass
+
+
+def _post_door(verifier_url, **payload):
+    """Best-effort push of a door state (e.g. the 'pending' state shown while the
+    attestation + gate run in the background on the just-captured frame)."""
+    if not verifier_url:
+        return
+    try:
+        urllib.request.urlopen(urllib.request.Request(
+            verifier_url.rstrip("/") + "/door",
+            data=json.dumps(payload).encode(),
+            headers={"Content-Type": "application/json"}), timeout=3).read()
+    except Exception:
+        pass
+
+
 def _tail(text, n):
     return [ln for ln in text.splitlines() if ln.strip()][-n:]
 
@@ -337,43 +375,68 @@ def run_door():
 
     _post_progress(vu, reset=True, phase=P1, pct=3)
 
-    # step 1: attest (verdict badge + fresh approval)
-    agent_cmd = [sys.executable, os.path.join(ATTESTER_DIR, "agent.py")]
-    if VERIFIER_URL:
-        agent_cmd += ["--verifier-url", VERIFIER_URL]
-    a_code, a_out = _run_step_streamed(
-        agent_cmd, timeout=120,
-        on_line=lambda ln: _post_progress(vu, line=ln, phase=P1, pct=25))
-    verdict = ("TRUSTED" if a_code == 0
-               else "COMPROMISED" if a_code == 2 else "ERROR")
-    _post_progress(vu, line=f"→ 平台驗證結果：{verdict}", verdict=verdict,
-                   phase=P2, pct=50)
+    # step 0: freeze the CURRENT frame at button-press and show it on the
+    # dashboard immediately, then judge THIS exact frame (not a later live grab)
+    # so the "判定影格" the operator sees is the one the gate decided on. /frame
+    # serves this frozen shot for the duration of the run (the live /stream is
+    # unaffected); infer_door still fetches it over HTTP, which keeps the frame
+    # off the measured file path (no extra PCR-10 extension before the unseal).
+    global _run_frame
+    jpg = CAM.latest_jpeg()
+    if jpg is not None:
+        with _run_lock:
+            _run_frame = jpg
+        _post_door_frame(vu, jpg)
+        _post_door(vu, state="pending", label="?", confidence=0.0,
+                   source="camera (stream)", reason="已擷取影格，背景驗證中…")
 
-    # step 2: gated door decision on the current live frame
-    frame_url = f"http://127.0.0.1:{SELF_PORT}/frame"
-    door_cmd = [sys.executable, INFER_DOOR, "--frame-url", frame_url]
-    if VERIFIER_URL:
-        door_cmd += ["--verifier-url", VERIFIER_URL]
-    if body.get("max_gate_attempts") is not None:
-        door_cmd += ["--max-gate-attempts", str(int(body["max_gate_attempts"]))]
-    d_code, d_out = _run_step_streamed(
-        door_cmd, timeout=180,
-        on_line=lambda ln: _post_progress(vu, line=ln, phase=P2, pct=80))
-    state = {0: "unlocked", 3: "locked"}.get(d_code, "error")
+    try:
+        # step 1: attest (verdict badge + fresh approval)
+        agent_cmd = [sys.executable, os.path.join(ATTESTER_DIR, "agent.py")]
+        if VERIFIER_URL:
+            agent_cmd += ["--verifier-url", VERIFIER_URL]
+        a_code, a_out = _run_step_streamed(
+            agent_cmd, timeout=120,
+            on_line=lambda ln: _post_progress(vu, line=ln, phase=P1, pct=25))
+        verdict = ("TRUSTED" if a_code == 0
+                   else "COMPROMISED" if a_code == 2 else "ERROR")
+        _post_progress(vu, line=f"→ 平台驗證結果：{verdict}", verdict=verdict,
+                       phase=P2, pct=50)
 
-    _post_progress(
-        vu, done=True, state=state, verdict=verdict,
-        phase=("DOOR UNLOCKED" if state == "unlocked"
-               else "DOOR LOCKED" if state == "locked" else "執行錯誤"))
+        # step 2: gated door decision on the frozen button-press frame
+        frame_url = f"http://127.0.0.1:{SELF_PORT}/frame"
+        door_cmd = [sys.executable, INFER_DOOR, "--frame-url", frame_url]
+        if VERIFIER_URL:
+            door_cmd += ["--verifier-url", VERIFIER_URL]
+        if body.get("max_gate_attempts") is not None:
+            door_cmd += ["--max-gate-attempts", str(int(body["max_gate_attempts"]))]
+        d_code, d_out = _run_step_streamed(
+            door_cmd, timeout=180,
+            on_line=lambda ln: _post_progress(vu, line=ln, phase=P2, pct=80))
+        state = {0: "unlocked", 3: "locked"}.get(d_code, "error")
+        # infer_door posts a rich /door state for unlocked/locked itself; on a
+        # crash/timeout it posts nothing, so clear the 'pending' we set above.
+        if state == "error":
+            _post_door(vu, state="error", label="?", confidence=0.0,
+                       source="camera (stream)",
+                       reason="門禁判定執行錯誤（詳見下方紀錄）")
 
-    return jsonify({
-        "agent_verdict": verdict,
-        "agent_exit": a_code,
-        "door_state": state,
-        "door_exit": d_code,
-        "log": _tail(a_out, 5) + _tail(d_out, 10),
-        "timestamp": time.time(),
-    })
+        _post_progress(
+            vu, done=True, state=state, verdict=verdict,
+            phase=("DOOR UNLOCKED" if state == "unlocked"
+                   else "DOOR LOCKED" if state == "locked" else "執行錯誤"))
+
+        return jsonify({
+            "agent_verdict": verdict,
+            "agent_exit": a_code,
+            "door_state": state,
+            "door_exit": d_code,
+            "log": _tail(a_out, 5) + _tail(d_out, 10),
+            "timestamp": time.time(),
+        })
+    finally:
+        with _run_lock:
+            _run_frame = None
 
 
 def main():

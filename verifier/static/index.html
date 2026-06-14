@@ -94,6 +94,7 @@
   .cam-progress-phase .spin { width: 12px; height: 12px; border: 2px solid var(--border);
                               border-top-color: var(--blue); border-radius: 50%; animation: spin .8s linear infinite; }
   @keyframes spin { to { transform: rotate(360deg); } }
+  .spinning { display: inline-block; animation: spin .9s linear infinite; }
 
   /* ---- door state (right, hero) ---- */
   .door-badge { width: 100%; justify-content: center; display: inline-flex; align-items: center; gap: 12px;
@@ -312,6 +313,46 @@ function renderDoor(d) {
   }
 
   const state = String(d.state).toUpperCase();
+
+  // pending — the frame was just captured at button-press; attestation + the
+  // gate run in the background. Show the captured frame now, class fills in later.
+  if (state === 'PENDING') {
+    badge.className = 'door-badge door-UNKNOWN';
+    badge.innerHTML = '<i class="ti ti-loader-2 spinning" aria-hidden="true"></i><span>判定中… · CHECKING</span>';
+    if (camEnabled) stage.className = 'stage-wrap';
+    klass.textContent = '辨識中…'; klass.className = 'recog-class';
+    prob.textContent = '—';        prob.className = 'recog-prob';
+    bar.style.width = '0%';        bar.className = 'recog-bar-fill';
+    let ph = esc(d.reason || '已擷取影格，背景驗證中…');
+    if (d.timestamp) ph += `<br><span class="recog-when">${new Date(d.timestamp * 1000).toLocaleString()}</span>`;
+    reason.innerHTML = ph;
+    srcCap.textContent = d.source ? ('判定影格：' + esc(d.source)) : '已擷取影格';
+    if (d.timestamp && d.timestamp !== lastDoorTs) {
+      document.getElementById('door-frame').src = '/door-frame?t=' + d.timestamp;
+      lastDoorTs = d.timestamp;
+    }
+    return;
+  }
+
+  // error — the background run crashed/timed out; don't stay stuck on 判定中
+  if (state === 'ERROR') {
+    badge.className = 'door-badge door-UNKNOWN';
+    badge.innerHTML = '<i class="ti ti-alert-triangle" aria-hidden="true"></i><span>執行錯誤 · ERROR</span>';
+    if (camEnabled) stage.className = 'stage-wrap';
+    klass.textContent = '—'; klass.className = 'recog-class';
+    prob.textContent = '—';  prob.className = 'recog-prob';
+    bar.style.width = '0%';   bar.className = 'recog-bar-fill';
+    let ph = esc(d.reason || '門禁判定執行錯誤');
+    if (d.timestamp) ph += `<br><span class="recog-when">${new Date(d.timestamp * 1000).toLocaleString()}</span>`;
+    reason.innerHTML = ph;
+    srcCap.textContent = d.source ? ('判定影格：' + esc(d.source)) : '—';
+    if (d.timestamp && d.timestamp !== lastDoorTs) {
+      document.getElementById('door-frame').src = '/door-frame?t=' + d.timestamp;
+      lastDoorTs = d.timestamp;
+    }
+    return;
+  }
+
   const cls  = state === 'UNLOCKED' ? 'UNLOCKED' : state === 'LOCKED' ? 'LOCKED' : 'UNKNOWN';
   const icon = state === 'UNLOCKED' ? 'ti-lock-open' : state === 'LOCKED' ? 'ti-lock' : 'ti-lock-question';
   const txt  = state === 'UNLOCKED' ? '門已開啟 · UNLOCKED'
@@ -474,6 +515,9 @@ async function initCamera() {
     setBusy(true);
     hint.textContent = '執行中…正在 Pi 上跑 attestation 與 unseal 閘門';
     startProgress();
+    // surface the just-captured frame + 判定中 state fast — the Pi posts it at
+    // the very start of the run (before attestation); the 2s poll is too slow.
+    [350, 800, 1500].forEach(ms => setTimeout(refresh, ms));
     try {
       const r = await fetch('/door/run', { method: 'POST' });
       const d = await r.json();
