@@ -45,6 +45,7 @@ _last_result = None
 _clip_data = None   # in-memory mp4 bytes from the Pi
 _door = None        # last door outcome JSON from infer_door.py
 _door_frame = None  # last frame the recognizer read (jpeg bytes)
+_door_progress = None  # live progress of the in-flight /run-door (pushed by the Pi)
 
 
 @app.get("/nonce")
@@ -183,6 +184,48 @@ def get_door_frame():
         mimetype="image/jpeg",
         headers={"Content-Length": str(len(data)), "Cache-Control": "no-store"},
     )
+
+
+@app.post("/door-progress")
+def post_door_progress():
+    """Pi pushes live progress while /run-door runs (the gated decision takes
+    seconds: attest + NPU inference + TPM unseal). Without this the dashboard
+    only updated at the very end; here each step streams in so the operator can
+    watch attestation and the unseal gate proceed.
+
+    Body is one of:
+      {"reset": true, "phase": ..., "pct": 0}     -> start a fresh run
+      {"line": "...", "phase": ..., "pct": N}      -> append a log line
+      {"done": true, "state": ..., "verdict": ...} -> run finished
+    """
+    global _door_progress
+    ev = request.get_json(silent=True)
+    if ev is None:
+        return jsonify({"error": "expected JSON progress event"}), 400
+    with _lock:
+        if ev.get("reset") or _door_progress is None:
+            _door_progress = {"active": True, "phase": "", "pct": 0,
+                              "lines": [], "state": None, "verdict": None,
+                              "started": time.time()}
+        p = _door_progress
+        for k in ("phase", "pct", "state", "verdict"):
+            if ev.get(k) is not None:
+                p[k] = ev[k]
+        if ev.get("line"):
+            p["lines"] = (p["lines"] + [ev["line"]])[-200:]  # cap the buffer
+        if ev.get("done"):
+            p["active"] = False
+            p["pct"] = 100
+        p["ts"] = time.time()
+    return jsonify({"ok": True})
+
+
+@app.get("/door-progress")
+def get_door_progress():
+    """Latest /run-door progress for the dashboard's live status panel."""
+    with _lock:
+        return jsonify(_door_progress or
+                       {"active": False, "phase": "", "pct": 0, "lines": []})
 
 
 @app.get("/camera/info")

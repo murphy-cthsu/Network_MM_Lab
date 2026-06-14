@@ -64,6 +64,12 @@
   .cam-btn-sm:disabled { opacity: .55; cursor: default; }
   .cam-btn-danger { color: var(--red-text); border-color: var(--red-border); background: var(--red-bg); }
   .cam-log { margin-top: 10px; font-family: ui-monospace, monospace; font-size: 11px; color: var(--text-muted); background: var(--bg); border: 0.5px solid var(--border); border-radius: var(--radius-md); padding: 10px; white-space: pre-wrap; max-height: 180px; overflow: auto; display: none; }
+  .cam-progress { margin-top: 12px; display: none; }
+  .cam-progress-track { height: 7px; border-radius: 999px; background: var(--bg); border: 0.5px solid var(--border); overflow: hidden; }
+  .cam-progress-fill { height: 100%; width: 0; background: #1f6feb; border-radius: 999px; transition: width .3s ease; }
+  .cam-progress-phase { margin-top: 7px; font-size: 12px; color: var(--text); font-weight: 500; display: flex; align-items: center; gap: 6px; }
+  .cam-progress-phase .spin { width: 12px; height: 12px; border: 2px solid var(--border); border-top-color: #1f6feb; border-radius: 50%; animation: spin .8s linear infinite; }
+  @keyframes spin { to { transform: rotate(360deg); } }
   @media (max-width: 560px) { .cam-grid { grid-template-columns: 1fr; } }
 
   /* sections */
@@ -114,6 +120,10 @@
         <button class="cam-btn" id="door-run"><i class="ti ti-shield-lock" aria-hidden="true"></i>執行門禁判定（含驗證）</button>
         <button class="cam-btn cam-btn-ghost" id="cam-shot"><i class="ti ti-capture" aria-hidden="true"></i>僅辨識（對焦用）</button>
         <div class="cam-hint" id="cam-hint">「執行門禁判定」會在 Pi 上跑完整流程（attestation + unseal 閘門），結果顯示在下方 Door lock 面板。「僅辨識」只測模型認不認得這張臉，不做驗證。</div>
+        <div class="cam-progress" id="cam-progress">
+          <div class="cam-progress-track"><div class="cam-progress-fill" id="cam-progress-fill"></div></div>
+          <div class="cam-progress-phase" id="cam-progress-phase"></div>
+        </div>
         <div class="cam-tamper">
           <span class="cam-tamper-label">Tamper（demo 用：模擬攻擊者換模型）</span>
           <button class="cam-btn-sm cam-btn-danger" id="tamper-swap"><i class="ti ti-skull" aria-hidden="true"></i>換成惡意模型</button>
@@ -295,14 +305,49 @@ async function initCamera() {
     logEl.style.display = 'block';
   }
 
+  // live progress of a gated run, streamed from the Pi via /door-progress
+  const progressEl = document.getElementById('cam-progress');
+  const fillEl = document.getElementById('cam-progress-fill');
+  const phaseEl = document.getElementById('cam-progress-phase');
+  let progTimer = null;
+  async function pollProgress() {
+    let p;
+    try { p = await (await fetch('/door-progress')).json(); } catch(e) { return; }
+    progressEl.style.display = 'block';
+    fillEl.style.width = (p.pct || 0) + '%';
+    const spin = p.active ? '<span class="spin"></span>' : '';
+    phaseEl.innerHTML = spin + esc(p.phase || '') +
+      (p.pct != null ? ` <span style="color:var(--text-muted)">(${p.pct}%)</span>` : '');
+    const lines = p.lines || [];
+    if (lines.length) {
+      logEl.textContent = lines.join('\n');
+      logEl.style.display = 'block';
+      logEl.scrollTop = logEl.scrollHeight;
+    }
+  }
+  function startProgress() {
+    fillEl.style.width = '0%';
+    logEl.textContent = ''; logEl.style.display = 'none';
+    phaseEl.innerHTML = '<span class="spin"></span>啟動中…';
+    progressEl.style.display = 'block';
+    if (progTimer) clearInterval(progTimer);
+    progTimer = setInterval(pollProgress, 700);   // first real poll after reset lands
+  }
+  function stopProgress() {
+    if (progTimer) { clearInterval(progTimer); progTimer = null; }
+  }
+
   // primary: full gated run on the Pi (attest + unseal). Authoritative.
+  // The run takes seconds (attest + NPU inference + TPM unseal); stream its
+  // progress from /door-progress so the button isn't a frozen black box.
   runBtn.addEventListener('click', async () => {
     setBusy(true);
-    hint.textContent = '執行中…正在 Pi 上跑 attestation 與 unseal 閘門，約需 10–30 秒';
-    showLog(null);
+    hint.textContent = '執行中…正在 Pi 上跑 attestation 與 unseal 閘門';
+    startProgress();
     try {
       const r = await fetch('/door/run', { method: 'POST' });
       const d = await r.json();
+      await pollProgress();   // final pull so the last streamed lines show
       if (!r.ok || d.error) {
         hint.textContent = '錯誤：' + (d.error || ('HTTP ' + r.status));
       } else {
@@ -314,12 +359,12 @@ async function initCamera() {
         } else {
           hint.textContent = `⚠️ 驗證 ${v}｜執行錯誤（door exit ${d.door_exit}）`;
         }
-        showLog(d.log);
         refresh();   // pull verdict badge + door panel
       }
     } catch(e) {
       hint.textContent = '錯誤：' + e;
     } finally {
+      stopProgress();
       setBusy(false);
     }
   });

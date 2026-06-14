@@ -23,11 +23,13 @@ Then point the laptop verifier at it (see verifier/server.py --camera-url).
 import argparse
 import base64
 import io
+import json
 import os
 import subprocess
 import sys
 import threading
 import time
+import urllib.request
 
 from flask import Flask, Response, jsonify, request
 
@@ -249,6 +251,82 @@ def _run_step(cmd, timeout):
         return 1, f"failed to run {' '.join(map(str, cmd))}: {e}"
 
 
+def _run_step_streamed(cmd, timeout, on_line):
+    """Like _run_step, but forward each stdout line to on_line as it appears.
+
+    PYTHONUNBUFFERED makes the child Python flush prints per line, so progress
+    is live instead of arriving in one batch at exit. A watchdog timer kills the
+    child on timeout. Returns (returncode, full_output)."""
+    env = dict(os.environ,
+               PYTHONUNBUFFERED="1",
+               PYTHONWARNINGS="ignore:Camellia has been moved,"
+                              "ignore:CFB has been moved")
+    try:
+        p = subprocess.Popen(cmd, cwd=REPO_ROOT, env=env,
+                             stdout=subprocess.PIPE, stderr=subprocess.STDOUT,
+                             text=True, bufsize=1)
+    except Exception as e:
+        return 1, f"failed to run {' '.join(map(str, cmd))}: {e}"
+
+    timed_out = {"v": False}
+
+    def _kill():
+        timed_out["v"] = True
+        p.kill()
+
+    timer = threading.Timer(timeout, _kill)
+    timer.start()
+    lines = []
+    try:
+        for line in p.stdout:
+            line = line.rstrip("\n")
+            lines.append(line)
+            if line.strip():
+                try:
+                    on_line(line)
+                except Exception:
+                    pass  # progress is best-effort, never break the run
+        p.wait()
+    finally:
+        timer.cancel()
+    if timed_out["v"]:
+        return 124, "\n".join(lines) + f"\ntimed out after {timeout}s"
+    return p.returncode, "\n".join(lines)
+
+
+_VERIFIER_BASE_CACHE = None
+
+
+def _verifier_base():
+    """Where to push dashboard updates: the camera server's --verifier-url, else
+    agent.py's default laptop URL — the SAME verifier infer_door/agent already
+    report to, so progress lands on the dashboard the operator is watching."""
+    global _VERIFIER_BASE_CACHE
+    if VERIFIER_URL:
+        return VERIFIER_URL
+    if _VERIFIER_BASE_CACHE is None:
+        try:
+            import agent
+            _VERIFIER_BASE_CACHE = agent.DEFAULT_VERIFIER_URL
+        except Exception:
+            _VERIFIER_BASE_CACHE = os.environ.get("VERIFIER_URL", "")
+    return _VERIFIER_BASE_CACHE
+
+
+def _post_progress(verifier_url, **event):
+    """Best-effort push of one progress event to the dashboard. Swallows every
+    error: a slow or absent verifier must never stall or fail the gated run."""
+    if not verifier_url:
+        return
+    try:
+        urllib.request.urlopen(urllib.request.Request(
+            verifier_url.rstrip("/") + "/door-progress",
+            data=json.dumps(event).encode(),
+            headers={"Content-Type": "application/json"}), timeout=2).read()
+    except Exception:
+        pass
+
+
 def _tail(text, n):
     return [ln for ln in text.splitlines() if ln.strip()][-n:]
 
@@ -271,14 +349,23 @@ def run_door():
     if _need_root():
         return _root_error()
     body = request.get_json(silent=True) or {}
+    vu = _verifier_base()
+    P1 = "1/2 平台驗證 (attestation)…"
+    P2 = "2/2 門禁判定 (辨識 + unseal 閘門)…"
+
+    _post_progress(vu, reset=True, phase=P1, pct=3)
 
     # step 1: attest (verdict badge + fresh approval)
     agent_cmd = [sys.executable, os.path.join(ATTESTER_DIR, "agent.py")]
     if VERIFIER_URL:
         agent_cmd += ["--verifier-url", VERIFIER_URL]
-    a_code, a_out = _run_step(agent_cmd, timeout=120)
+    a_code, a_out = _run_step_streamed(
+        agent_cmd, timeout=120,
+        on_line=lambda ln: _post_progress(vu, line=ln, phase=P1, pct=25))
     verdict = ("TRUSTED" if a_code == 0
                else "COMPROMISED" if a_code == 2 else "ERROR")
+    _post_progress(vu, line=f"→ 平台驗證結果：{verdict}", verdict=verdict,
+                   phase=P2, pct=50)
 
     # step 2: gated door decision on the current live frame
     frame_url = f"http://127.0.0.1:{SELF_PORT}/frame"
@@ -287,8 +374,15 @@ def run_door():
         door_cmd += ["--verifier-url", VERIFIER_URL]
     if body.get("max_gate_attempts") is not None:
         door_cmd += ["--max-gate-attempts", str(int(body["max_gate_attempts"]))]
-    d_code, d_out = _run_step(door_cmd, timeout=180)
+    d_code, d_out = _run_step_streamed(
+        door_cmd, timeout=180,
+        on_line=lambda ln: _post_progress(vu, line=ln, phase=P2, pct=80))
     state = {0: "unlocked", 3: "locked"}.get(d_code, "error")
+
+    _post_progress(
+        vu, done=True, state=state, verdict=verdict,
+        phase=("DOOR UNLOCKED" if state == "unlocked"
+               else "DOOR LOCKED" if state == "locked" else "執行錯誤"))
 
     return jsonify({
         "agent_verdict": verdict,

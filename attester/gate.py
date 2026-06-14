@@ -85,13 +85,25 @@ def unseal_secret(approval):
     here (an AES clip key in Phase 1, a lock credential in Phase 2)."""
     esys = open_esapi()
     try:
-        primary = sealing.create_storage_primary(esys)
+        # Reuse the PERSISTENT storage primary (seal.py evicted it to
+        # STORAGE_PRIMARY_HANDLE) instead of re-deriving it. Recreating an
+        # RSA2048 primary is the slowest operation the SPI TPM does — seconds
+        # of prime generation — and create_storage_primary() paid that cost on
+        # every unseal AND on every live-PCR retry. get_storage_primary() turns
+        # it into a handle lookup, falling back to a transient recreation only
+        # if seal.py never persisted one.
+        primary, persistent = sealing.get_storage_primary(esys)
         with open(sealing.SEALED_PRIV, "rb") as f:
             priv, _ = TPM2B_PRIVATE.unmarshal(f.read())
         with open(sealing.SEALED_PUB, "rb") as f:
             pub, _ = TPM2B_PUBLIC.unmarshal(f.read())
         sealed = esys.load(primary, priv, pub)
-        esys.flush_context(primary)
+        # transient parents must be flushed; a persistent handle is only an
+        # ESYS_TR mapping, released with tr_close (NOT flushed/evicted)
+        if persistent:
+            esys.tr_close(primary)
+        else:
+            esys.flush_context(primary)
         session = sealing.start_authorized_pcr_session(esys, approval)
         try:
             return bytes(esys.unseal(sealed, session1=session))
