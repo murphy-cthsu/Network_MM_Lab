@@ -79,10 +79,17 @@ class CameraManager:
         while self._running:
             try:
                 arr = self.cam.capture_array()
+                # Picamera2's "RGB888" actually delivers BGR byte order, so the
+                # raw array reads red<->blue swapped (faces look blue). Reverse
+                # the channel axis to get TRUE RGB; .copy() makes it contiguous
+                # for PIL. Storing the corrected array means the live feed, the
+                # /frame still, AND the recognizer all see natural colours and
+                # match the RGB training images.
+                rgb = arr[:, :, ::-1].copy()
                 buf = io.BytesIO()
-                Image.fromarray(arr).convert("RGB").save(buf, "JPEG", quality=80)
+                Image.fromarray(rgb).save(buf, "JPEG", quality=80)
                 with self._lock:
-                    self._arr = arr
+                    self._arr = rgb
                     self._jpeg = buf.getvalue()
             except Exception as e:
                 print(f"[camera] capture loop error: {e}")

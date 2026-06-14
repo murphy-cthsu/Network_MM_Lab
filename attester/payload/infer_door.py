@@ -73,11 +73,14 @@ def capture_camera():
     cam.configure(cam.create_still_configuration(main={"format": "RGB888"}))
     cam.start()
     time.sleep(1.5)            # let auto-exposure / white-balance settle
-    arr = cam.capture_array()  # HxWx3 RGB
+    arr = cam.capture_array()  # HxWx3, "RGB888" but actually BGR byte order
     cam.stop()
     cam.close()
     print(f"[door] captured {arr.shape[1]}x{arr.shape[0]} from the Pi camera")
-    return Image.fromarray(arr)
+    # Picamera2's "RGB888" delivers BGR; reverse the channel axis to true RGB
+    # (else red<->blue swap — faces look blue — and a colour mismatch vs the
+    # RGB training images). .copy() makes the view contiguous for PIL.
+    return Image.fromarray(arr[:, :, ::-1].copy())
 
 
 def grab_frame(args):
