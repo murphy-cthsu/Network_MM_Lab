@@ -54,7 +54,16 @@
   .cam-btn:hover { background: #1a5fd0; }
   .cam-btn:disabled { opacity: .55; cursor: default; }
   .cam-btn i { font-size: 18px; }
+  .cam-btn-ghost { background: var(--surface); color: var(--text); border: 0.5px solid var(--border); margin-left: 8px; }
+  .cam-btn-ghost:hover { background: var(--bg); }
   .cam-hint { font-size: 12px; color: var(--text-hint); margin-top: 10px; line-height: 1.6; }
+  .cam-tamper { margin-top: 14px; padding-top: 12px; border-top: 0.5px dashed var(--border); display: flex; gap: 8px; flex-wrap: wrap; align-items: center; }
+  .cam-tamper-label { font-size: 11px; font-weight: 500; text-transform: uppercase; letter-spacing: .08em; color: var(--text-hint); width: 100%; margin-bottom: 2px; }
+  .cam-btn-sm { font: inherit; font-size: 12px; font-weight: 500; cursor: pointer; border-radius: var(--radius-md); padding: 7px 12px; display: inline-flex; align-items: center; gap: 6px; border: 0.5px solid var(--border); background: var(--surface); color: var(--text); }
+  .cam-btn-sm:hover { background: var(--bg); }
+  .cam-btn-sm:disabled { opacity: .55; cursor: default; }
+  .cam-btn-danger { color: var(--red-text); border-color: var(--red-border); background: var(--red-bg); }
+  .cam-log { margin-top: 10px; font-family: ui-monospace, monospace; font-size: 11px; color: var(--text-muted); background: var(--bg); border: 0.5px solid var(--border); border-radius: var(--radius-md); padding: 10px; white-space: pre-wrap; max-height: 180px; overflow: auto; display: none; }
   @media (max-width: 560px) { .cam-grid { grid-template-columns: 1fr; } }
 
   /* sections */
@@ -102,8 +111,15 @@
         <img id="cam-stream" alt="live camera feed">
       </div>
       <div>
-        <button class="cam-btn" id="cam-shot"><i class="ti ti-capture" aria-hidden="true"></i>拍照並辨識</button>
-        <div class="cam-hint" id="cam-hint">即時畫面來自 Pi 相機。按下拍照會跑模型辨識，結果顯示在下方。</div>
+        <button class="cam-btn" id="door-run"><i class="ti ti-shield-lock" aria-hidden="true"></i>執行門禁判定（含驗證）</button>
+        <button class="cam-btn cam-btn-ghost" id="cam-shot"><i class="ti ti-capture" aria-hidden="true"></i>僅辨識（對焦用）</button>
+        <div class="cam-hint" id="cam-hint">「執行門禁判定」會在 Pi 上跑完整流程（attestation + unseal 閘門），結果顯示在下方 Door lock 面板。「僅辨識」只測模型認不認得這張臉，不做驗證。</div>
+        <div class="cam-tamper">
+          <span class="cam-tamper-label">Tamper（demo 用：模擬攻擊者換模型）</span>
+          <button class="cam-btn-sm cam-btn-danger" id="tamper-swap"><i class="ti ti-skull" aria-hidden="true"></i>換成惡意模型</button>
+          <button class="cam-btn-sm" id="tamper-restore"><i class="ti ti-rotate" aria-hidden="true"></i>還原正常模型</button>
+        </div>
+        <pre class="cam-log" id="cam-log"></pre>
       </div>
     </div>
   </div>
@@ -265,27 +281,85 @@ async function initCamera() {
   document.getElementById('cam-panel').style.display = 'block';
   document.getElementById('cam-stream').src = '/camera/stream';
 
-  const btn  = document.getElementById('cam-shot');
+  const runBtn = document.getElementById('door-run');
+  const shotBtn = document.getElementById('cam-shot');
+  const swapBtn = document.getElementById('tamper-swap');
+  const restoreBtn = document.getElementById('tamper-restore');
   const hint = document.getElementById('cam-hint');
-  btn.addEventListener('click', async () => {
-    btn.disabled = true; hint.textContent = '辨識中…';
+  const logEl = document.getElementById('cam-log');
+  const allBtns = [runBtn, shotBtn, swapBtn, restoreBtn];
+  const setBusy = (b) => allBtns.forEach(x => x.disabled = b);
+  function showLog(lines) {
+    if (!lines || !lines.length) { logEl.style.display = 'none'; return; }
+    logEl.textContent = lines.join('\n');
+    logEl.style.display = 'block';
+  }
+
+  // primary: full gated run on the Pi (attest + unseal). Authoritative.
+  runBtn.addEventListener('click', async () => {
+    setBusy(true);
+    hint.textContent = '執行中…正在 Pi 上跑 attestation 與 unseal 閘門，約需 10–30 秒';
+    showLog(null);
+    try {
+      const r = await fetch('/door/run', { method: 'POST' });
+      const d = await r.json();
+      if (!r.ok || d.error) {
+        hint.textContent = '錯誤：' + (d.error || ('HTTP ' + r.status));
+      } else {
+        const v = d.agent_verdict || '?';
+        if (d.door_state === 'unlocked') {
+          hint.textContent = `✅ 驗證 ${v}｜DOOR UNLOCKED — 辨識通過且裝置通過驗證`;
+        } else if (d.door_state === 'locked') {
+          hint.textContent = `🔒 驗證 ${v}｜DOOR LOCKED — 非門主，或裝置未通過驗證（unseal 被拒）`;
+        } else {
+          hint.textContent = `⚠️ 驗證 ${v}｜執行錯誤（door exit ${d.door_exit}）`;
+        }
+        showLog(d.log);
+        refresh();   // pull verdict badge + door panel
+      }
+    } catch(e) {
+      hint.textContent = '錯誤：' + e;
+    } finally {
+      setBusy(false);
+    }
+  });
+
+  // secondary: recognition only, no gate. Never touches the door panel, so a
+  // swapped-model "recognised" can't be mistaken for an unlocked door.
+  shotBtn.addEventListener('click', async () => {
+    setBusy(true); hint.textContent = '辨識中…'; showLog(null);
     try {
       const r = await fetch('/camera/capture', { method: 'POST' });
       const d = await r.json();
       if (!r.ok || d.error) {
         hint.textContent = '錯誤：' + (d.error || ('HTTP ' + r.status));
       } else {
-        hint.textContent = d.recognized
-          ? `辨識成功 — 門主 ${d.owner_label}（P=${Number(d.confidence).toFixed(2)}）`
-          : `非門主（label ${d.label}, P=${Number(d.confidence).toFixed(2)}）`;
-        refresh();   // pull the captured frame + verdict into the door panel now
+        hint.textContent = (d.recognized
+          ? `僅辨識：認得門主 ${d.owner_label}`
+          : `僅辨識：非門主（label ${d.label}）`)
+          + `（P=${Number(d.confidence).toFixed(2)}，未做驗證）`;
       }
     } catch(e) {
       hint.textContent = '錯誤：' + e;
     } finally {
-      btn.disabled = false;
+      setBusy(false);
     }
   });
+
+  async function tamper(path, runningMsg) {
+    setBusy(true); hint.textContent = runningMsg; showLog(null);
+    try {
+      const r = await fetch(path, { method: 'POST' });
+      const d = await r.json();
+      if (!r.ok || d.error) hint.textContent = '錯誤：' + (d.error || ('HTTP ' + r.status));
+      else { hint.textContent = d.ok ? '完成 — 接著按「執行門禁判定」看結果' : '腳本回報失敗，詳見下方'; showLog(d.log); }
+    } catch(e) { hint.textContent = '錯誤：' + e; }
+    finally { setBusy(false); }
+  }
+  swapBtn.addEventListener('click', () =>
+    tamper('/tamper/swap', '換成惡意模型中…'));
+  restoreBtn.addEventListener('click', () =>
+    tamper('/tamper/restore', '還原正常模型中…'));
 }
 initCamera();
 

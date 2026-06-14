@@ -222,9 +222,9 @@ def camera_stream():
 
 @app.post("/camera/capture")
 def camera_capture():
-    """Trigger one capture+recognise on the Pi, then store the result so the
-    existing door panel renders it (frame + green/red verdict)."""
-    global _door, _door_frame
+    """Recognition-only quick check (focus aid). Does NOT run attestation and
+    does NOT touch the door panel — the door panel is reserved for the gated
+    /door/run result so the two can never be confused."""
     cam = app.config.get("CAMERA_URL")
     if not cam:
         return jsonify({"error": "camera not configured"}), 503
@@ -234,33 +234,51 @@ def camera_capture():
             result = json.loads(r.read().decode())
     except Exception as e:
         return jsonify({"error": f"camera unreachable: {e}"}), 502
-    if result.get("error"):
-        return jsonify(result), 502
-
-    # decode the captured jpeg for the dashboard's /door-frame
-    frame_bytes = None
-    img_data = result.get("image", "")
-    if img_data.startswith("data:image") and "," in img_data:
-        try:
-            frame_bytes = base64.b64decode(img_data.split(",", 1)[1])
-        except Exception:
-            frame_bytes = None
-
-    recognized = bool(result.get("recognized"))
-    door = {
-        "state": "unlocked" if recognized else "locked",
-        "label": result.get("label"),
-        "confidence": result.get("confidence"),
-        "source": "camera",
-        "reason": ("owner recognised by the model" if recognized
-                   else "face not recognised as the owner"),
-        "timestamp": time.time(),
-    }
-    with _lock:
-        _door = door
-        if frame_bytes:
-            _door_frame = frame_bytes
     return jsonify(result)
+
+
+@app.post("/door/run")
+def door_run():
+    """Trigger the FULL gated door payload on the Pi (attest + infer_door.py with
+    the TPM gate). infer_door reports its own frame + verdict to /door, so the
+    dashboard's door panel updates automatically; here we relay the run and
+    return its result to the button. Generous timeout: agent + unseal can be slow."""
+    cam = app.config.get("CAMERA_URL")
+    if not cam:
+        return jsonify({"error": "camera not configured"}), 503
+    try:
+        req = urllib.request.Request(
+            cam.rstrip("/") + "/run-door", method="POST",
+            data=b"{}", headers={"Content-Type": "application/json"})
+        with urllib.request.urlopen(req, timeout=320) as r:
+            result = json.loads(r.read().decode())
+    except Exception as e:
+        return jsonify({"error": f"camera/run-door unreachable: {e}"}), 502
+    return jsonify(result)
+
+
+def _relay_tamper(path):
+    cam = app.config.get("CAMERA_URL")
+    if not cam:
+        return jsonify({"error": "camera not configured"}), 503
+    try:
+        req = urllib.request.Request(cam.rstrip("/") + path, method="POST")
+        with urllib.request.urlopen(req, timeout=90) as r:
+            return jsonify(json.loads(r.read().decode()))
+    except Exception as e:
+        return jsonify({"error": f"camera{path} unreachable: {e}"}), 502
+
+
+@app.post("/tamper/swap")
+def tamper_swap():
+    """Relay: swap the malicious model in on the Pi (-> COMPROMISED next run)."""
+    return _relay_tamper("/swap-model")
+
+
+@app.post("/tamper/restore")
+def tamper_restore():
+    """Relay: restore the honest model on the Pi (needs a reboot to re-TRUST)."""
+    return _relay_tamper("/restore-model")
 
 
 @app.get("/")

@@ -24,14 +24,16 @@ import argparse
 import base64
 import io
 import os
+import subprocess
 import sys
 import threading
 import time
 
-from flask import Flask, Response, jsonify
+from flask import Flask, Response, jsonify, request
 
 PAYLOAD_DIR = os.path.dirname(os.path.abspath(__file__))
 ATTESTER_DIR = os.path.dirname(PAYLOAD_DIR)
+REPO_ROOT = os.path.dirname(ATTESTER_DIR)
 sys.path.insert(0, PAYLOAD_DIR)
 sys.path.insert(0, ATTESTER_DIR)
 
@@ -40,6 +42,11 @@ from recognizer import OWNER_LABEL, NOT_OWNER_LABEL  # noqa: E402
 DEFAULT_MODEL = os.path.join(ATTESTER_DIR, "models", "face_classifier.hef")
 DEFAULT_THRESHOLD = 0.5
 DEFAULT_SIZE = (640, 480)
+INFER_DOOR = os.path.join(PAYLOAD_DIR, "infer_door.py")
+
+# set in main(): so /run-door can point infer_door at THIS server's /frame
+SELF_PORT = 8001
+VERIFIER_URL = None   # forwarded to infer_door --verifier-url if set
 
 app = Flask(__name__)
 
@@ -206,8 +213,110 @@ def capture():
     })
 
 
+SWAP_MODEL = os.path.join(REPO_ROOT, "tamper", "swap_model.sh")
+RESTORE_MODEL = os.path.join(REPO_ROOT, "tamper", "restore_model.sh")
+
+
+def _need_root():
+    return os.geteuid() != 0
+
+
+def _root_error():
+    return jsonify({"error": "control needs root — restart camera_stream.py "
+                             "with sudo (agent/infer_door read the IMA log + "
+                             "TPM as root)"}), 503
+
+
+def _run_step(cmd, timeout):
+    """Run one subprocess as the current (root) user; return (code, output)."""
+    env = dict(os.environ,
+               PYTHONWARNINGS="ignore:Camellia has been moved,"
+                              "ignore:CFB has been moved")
+    try:
+        p = subprocess.run(cmd, cwd=REPO_ROOT, env=env, timeout=timeout,
+                           capture_output=True, text=True)
+        return p.returncode, (p.stdout or "") + (p.stderr or "")
+    except subprocess.TimeoutExpired:
+        return 124, f"timed out after {timeout}s"
+    except Exception as e:
+        return 1, f"failed to run {' '.join(map(str, cmd))}: {e}"
+
+
+def _tail(text, n):
+    return [ln for ln in text.splitlines() if ln.strip()][-n:]
+
+
+@app.post("/run-door")
+def run_door():
+    """ONE-CLICK gated decision: attest, then run the gated door payload.
+
+    1) agent.py  -> flips the dashboard verdict (TRUSTED / COMPROMISED) and
+       writes the unseal authorization infer_door needs.
+    2) infer_door.py --frame-url <self>/frame -> recognises the CURRENT live
+       frame and only UNLOCKS if the TPM unseals (device attested clean). After
+       a model swap, the recognizer may still admit the face, but the unseal is
+       refused -> DOOR LOCKED (the Phase 2 headline).
+
+    Both steps report to the verifier themselves, so the dashboard's verdict
+    badge and door panel update on their own; the JSON here drives the button.
+    Requires root (IMA log + TPM) -> run camera_stream.py with sudo.
+    """
+    if _need_root():
+        return _root_error()
+    body = request.get_json(silent=True) or {}
+
+    # step 1: attest (verdict badge + fresh approval)
+    agent_cmd = [sys.executable, os.path.join(ATTESTER_DIR, "agent.py")]
+    if VERIFIER_URL:
+        agent_cmd += ["--verifier-url", VERIFIER_URL]
+    a_code, a_out = _run_step(agent_cmd, timeout=120)
+    verdict = ("TRUSTED" if a_code == 0
+               else "COMPROMISED" if a_code == 2 else "ERROR")
+
+    # step 2: gated door decision on the current live frame
+    frame_url = f"http://127.0.0.1:{SELF_PORT}/frame"
+    door_cmd = [sys.executable, INFER_DOOR, "--frame-url", frame_url]
+    if VERIFIER_URL:
+        door_cmd += ["--verifier-url", VERIFIER_URL]
+    if body.get("max_gate_attempts") is not None:
+        door_cmd += ["--max-gate-attempts", str(int(body["max_gate_attempts"]))]
+    d_code, d_out = _run_step(door_cmd, timeout=180)
+    state = {0: "unlocked", 3: "locked"}.get(d_code, "error")
+
+    return jsonify({
+        "agent_verdict": verdict,
+        "agent_exit": a_code,
+        "door_state": state,
+        "door_exit": d_code,
+        "log": _tail(a_out, 5) + _tail(d_out, 10),
+        "timestamp": time.time(),
+    })
+
+
+@app.post("/swap-model")
+def swap_model():
+    """Tamper: copy the malicious .hef over the live model (-> COMPROMISED on
+    the next attest). The attacker action in the demo."""
+    if _need_root():
+        return _root_error()
+    code, out = _run_step(["bash", SWAP_MODEL], timeout=60)
+    return jsonify({"ok": code == 0, "exit": code, "log": _tail(out, 12)})
+
+
+@app.post("/restore-model")
+def restore_model():
+    """Undo the swap (copies honest.hef back). NOTE: the trojan measurement
+    stays in this boot's append-only IMA log, so the device remains COMPROMISED
+    until a clean REBOOT + dev/prepare_demo_p2.sh — correct attestation
+    semantics (an attacker can't regain trust by restoring the file)."""
+    if _need_root():
+        return _root_error()
+    code, out = _run_step(["bash", RESTORE_MODEL], timeout=60)
+    return jsonify({"ok": code == 0, "exit": code, "log": _tail(out, 12)})
+
+
 def main():
-    global CAM, RECOG, THRESHOLD
+    global CAM, RECOG, THRESHOLD, SELF_PORT, VERIFIER_URL
     p = argparse.ArgumentParser(description=__doc__)
     p.add_argument("--host", default="0.0.0.0")
     p.add_argument("--port", type=int, default=8001)
@@ -215,11 +324,16 @@ def main():
     p.add_argument("--threshold", type=float, default=DEFAULT_THRESHOLD)
     p.add_argument("--width", type=int, default=DEFAULT_SIZE[0])
     p.add_argument("--height", type=int, default=DEFAULT_SIZE[1])
+    p.add_argument("--verifier-url", default=os.environ.get("VERIFIER_URL"),
+                   help="forwarded to infer_door.py --verifier-url for /run-door "
+                        "(default: infer_door's own default laptop URL)")
     p.add_argument("--stub-recognizer", action="store_true")
     p.add_argument("--stub-camera", action="store_true")
     args = p.parse_args()
 
     THRESHOLD = args.threshold
+    SELF_PORT = args.port
+    VERIFIER_URL = args.verifier_url
     size = (args.width, args.height)
 
     if args.stub_camera:
