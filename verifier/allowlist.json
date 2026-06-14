@@ -123,7 +123,7 @@
       "55a4f0d1ea45ee24954b6e9548b9c2a6c1a95e125e0b173fe7ff3a6f2760d16e"
     ],
     "/etc/cups/subscriptions.conf": [
-      "7ae43ad2a429fdf6fd8a82d5255e6e85a50ec4f55f94c9922184406e89eab5cd"
+      "229cfa983d6c9e093a2402f956d7272bb142f2a54a0e1cf0dbbace414fe3827d"
     ],
     "/etc/default/cron": [
       "b87c80139e47ecd361dae32bfcae5f233ffe6d4a906345a8073348a681469879"
@@ -326,10 +326,10 @@
     "/etc/resolv.conf": [
       "8904dddc31dc8218bde89daeeb5150279acf0baef5b827005a2ed17dbe803b6e"
     ],
-    "/etc/resolv.conf.1J0RQ3": [
+    "/etc/resolv.conf.CJEPQ3": [
       "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
     ],
-    "/etc/resolv.conf.9MPLQ3": [
+    "/etc/resolv.conf.UEEJQ3": [
       "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
     ],
     "/etc/rpi/swap.conf": [
@@ -656,9 +656,6 @@
     "/home/team2/Network_MM_Lab/.venv/lib/python3.13/site-packages/idna/__pycache__/package_data.cpython-313.pyc": [
       "e36b5744293d28dd75a93445efbbd7260dd5f6273538af1ef5962aa6af8c0d96"
     ],
-    "/home/team2/Network_MM_Lab/.venv/lib/python3.13/site-packages/markupsafe/_speedups.cpython-313-aarch64-linux-gnu.so": [
-      "7e463d86e5d5efd445e51685f47c0fbefe3d3a7b220866b90902c9b1b0368862"
-    ],
     "/home/team2/Network_MM_Lab/.venv/lib/python3.13/site-packages/requests/__pycache__/__init__.cpython-313.pyc": [
       "018defbf88b429a993cdb171990b5c14db54f5563d73879dde6c1f79624b2bcd"
     ],
@@ -855,7 +852,7 @@
       "d4f2da0620657fabec78ad274b0942817fdc1300d377e90ca870f0ee0ae44ee6"
     ],
     "/home/team2/Network_MM_Lab/attester/__pycache__/gate.cpython-313.pyc": [
-      "4a0e8731a927dfafff155389ac30c54138159bfb95a6afdf40db27ea87b02427"
+      "bf0a0690139d38cdce531c13cb52ac9458651898a52b4be8f96910719ad37871"
     ],
     "/home/team2/Network_MM_Lab/attester/__pycache__/ima_replay.cpython-313.pyc": [
       "414998d1e0c82fdf6af62cb0e2fadc23e8fd3d18bcb125c0d0a33f87f887680b"
@@ -870,7 +867,7 @@
       "c23df5f9c009eb777a3e2df00a2cf631b44789c43b61ff802293e9092e497310"
     ],
     "/home/team2/Network_MM_Lab/attester/models/face_classifier.hef": [
-      "8493b64ed9ae7f22cb7cb54828b6f4a5f6ffb7979017bfb1d83ed104dd0efefc"
+      "bc8ae16c562f4b9810e7dc422ac11b5e93f654dc2db04602020c3aab6c3062f0"
     ],
     "/home/team2/Network_MM_Lab/attester/out/sealed_key.priv": [
       "39e9a2bbb19748422d2391537269b97d8b9bc99214c2480de8bb2d142519c22d"
@@ -885,10 +882,13 @@
       "1adecd9cab9d711bff0be3df8c3ca094f427ede6d78158e17b89f49c1c36dc3e"
     ],
     "/home/team2/Network_MM_Lab/attester/payload/infer_door.py": [
-      "cfaf721f57d2699ea3b2c1f0fbccd2e395bb021219314a7a5183c5f082773501"
+      "c60d2dc7154a3de6581838dd9af32051a9f409834f49ee8b52183bb2f6eb5c4c"
     ],
     "/home/team2/Network_MM_Lab/dev/prepare_demo_p2.sh": [
-      "e8b296099fd13e2ca190e32634d3b0531e696ae9c7ee11ee0fde28388e5c782f"
+      "5f47b6de8c569938da2d2e67b59e7f14d9638e10838e3bb78f3d441ab881e298"
+    ],
+    "/home/team2/Network_MM_Lab/training/testset/A.jpg": [
+      "0128775043593ff2cb361651fea38415dcb6c0f755e7bf6067f5e2c5ad10a2fc"
     ],
     "/home/team2/Network_MM_Lab/training/testset/B.jpg": [
       "be932c72b0e21fe14955c1ef10addf514ad0d795748e4d4cd26a25839fb76a09"
@@ -929,9 +929,6 @@
     "/usr/bin/create_xauth": [
       "79287d2a7b090c84c14557e5b7b706a290b85fb719c722ff329248e7cc7b19e2"
     ],
-    "/usr/bin/curl": [
-      "f7b1fc0358ea2f7abd8a1d25084808e17e2067307cd8ea3bc88d57bc5cedeb84"
-    ],
     "/usr/bin/cut": [
       "2b910f41d86805c20131df9f5ceec50831db66644b56cfb44facf83e79fbdd61"
     ],
@@ -970,9 +967,6 @@
     ],
     "/usr/bin/env": [
       "a1a366aeec990c18d7ff97358e523925e449e2df224029fe048fc3ae35a97720"
-    ],
-    "/usr/bin/file": [
-      "71691ad44ec682de7a40535a38cc2048badf34748e3ca391b7e7ca47d0f2ee20"
     ],
     "/usr/bin/find": [
       "a0a346a409b0637a251b82c95a90e4ee7be329ebfe37df357e9387385404942a"
@@ -1139,9 +1133,6 @@
     "/usr/bin/sed": [
       "8a495ad93852a6ae0d409dac21c9f81f40aab24a49da9e01a849a8d3edbea396"
     ],
-    "/usr/bin/seq": [
-      "b597d04caa08ed39d9906f90361b3558fc5e65ae7eae6724f958ca7224eb80f0"
-    ],
     "/usr/bin/sha256sum": [
       "7911a1f0aec4678c540bd78ff886f48d42790c8689a82ed0ae25ed79ed5dd512"
     ],
@@ -1216,9 +1207,6 @@
     ],
     "/usr/bin/wlr-randr": [
       "1803679c2cb50c66a0cc0877f2ad8765a2bc1cf59e59b9e53f6de069b7a2a3dc"
-    ],
-    "/usr/bin/xargs": [
-      "ca6dfe9cc2dc6dd37b251a51e8b29cf4e82d66334c46b604023964cf4dc8d680"
     ],
     "/usr/bin/xauth": [
       "09e10b73ad2e639edf205bda54caa1aa3186f5fba8f6787ea78e8ad6c63f5ace"
@@ -2203,9 +2191,6 @@
     ],
     "/usr/lib/aarch64-linux-gnu/libm.so.6": [
       "a8afb2d1f4a0c5e14c0fc82f794ec839eafe29738907aa92895410f57630bbe2"
-    ],
-    "/usr/lib/aarch64-linux-gnu/libmagic.so.1.0.0": [
-      "b322f83513af72e56420f15f070f4b6eab4648e110bf7758d6d0575850a165b0"
     ],
     "/usr/lib/aarch64-linux-gnu/libmbim-glib.so.4.9.0": [
       "ca9b2f0b45fc80825cf4853cc5c0500d8ef28ce2315511190dd08b3ad6ebecf3"
@@ -8109,12 +8094,12 @@
       "c85495070dca42687df6a1c3ee780a27cbcb82f1844750ea6f642833a44d29b4"
     ],
     "/var/cache/apt/pkgcache.bin": [
-      "12cb676756b51c7d0e4d3714470913c79ea448e40582e0846dc9b0c55b78dc60"
+      "b279542d5be0c9b08433d834c602bc86498b1c626479ff7c9e5149d50640949d"
     ],
-    "/var/cache/apt/pkgcache.bin.VBzu1B": [
+    "/var/cache/apt/pkgcache.bin.79XfM4": [
       "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
     ],
-    "/var/cache/apt/srcpkgcache.bin.ruGBOE": [
+    "/var/cache/apt/srcpkgcache.bin.yMjEuj": [
       "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
     ],
     "/var/cache/cups/job.cache": [
@@ -8228,29 +8213,26 @@
     "/var/lib/NetworkManager/internal-28d4a0dc-169d-4c97-8d03-9cfba91ed17f-wlan0.lease": [
       "e4c3e6c817052d9c2189e32612342cca0b572762ce7fbd578d2436cef7d44c3f"
     ],
-    "/var/lib/NetworkManager/internal-28d4a0dc-169d-4c97-8d03-9cfba91ed17f-wlan0.lease.B65DQ3": [
-      "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
-    ],
-    "/var/lib/NetworkManager/internal-28d4a0dc-169d-4c97-8d03-9cfba91ed17f-wlan0.lease.ZFXTQ3": [
+    "/var/lib/NetworkManager/internal-28d4a0dc-169d-4c97-8d03-9cfba91ed17f-wlan0.lease.FKGLQ3": [
       "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
     ],
     "/var/lib/NetworkManager/secret_key": [
       "9b53b6366e5c5464907d03b326c98f35c1c68ec9aa2d0a21654fa1628aa3e20d"
     ],
     "/var/lib/NetworkManager/seen-bssids": [
-      "b22ae3b6a7f90481fe318f53023592097199729e341b6515faa157968e11284c"
+      "3d02d912d630e5eea2e81d7834a9bb24ac92d9c4741b23bbe4fa35b14bdc4077"
     ],
     "/var/lib/NetworkManager/timestamps": [
-      "fb5756a4ad1d52c826c2e74def799a6f3feb8382345773e4dc050f9fc3d540fa"
+      "fbf26a88f71d742d31bd3d9f4f0b372e75f9a6e3ce7c504502b20607cf2ae39b"
     ],
-    "/var/lib/NetworkManager/timestamps.0JKPQ3": [
+    "/var/lib/NetworkManager/timestamps.AY0HQ3": [
       "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
     ],
-    "/var/lib/NetworkManager/timestamps.8Z3XQ3": [
+    "/var/lib/NetworkManager/timestamps.KT9QQ3": [
       "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
     ],
     "/var/lib/PackageKit/transactions.db": [
-      "24684051691e3465b6db28c933f5ea0bc22aa3f333c8d74877faef0bd8990c27"
+      "c6f9cbaddf6a55964a52b4b811784c1b02c68766803cc39e19bff8e8d7cc255e"
     ],
     "/var/lib/PackageKit/transactions.db-journal": [
       "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
@@ -8271,13 +8253,13 @@
       "2ec53bf7e3fb44f1215f23bed8c920459736e9188038f6fed70323bc453bc680"
     ],
     "/var/lib/apt/lists/deb.debian.org_debian-security_dists_trixie-security_InRelease": [
-      "c22a24ef407739ce3565069014dd7a20c78786b88ecb08b174d8fae7ef007135"
+      "ca0f3adb54265a40508ea68e20207b3985bc7e578d8fd65b4fb0f28d48a12668"
     ],
     "/var/lib/apt/lists/deb.debian.org_debian-security_dists_trixie-security_main_binary-arm64_Packages": [
-      "07755c1099b3aae040808374100e82bd8f496a961634c18eb392463dcd71b5af"
+      "8609535a63acc82b1102e0dfe8a9c54339b76d50b12383ee8c4e0929fed903cd"
     ],
     "/var/lib/apt/lists/deb.debian.org_debian-security_dists_trixie-security_main_binary-armhf_Packages": [
-      "7fd5c0454183f648446d7d4282d2cdbd770a4802b1075230a37b4de1dceceae5"
+      "ef9d079cc6f6cc9dabe16ed5fdbf46fbf33e8aa289be48ccc9d6c42f6d093ee5"
     ],
     "/var/lib/apt/lists/deb.debian.org_debian-security_dists_trixie-security_main_i18n_Translation-en": [
       "8f68f0388d6d6073dda6d82b0528e0ed26e0aff09958986f5d168b98a1e0874c"
@@ -8286,7 +8268,7 @@
       "e4907fdbff33532d6868798090276fd7fb3281ca42f1fa35ac8ddfc7a9380cc7"
     ],
     "/var/lib/apt/lists/deb.debian.org_debian_dists_trixie-updates_InRelease": [
-      "44cd92250153de8aa42398f12dfb5c7944bd8b0458981f4af9eeb604d1f048d8"
+      "f5d07db1ec9cee06173eb1ec7544d3d9f44757d07f7b43ba3eaf2261e6a98637"
     ],
     "/var/lib/apt/lists/deb.debian.org_debian_dists_trixie-updates_main_binary-arm64_Packages": [
       "e1713ad0ca698a00cfb31c6b611234f5c43018303137ceb54a4b73efd0752024"
@@ -8339,22 +8321,22 @@
     "/var/lib/apt/lists/lock": [
       "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
     ],
-    "/var/lib/apt/lists/partial/.apt-acquire-privs-test.EYL9o8": [
+    "/var/lib/apt/lists/partial/.apt-acquire-privs-test.9Od0RO": [
       "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
     ],
-    "/var/lib/apt/lists/partial/.apt-acquire-privs-test.MX2a2T": [
+    "/var/lib/apt/lists/partial/.apt-acquire-privs-test.JD0fcP": [
       "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
     ],
-    "/var/lib/apt/lists/partial/.apt-acquire-privs-test.XzXSbN": [
+    "/var/lib/apt/lists/partial/.apt-acquire-privs-test.oX611O": [
       "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
     ],
-    "/var/lib/apt/lists/partial/.apt-acquire-privs-test.q3KcLV": [
+    "/var/lib/apt/lists/partial/.apt-acquire-privs-test.yvOeqC": [
       "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
     ],
     "/var/lib/bluetooth/88:A2:9E:23:CE:95/attributes": [
       "ddfdaafb3300321513109f53f9d736ed4cf8695038030e3df2d76f46f4f76ed2"
     ],
-    "/var/lib/bluetooth/88:A2:9E:23:CE:95/attributes.E74OQ3": [
+    "/var/lib/bluetooth/88:A2:9E:23:CE:95/attributes.H5YRQ3": [
       "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
     ],
     "/var/lib/bluetooth/88:A2:9E:23:CE:95/settings": [
@@ -8373,35 +8355,35 @@
       "58ff1ea61e79d156a477481c28942a60dd7abfae38fb1f4ca655249671618cc6"
     ],
     "/var/lib/cloud/data/status.json": [
-      "71034d4d9ceb01f154bea09808fbc3a0c66687fce1a16ab0d388c4583c01f33b",
-      "8afd31f508d13ff126c69b489b92c01ca170a8ee1456c6b808b05965ddbe3635",
-      "3a8ead3314971a8d045795bcf2a69e1e41be4c5c98d25d689a46083150eab27d"
+      "49af35acc19f470bd6ad3d3618072f70200f822e944a445639db39cb885e9bb1",
+      "5eecd8d0828437a0688ad98aeae82a03c6f3b6a2617229c575711088628d339f",
+      "11aa6f0fc5f5eb1c92f3a0853c6df37c8a84db5c2a6e4b15a8fa97bf91a83b3f"
     ],
-    "/var/lib/cloud/data/tmp3rerevbe": [
+    "/var/lib/cloud/data/tmp2gs53959": [
       "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
     ],
-    "/var/lib/cloud/data/tmp7523wzua": [
+    "/var/lib/cloud/data/tmp33xsyd56": [
       "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
     ],
-    "/var/lib/cloud/data/tmp99juicvm": [
+    "/var/lib/cloud/data/tmpig0blatr": [
       "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
     ],
-    "/var/lib/cloud/data/tmpa9k8lo_6": [
+    "/var/lib/cloud/data/tmpk6f4du75": [
       "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
     ],
-    "/var/lib/cloud/data/tmpbigfyvnp": [
+    "/var/lib/cloud/data/tmpm2hsk7x2": [
       "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
     ],
-    "/var/lib/cloud/data/tmpcbrudis3": [
+    "/var/lib/cloud/data/tmpntclo_m0": [
       "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
     ],
-    "/var/lib/cloud/data/tmpf99f_k56": [
+    "/var/lib/cloud/data/tmpq5omk6w4": [
       "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
     ],
-    "/var/lib/cloud/data/tmppnt7n2s5": [
+    "/var/lib/cloud/data/tmptvkpne9g": [
       "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
     ],
-    "/var/lib/cloud/data/tmpsm1rjxv3": [
+    "/var/lib/cloud/data/tmpuo9lvu2z": [
       "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
     ],
     "/var/lib/cloud/instances/nocloud/cloud-config.txt": [
@@ -8411,8 +8393,8 @@
       "28eca9266548b34f1779d3d708c42364547733ff249b0878662f66041639443c"
     ],
     "/var/lib/cloud/instances/nocloud/obj.pkl": [
-      "2dc1e37d5cff662cc750682f5c6d6c012291f3e7829b5c5d6fbb25def157ce14",
-      "51f6fad83ea5556a49844c7e432b2aa8f5aa569f794eb95d59605e7efc871e68"
+      "97fe573d6fa76d0d87d4899bc68cd66a46962d35ef9793b82b36b4ab2bb6fd27",
+      "749dd066307c0ccf9fb20302d152dbce0faffb57dd26b2e2e746ed0e3d59cef4"
     ],
     "/var/lib/dpkg/arch": [
       "ce4d143484c6eef24e963fb3f4f952a6641c712f50b9ee99f9093af4db333ecf"
@@ -8421,18 +8403,18 @@
       "75dbbad8b6ad5801d5c3d7a8fcbb43beee3f68e7d626a69adf6c232791f5543d"
     ],
     "/var/lib/plymouth/boot-duration": [
-      "1e1ba17cd3d37c162e4389c73715060402f296e59aa4bc727b88e4f4ffbd5fd7"
+      "4d87871efe971f8f98b06ff795f5ebcfe443d38ce436178791a211390f50b233"
     ],
     "/var/lib/systemd/backlight/platform-1f00080000.i2c:backlight:11-0045": [
       "ce8bafb38615aeb5d44ebbabe78ec14ac35a5de87bdc5ad5ea82a72656024ce4"
     ],
     "/var/lib/systemd/random-seed": [
-      "564436a649af7b8291049f45beda1096a3923dce5869ba145ec36b84fcc26aa0"
+      "6afdd10c7c995eb3f77247dd245ef17100bb03646fe4904df3d43f479329dbee"
     ],
-    "/var/lib/systemd/rfkill/.#platform-1001100000.mmc:wlan34d9de0cc3ef9beb": [
+    "/var/lib/systemd/rfkill/.#platform-1001100000.mmc:wlanac14275e852314a0": [
       "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
     ],
-    "/var/lib/systemd/rfkill/.#platform-107d50c000.serial:bluetooth86ead7eadd3129ba": [
+    "/var/lib/systemd/rfkill/.#platform-107d50c000.serial:bluetoothe5ab1b7a52883a41": [
       "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
     ],
     "/var/lib/systemd/rfkill/platform-1001100000.mmc:wlan": [
@@ -8440,23 +8422,6 @@
     ],
     "/var/lib/systemd/rfkill/platform-107d50c000.serial:bluetooth": [
       "9a271f2a916b0b6ee6cecb2426f0b3206ef074578be55d9bc94f6f3fe3ab86aa"
-    ],
-    "/var/log/lastlog": [
-      "4d12d2cdbddc86c673784de217ac05e9537a5d5762e245f33bafc529bba1bc81",
-      "06700ff7940faf7f75ca6fbf0d476a0c06226b9d7981a917d986c01d694cc992"
-    ],
-    "/var/log/wtmp": [
-      "ec4fb027b6e9891dbf8f3454f386212534b395bb08101d90f1ac853f7665f8f3",
-      "4c32553a3c1bbe7d2b2a703a851aab4aac169444d691c5892c80077d1652827e",
-      "a35ff091147cccd4dbef8500967b2ea744cb56b92334166e90d52a7879b8a467",
-      "1d8f2e61a98e64ddddf5dd8376a5de3e9b00b42f4a96ac16471efa18e3362ed2"
-    ],
-    "/var/log/wtmp.db": [
-      "65aa61502bdfcdded7e8bf80a5834277afc1741943f636ebb8e12ce079f69944",
-      "1c6c8de57d02c83cd2d372a4077bf57c1a76bce2f2a6c73f8d8cf753df2e49ad"
-    ],
-    "/var/log/wtmp.db-journal": [
-      "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
     ],
     "/var/swap": [
       "b38ba8d844bdcba5e14c2b193fed4b1348e90b06e6e4aa7c311959bacb4b4577"
