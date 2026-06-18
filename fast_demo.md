@@ -1,5 +1,7 @@
 ## Preparation
 
+(venv is on RPI team2)
+
 Make sure to modify the server URL in `attester/agent.py`
 
 ## One-time enrollment / after a key rotation
